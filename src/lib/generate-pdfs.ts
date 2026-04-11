@@ -213,48 +213,65 @@ export function generateDossierPDF(
 
   // --- RED FLAGS ---
   if (result.redFlags.length > 0) {
-    if (y > 250) { doc.addPage(); y = 20; }
-    doc.setFillColor(255, 245, 245);
-    doc.roundedRect(margin, y, contentWidth, 8 + result.redFlags.length * 12, 3, 3, "F");
-    doc.setDrawColor(...COLORS.red);
-    doc.setLineWidth(0.8);
-    doc.line(margin, y, margin, y + 8 + result.redFlags.length * 12);
+    if (y > 230) { doc.addPage(); y = 20; }
 
     doc.setTextColor(...COLORS.red);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("SIGNAUX D'ALERTE", margin + 6, y + 6);
+    doc.text("SIGNAUX D'ALERTE", margin, y);
+    y += 7;
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    result.redFlags.forEach((flag, i) => {
-      doc.text(`- ${sanitize(flag.message)}`, margin + 6, y + 14 + i * 12);
-      doc.setTextColor(...COLORS.gray);
-      doc.text(sanitize(flag.recommendation), margin + 10, y + 19 + i * 12);
+    result.redFlags.forEach((flag) => {
+      if (y > 265) { doc.addPage(); y = 20; }
+      doc.setFillColor(255, 245, 245);
+      const msgText = sanitize(flag.message);
+      const recText = sanitize(flag.recommendation);
+      const msgLines = doc.splitTextToSize(`- ${msgText}`, contentWidth - 12);
+      const recLines = doc.splitTextToSize(recText, contentWidth - 16);
+      const blockH = msgLines.length * 4 + recLines.length * 3.5 + 6;
+      doc.roundedRect(margin, y - 2, contentWidth, blockH, 2, 2, "F");
+      doc.setDrawColor(...COLORS.red);
+      doc.setLineWidth(0.8);
+      doc.line(margin, y - 2, margin, y - 2 + blockH);
+
       doc.setTextColor(...COLORS.red);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text(msgLines, margin + 6, y + 2);
+      doc.setTextColor(...COLORS.gray);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(recLines, margin + 10, y + 2 + msgLines.length * 4);
+      y += blockH + 3;
     });
-
-    y += 14 + result.redFlags.length * 12;
+    y += 4;
   }
 
   // --- PATTERNS ---
   if (result.detectedPatterns.length > 0) {
-    if (y > 260) { doc.addPage(); y = 20; }
+    if (y > 240) { doc.addPage(); y = 20; }
     doc.setTextColor(...COLORS.orange);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("Patterns cliniques detectes", margin, y);
-    y += 6;
+    y += 7;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     result.detectedPatterns.forEach((p) => {
+      if (y > 265) { doc.addPage(); y = 20; }
       doc.setTextColor(...COLORS.black);
-      doc.text(`- ${sanitize(p.name)}`, margin + 4, y);
-      y += 4;
+      doc.setFont("helvetica", "bold");
+      const nameLines = doc.splitTextToSize(`- ${sanitize(p.name)}`, contentWidth - 8);
+      doc.text(nameLines, margin + 4, y);
+      y += nameLines.length * 4;
       doc.setTextColor(...COLORS.gray);
-      doc.text(sanitize(p.description), margin + 8, y);
-      y += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      const descLines = doc.splitTextToSize(sanitize(p.description), contentWidth - 12);
+      doc.text(descLines, margin + 8, y);
+      y += descLines.length * 3.5 + 3;
+      doc.setFontSize(9);
     });
     y += 4;
   }
@@ -298,48 +315,55 @@ export function generateDossierPDF(
         if (!question.conditionalOn.values.some((v) => condVals.includes(v))) continue;
       }
 
-      if (y > 265) { doc.addPage(); y = 20; }
-
       const formattedAnswer = formatAnswer(question, answer);
       const annotations = getAnnotations(question.id, answer);
 
+      // Estimate block height to avoid splitting Q/A across pages
+      const estHeight = 12 + annotations.length * 10;
+      if (y + estHeight > 275) { doc.addPage(); y = 20; }
+
       // Question label
       doc.setTextColor(...COLORS.gray);
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
-      const questionLines = doc.splitTextToSize(sanitize(question.label), contentWidth - 4);
+      const questionLines = doc.splitTextToSize(sanitize(question.label), contentWidth - 8);
       doc.text(questionLines, margin + 2, y);
-      y += questionLines.length * 4;
+      y += questionLines.length * 3.5;
 
       // Answer
       doc.setTextColor(...COLORS.black);
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
-      const answerLines = doc.splitTextToSize(sanitize(formattedAnswer), contentWidth - 4);
+      const answerLines = doc.splitTextToSize(sanitize(formattedAnswer), contentWidth - 8);
       doc.text(answerLines, margin + 2, y);
-      y += answerLines.length * 5;
+      y += answerLines.length * 4;
 
       // Annotations
       if (annotations.length > 0) {
         annotations.forEach((ann) => {
-          if (y > 270) { doc.addPage(); y = 20; }
+          if (y > 268) { doc.addPage(); y = 20; }
           doc.setFillColor(255, 252, 245);
           const annText = sanitize(ann.text);
-          const annLines = doc.splitTextToSize(annText, contentWidth - 16);
-          const annHeight = annLines.length * 4 + 4;
+          const annLines = doc.splitTextToSize(annText, contentWidth - 20);
+          const annHeight = annLines.length * 3.5 + 4;
           doc.roundedRect(margin + 4, y - 2, contentWidth - 8, annHeight, 1, 1, "F");
 
-          const isRed = ann.icon.includes("🔴");
-          const isWarn = ann.icon.includes("⚠");
-          doc.setTextColor(isRed ? 217 : isWarn ? 224 : 107, isRed ? 67 : isWarn ? 122 : 158, isRed ? 67 : isWarn ? 58 : 107);
-          doc.setFontSize(8);
+          const isRed = ann.icon.includes("\u{1F534}") || ann.text.includes("URGENT");
+          const isWarn = ann.icon.includes("\u{26A0}") || ann.text.includes("VISIO");
+          const isGood = ann.icon.includes("\u{2705}") || ann.text.startsWith("Bon") || ann.text.startsWith("Excellente");
+          doc.setTextColor(
+            isRed ? 217 : isWarn ? 180 : isGood ? 45 : 107,
+            isRed ? 67 : isWarn ? 100 : isGood ? 90 : 158,
+            isRed ? 67 : isWarn ? 20 : isGood ? 61 : 107
+          );
+          doc.setFontSize(7);
           doc.setFont("helvetica", "italic");
-          doc.text(annLines, margin + 8, y + 2);
-          y += annHeight + 2;
+          doc.text(annLines, margin + 8, y + 1);
+          y += annHeight + 1;
         });
       }
 
-      y += 4;
+      y += 3;
     }
 
     y += 4;
@@ -388,7 +412,7 @@ export function generateDossierPDF(
     doc.setFontSize(8);
     doc.setTextColor(...COLORS.gray);
     doc.text(
-      `NutriByMeli - Melissa Pommez, Dieteticienne DE & Naturopathe | Document confidentiel | Page ${i}/${totalPages}`,
+      `NutriByMeli - M. Pommez, Diet. DE & Naturopathe | Confidentiel | Page ${i}/${totalPages}`,
       pageWidth / 2,
       290,
       { align: "center" }
@@ -485,27 +509,31 @@ export function generateBriefingPDF(
 
   // --- DRAPEAUX ROUGES ---
   if (result.redFlags.length > 0) {
-    doc.setFillColor(255, 240, 240);
-    const flagHeight = 12 + result.redFlags.length * 14;
-    doc.roundedRect(margin, y, contentWidth, flagHeight, 3, 3, "F");
-
     doc.setTextColor(...COLORS.red);
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("DRAPEAUX ROUGES - A ABORDER EN PRIORITE", margin + 4, y + 8);
+    doc.text("DRAPEAUX ROUGES - A ABORDER EN PRIORITE", margin, y);
+    y += 7;
 
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    result.redFlags.forEach((flag, i) => {
-      doc.text(`! ${sanitize(flag.message)}`, margin + 6, y + 18 + i * 14);
-      doc.setTextColor(...COLORS.gray);
-      doc.setFontSize(9);
-      doc.text(`  -> ${sanitize(flag.recommendation)}`, margin + 8, y + 23 + i * 14);
+    result.redFlags.forEach((flag) => {
+      if (y > 260) { doc.addPage(); y = 20; }
+      doc.setFillColor(255, 240, 240);
+      const msgLines = doc.splitTextToSize(`! ${sanitize(flag.message)}`, contentWidth - 12);
+      const recLines = doc.splitTextToSize(`-> ${sanitize(flag.recommendation)}`, contentWidth - 16);
+      const blockH = msgLines.length * 4 + recLines.length * 3.5 + 5;
+      doc.roundedRect(margin, y - 2, contentWidth, blockH, 2, 2, "F");
+
       doc.setTextColor(...COLORS.red);
-      doc.setFontSize(10);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text(msgLines, margin + 4, y + 1);
+      doc.setTextColor(...COLORS.gray);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(recLines, margin + 8, y + 1 + msgLines.length * 4);
+      y += blockH + 3;
     });
-
-    y += flagHeight + 6;
+    y += 4;
   }
 
   // --- AXES PROBLEMATIQUES ---
@@ -533,12 +561,12 @@ export function generateBriefingPDF(
       fontStyle: "bold",
       fontSize: 9,
     },
-    styles: { fontSize: 9, cellPadding: 4, overflow: "linebreak" },
+    styles: { fontSize: 8, cellPadding: 3, overflow: "linebreak" },
     columnStyles: {
-      0: { cellWidth: 45 },
-      1: { cellWidth: 20, halign: "center", fontStyle: "bold" },
-      2: { cellWidth: 28, halign: "center" },
-      3: { cellWidth: 70 },
+      0: { cellWidth: 42 },
+      1: { cellWidth: 18, halign: "center", fontStyle: "bold" },
+      2: { cellWidth: 25, halign: "center" },
+      3: { cellWidth: contentWidth - 85 },
     },
     margin: { left: margin, right: margin },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -596,12 +624,12 @@ export function generateBriefingPDF(
         fillColor: COLORS.greenDark,
         textColor: COLORS.white,
         fontStyle: "bold",
-        fontSize: 9,
+        fontSize: 8,
       },
-      styles: { fontSize: 8, cellPadding: 4, overflow: "linebreak" },
+      styles: { fontSize: 7, cellPadding: 3, overflow: "linebreak" },
       columnStyles: {
-        0: { cellWidth: 50, fontStyle: "bold" },
-        1: { cellWidth: 115 },
+        0: { cellWidth: 45, fontStyle: "bold" },
+        1: { cellWidth: contentWidth - 45 },
       },
       margin: { left: margin, right: margin },
     });
@@ -620,24 +648,25 @@ export function generateBriefingPDF(
     if (y > 240) { doc.addPage(); y = 20; }
 
     doc.setTextColor(...COLORS.orange);
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("Patterns cliniques detectes", margin, y);
-    y += 6;
+    y += 7;
 
     result.detectedPatterns.forEach((p) => {
-      if (y > 270) { doc.addPage(); y = 20; }
+      if (y > 265) { doc.addPage(); y = 20; }
       doc.setTextColor(...COLORS.black);
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
-      doc.text(`- ${sanitize(p.name)}`, margin + 2, y);
-      y += 4;
+      const nameLines = doc.splitTextToSize(`- ${sanitize(p.name)}`, contentWidth - 8);
+      doc.text(nameLines, margin + 2, y);
+      y += nameLines.length * 4;
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...COLORS.gray);
-      doc.setFontSize(9);
-      const descLines = doc.splitTextToSize(sanitize(p.description), contentWidth - 10);
+      doc.setFontSize(8);
+      const descLines = doc.splitTextToSize(sanitize(p.description), contentWidth - 12);
       doc.text(descLines, margin + 6, y);
-      y += descLines.length * 4 + 4;
+      y += descLines.length * 3.5 + 4;
     });
   }
 
@@ -1054,11 +1083,11 @@ export function generateArgumentairePDF(
   doc.text("Programme 90 Jours - Accompagnement complet", margin + contentWidth / 2, y + 10, { align: "center" });
 
   doc.setFontSize(28);
-  doc.text("297 EUR", margin + contentWidth / 2, y + 26, { align: "center" });
+  doc.text("790 EUR", margin + contentWidth / 2, y + 26, { align: "center" });
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("ou 3 x 99 EUR sans frais", margin + contentWidth / 2, y + 34, { align: "center" });
+  doc.text("ou 3 x 263 EUR sans frais", margin + contentWidth / 2, y + 34, { align: "center" });
 
   y += 48;
 
@@ -1086,7 +1115,7 @@ export function generateArgumentairePDF(
     },
     {
       step: "4. Faciliter la decision",
-      script: `"Le programme est a 297 EUR, et on peut etaler en 3 fois sans frais. Vous pourrez commencer des ${new Date(Date.now() + 7 * 86400000).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}."`,
+      script: `"Le programme est a 790 EUR, et on peut etaler en 3 fois sans frais. Vous pourrez commencer des ${new Date(Date.now() + 7 * 86400000).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}."`,
     },
   ];
 
@@ -1123,7 +1152,7 @@ export function generateArgumentairePDF(
   const objections = [
     {
       objection: "C'est trop cher",
-      response: "Rapporte a 90 jours, c'est 3,30 EUR/jour — moins qu'un cafe. Et c'est un investissement dans votre sante qui va vous faire economiser en consultations medicales, medicaments et fatigue. De plus, le paiement en 3 fois est disponible.",
+      response: "Rapporte a 90 jours, c'est 8,78 EUR/jour — moins qu'un cafe. Et c'est un investissement dans votre sante qui va vous faire economiser en consultations medicales, medicaments et fatigue. De plus, le paiement en 3 fois est disponible.",
       tip: "Comparer avec le cout de NE RIEN FAIRE (medicaments, fatigue, arret maladie...)",
     },
     {
