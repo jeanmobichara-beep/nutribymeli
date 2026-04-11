@@ -689,13 +689,22 @@ export const SCORING_MATRIX: Record<
     non: [],
   },
 
-  libido_basse: {
-    oui: [
+  libido: {
+    "1": [
+      { axis: "hormonal", weight: 4 },
+      { axis: "nerveux", weight: 2 },
+      { axis: "energetique", weight: 2 },
+    ],
+    "2": [
       { axis: "hormonal", weight: 3 },
       { axis: "nerveux", weight: 1 },
       { axis: "energetique", weight: 1 },
     ],
-    non: [],
+    "3": [
+      { axis: "hormonal", weight: 1 },
+    ],
+    "4": [],
+    "5": [],
   },
 
   cycle_regulier: {
@@ -787,7 +796,23 @@ export const SCORING_MATRIX: Record<
     "5": [],
   },
 
-  contexte_repas: {
+  contexte_repas_midi: {
+    calme: [],
+    rapide: [
+      { axis: "digestif", weight: 2 },
+      { axis: "nerveux", weight: 1 },
+    ],
+    ecran: [
+      { axis: "digestif", weight: 1 },
+      { axis: "nerveux", weight: 1 },
+    ],
+    stressant: [
+      { axis: "digestif", weight: 3 },
+      { axis: "nerveux", weight: 3 },
+    ],
+  },
+
+  contexte_repas_soir: {
     calme: [],
     rapide: [
       { axis: "digestif", weight: 2 },
