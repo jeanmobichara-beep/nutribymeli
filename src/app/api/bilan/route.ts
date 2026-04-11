@@ -633,7 +633,7 @@ export async function POST(request: Request) {
 
     <!-- Header avec logo -->
     <div style="text-align:center;padding:32px 20px;">
-      <img src="https://nutri-meli.com/logo.png" alt="NutriByMeli" width="180" style="display:inline-block;" />
+      <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="180" style="display:inline-block;pointer-events:none;" />
     </div>
 
     <!-- Main Card -->
