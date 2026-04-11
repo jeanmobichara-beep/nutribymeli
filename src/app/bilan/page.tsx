@@ -20,26 +20,27 @@ import {
   Info,
 } from "lucide-react";
 
-const LEVEL_COLORS: Record<string, string> = {
-  optimal: "#22c55e",
-  attention: "#eab308",
-  "préoccupant": "#f97316",
-  critique: "#ef4444",
-};
+// Score-based colors/labels aligned with email thresholds
+function getAxisColor(score: number): string {
+  if (score >= 65) return "#6B9E6B";
+  if (score >= 45) return "#E5A100";
+  if (score >= 25) return "#E07A3A";
+  return "#D94343";
+}
 
-const LEVEL_BG: Record<string, string> = {
-  optimal: "bg-green-50 border-green-200",
-  attention: "bg-amber-50 border-amber-200",
-  "préoccupant": "bg-orange-50 border-orange-200",
-  critique: "bg-red-50 border-red-200",
-};
+function getAxisBg(score: number): string {
+  if (score >= 65) return "bg-green-50 border-green-200";
+  if (score >= 45) return "bg-amber-50 border-amber-200";
+  if (score >= 25) return "bg-orange-50 border-orange-200";
+  return "bg-red-50 border-red-200";
+}
 
-const LEVEL_LABELS: Record<string, string> = {
-  optimal: "Optimal",
-  attention: "A surveiller",
-  "préoccupant": "Preoccupant",
-  critique: "Critique",
-};
+function getAxisLabel(score: number): string {
+  if (score >= 65) return "Bon";
+  if (score >= 45) return "À améliorer";
+  if (score >= 25) return "Préoccupant";
+  return "Critique";
+}
 
 export default function BilanPage() {
   const router = useRouter();
@@ -148,16 +149,7 @@ export default function BilanPage() {
             <div className="inline-flex items-center gap-3 bg-[#F9F6F1] rounded-2xl px-6 py-4">
               <div
                 className="text-3xl font-bold"
-                style={{
-                  color:
-                    result.overallScore >= 80
-                      ? "#22c55e"
-                      : result.overallScore >= 55
-                        ? "#eab308"
-                        : result.overallScore >= 30
-                          ? "#f97316"
-                          : "#ef4444",
-                }}
+                style={{ color: getAxisColor(result.overallScore) }}
               >
                 {result.overallScore}
                 <span className="text-lg text-muted-foreground">/100</span>
@@ -165,11 +157,11 @@ export default function BilanPage() {
               <div className="text-left">
                 <p className="text-xs text-muted-foreground">Score global de santé</p>
                 <p className="text-sm font-medium text-[#1a1a1a]">
-                  {result.overallScore >= 80
+                  {result.overallScore >= 65
                     ? "Terrain globalement équilibré"
-                    : result.overallScore >= 55
-                      ? "Quelques axes à surveiller"
-                      : result.overallScore >= 30
+                    : result.overallScore >= 45
+                      ? "Quelques axes méritent attention"
+                      : result.overallScore >= 25
                         ? "Plusieurs axes à travailler"
                         : "Prise en charge recommandée"}
                 </p>
@@ -295,11 +287,11 @@ export default function BilanPage() {
           <div className="prose prose-sm max-w-none text-[#444] leading-relaxed space-y-3">
             <p>
               {prenom}, votre score global est de <strong>{result.overallScore}/100</strong>.{" "}
-              {result.overallScore >= 80
+              {result.overallScore >= 65
                 ? "Votre terrain est globalement bien équilibré. Quelques ajustements ciblés pourraient encore optimiser votre santé."
-                : result.overallScore >= 55
+                : result.overallScore >= 45
                   ? "Votre terrain présente des points forts mais aussi des axes qui méritent attention. Un accompagnement ciblé pourrait faire une vraie différence."
-                  : result.overallScore >= 30
+                  : result.overallScore >= 25
                     ? "Plusieurs axes de votre terrain nécessitent un travail en profondeur. C'est le signe que votre corps vous envoie des signaux qu'il est important d'écouter."
                     : "Votre terrain présente des déséquilibres importants sur plusieurs axes. Une prise en charge structurée est fortement recommandée pour rétablir l'équilibre."}
             </p>
@@ -480,7 +472,7 @@ function RadarChart({ axes }: { axes: AxisScore[] }) {
             cx={p.x}
             cy={p.y}
             r="5"
-            fill={LEVEL_COLORS[axis.level]}
+            fill={getAxisColor(axis.score)}
             stroke="white"
             strokeWidth="2"
           />
@@ -512,18 +504,22 @@ function RadarChart({ axes }: { axes: AxisScore[] }) {
 // ===== Axis Detail Component =====
 
 function AxisDetail({ axis }: { axis: AxisScore }) {
+  const color = getAxisColor(axis.score);
+  const bg = getAxisBg(axis.score);
+  const label = getAxisLabel(axis.score);
+
   return (
-    <div className={`rounded-xl border p-5 ${LEVEL_BG[axis.level]}`}>
+    <div className={`rounded-xl border p-5 ${bg}`}>
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm text-[#1a1a1a]">{axis.label}</h3>
         <span
           className="text-xs font-medium px-2.5 py-1 rounded-full"
           style={{
-            backgroundColor: LEVEL_COLORS[axis.level] + "20",
-            color: LEVEL_COLORS[axis.level],
+            backgroundColor: color + "20",
+            color: color,
           }}
         >
-          {LEVEL_LABELS[axis.level]}
+          {label}
         </span>
       </div>
 
@@ -533,7 +529,7 @@ function AxisDetail({ axis }: { axis: AxisScore }) {
           className="h-2.5 rounded-full transition-all"
           style={{
             width: `${axis.score}%`,
-            backgroundColor: LEVEL_COLORS[axis.level],
+            backgroundColor: color,
           }}
         />
       </div>

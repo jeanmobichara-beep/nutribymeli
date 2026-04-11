@@ -736,3 +736,534 @@ export function generateBriefingPDF(
 
   return Buffer.from(doc.output("arraybuffer"));
 }
+
+// ============================================================================
+// PDF 3 : ARGUMENTAIRE DE VENTE — Programme 90 Jours
+// ============================================================================
+
+export function generateArgumentairePDF(
+  answers: Record<string, string | string[]>,
+  result: BilanResult
+): Buffer {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 20;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  const prenom = (answers.prenom as string) || "Patient";
+  const nom = (answers.nom as string) || "";
+  const sexe = (answers.sexe as string) || "";
+  const accord = sexe === "femme" ? "e" : "";
+
+  // Objectifs du patient
+  const objectifs = Array.isArray(answers.objectif) ? answers.objectif : [];
+  const objectifLabels: Record<string, string> = {
+    perte_poids: "Perte de poids",
+    prendre_poids: "Prise de poids",
+    energie: "Retrouver de l'energie",
+    digestion: "Ameliorer la digestion",
+    hormones: "Equilibrer les hormones",
+    alimentation: "Ameliorer l'alimentation",
+    douleurs: "Diminuer les douleurs/inflammations",
+    sommeil: "Mieux dormir",
+    stress: "Gerer le stress",
+  };
+
+  // Axes faibles = arguments de vente
+  const weakAxes = result.axes.filter((a) => a.score < 65).sort((a, b) => a.score - b.score);
+
+  // IMC
+  const tailleNum = parseFloat(answers.taille as string);
+  const poidsNum = parseFloat(answers.poids as string);
+  const imc = tailleNum > 0 ? poidsNum / ((tailleNum / 100) ** 2) : 0;
+
+  // === HEADER ===
+  doc.setFillColor(45, 90, 61);
+  doc.rect(0, 0, pageWidth, 42, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ARGUMENTAIRE DE VENTE", margin, 18);
+
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "normal");
+  doc.text("Programme 90 Jours - NutriByMeli", margin, 27);
+
+  doc.setFontSize(9);
+  doc.text(`Prepare pour : ${prenom} ${nom} | ${new Date().toLocaleDateString("fr-FR")}`, margin, 35);
+
+  y = 52;
+
+  // === PROFIL CLIENT ===
+  doc.setTextColor(...COLORS.black);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Profil du/de la patient(e)", margin, y);
+  y += 3;
+
+  const motivationLevel = parseInt((answers.motivation as string) || (answers.motivation_niveau as string) || "5");
+  const pret90 = (answers.pret_90_jours as string) || "";
+
+  autoTable(doc, {
+    startY: y,
+    head: [],
+    body: [
+      ["Nom", `${prenom} ${nom}`],
+      ["Score global", `${result.overallScore}/100 (${getScoreLabel(result.overallScore)})`],
+      ["IMC", imc > 0 ? `${Math.round(imc * 10) / 10} kg/m2` : "N/A"],
+      ["Objectif(s)", objectifs.map((o) => objectifLabels[o] || o).join(", ") || "Non precise"],
+      ["Motivation", `${motivationLevel}/10`],
+      ["Pret(e) 90 jours", pret90 === "oui" ? "OUI" : pret90 === "pourquoi_pas" ? "Interesse(e) mais hesitant(e)" : "Non pour l'instant"],
+      ["Axes faibles", weakAxes.length > 0 ? weakAxes.map((a) => `${a.label} (${a.score})`).join(", ") : "Aucun"],
+      ["Red flags", result.redFlags.length > 0 ? result.redFlags.map((f) => sanitize(f.message)).join(", ") : "Aucun"],
+    ],
+    theme: "plain",
+    styles: { fontSize: 9, cellPadding: 3 },
+    columnStyles: {
+      0: { fontStyle: "bold", cellWidth: 40, textColor: COLORS.greenDark },
+      1: { textColor: COLORS.black },
+    },
+    margin: { left: margin, right: margin },
+  });
+
+  y = (doc as any).lastAutoTable.finalY + 10;
+
+  // === STRATEGIE DE VENTE PERSONNALISEE ===
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Strategie de vente personnalisee", margin, y);
+  y += 8;
+
+  // Determine la temperature du lead
+  let leadTemp = "FROID";
+  let leadColor: [number, number, number] = COLORS.red;
+  if (pret90 === "oui" && motivationLevel >= 7) {
+    leadTemp = "CHAUD";
+    leadColor = COLORS.green;
+  } else if (pret90 === "pourquoi_pas" || motivationLevel >= 5) {
+    leadTemp = "TIEDE";
+    leadColor = COLORS.yellow;
+  }
+
+  doc.setFillColor(leadColor[0], leadColor[1], leadColor[2]);
+  doc.roundedRect(margin, y, 50, 12, 3, 3, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Lead ${leadTemp}`, margin + 25, y + 8, { align: "center" });
+
+  doc.setTextColor(...COLORS.black);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  const tempAdvice = leadTemp === "CHAUD"
+    ? `${prenom} est tres motive${accord} et pret${accord}. Presenter l'offre directement en fin de visio.`
+    : leadTemp === "TIEDE"
+      ? `${prenom} est interesse${accord} mais hesite. Construire la valeur, lever les objections, creer l'urgence.`
+      : `${prenom} n'est pas encore convaincu${accord}. Focus sur la valeur du bilan gratuit, planter les graines pour un suivi.`;
+  const tempLines = doc.splitTextToSize(tempAdvice, contentWidth - 60);
+  doc.text(tempLines, margin + 55, y + 4);
+
+  y += Math.max(16, tempLines.length * 4 + 8);
+
+  // === ACCROCHE PERSONNALISEE ===
+  if (y > 250) { doc.addPage(); y = 20; }
+
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Accroche d'ouverture suggeree", margin, y);
+  y += 6;
+
+  const mainObjectif = objectifs[0] ? (objectifLabels[objectifs[0]] || objectifs[0]).toLowerCase() : "ameliorer votre sante";
+  const hookText = `"${prenom}, au vu de votre bilan, je vois clairement que vous avez un potentiel enorme d'amelioration, surtout sur ${weakAxes.length > 0 ? weakAxes[0].label.toLowerCase() : "votre terrain global"}. Avec un score de ${result.overallScore}/100, il y a de vrais leviers qu'on peut activer ensemble pour ${mainObjectif}. Et la bonne nouvelle, c'est que votre motivation a ${motivationLevel}/10 me montre que vous etes pret${accord} a passer a l'action."`;
+
+  doc.setTextColor(...COLORS.black);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "italic");
+  const hookLines = doc.splitTextToSize(hookText, contentWidth - 8);
+  doc.setFillColor(245, 250, 245);
+  doc.roundedRect(margin, y - 2, contentWidth, hookLines.length * 4 + 6, 2, 2, "F");
+  doc.text(hookLines, margin + 4, y + 2);
+  y += hookLines.length * 4 + 10;
+
+  // === ARGUMENTS PERSONNALISES PAR AXE ===
+  if (y > 230) { doc.addPage(); y = 20; }
+
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Arguments de vente par axe", margin, y);
+  y += 8;
+
+  const axeArguments = weakAxes.map((a) => {
+    const args: Record<string, { argument: string; benefit: string }> = {
+      equilibre_alimentaire: {
+        argument: "Votre alimentation presente des desequilibres que je peux corriger avec un plan structure.",
+        benefit: "En 90 jours, vous aurez une alimentation equilibree sans frustration, avec des recettes adaptees a vos gouts.",
+      },
+      hydratation_micronutriments: {
+        argument: "Votre hydratation et vos apports en micronutriments sont insuffisants, ce qui impacte tout votre organisme.",
+        benefit: "Meilleure energie, meilleure peau, meilleure digestion — juste en optimisant eau et micronutriments.",
+      },
+      habitudes_repas: {
+        argument: "Vos habitudes de repas (horaires, contexte, vitesse) freinent votre digestion et votre metabolisme.",
+        benefit: "Des ajustements simples dans votre routine vont transformer votre confort digestif et votre energie.",
+      },
+      digestif_transit: {
+        argument: "Votre systeme digestif montre des signes de desequilibre qui meritent un protocole structure.",
+        benefit: "Fini les ballonnements, la fatigue apres manger et les troubles du transit — en 90 jours, tout change.",
+      },
+      energie_vitalite: {
+        argument: "Votre energie et votre vitalite sont en dessous de votre potentiel — c'est souvent le premier benefice visible.",
+        benefit: "Vous retrouverez une energie stable toute la journee, un meilleur sommeil et une clarte mentale.",
+      },
+      mode_de_vie: {
+        argument: "Votre mode de vie (stress, activite, sommeil) impacte directement vos resultats nutritionnels.",
+        benefit: "On va integrer des routines simples dans votre quotidien pour que les changements tiennent sur le long terme.",
+      },
+    };
+    return {
+      label: a.label,
+      score: a.score,
+      axis: a.axis,
+      argument: args[a.axis]?.argument || "Cet axe necessite un accompagnement structure.",
+      benefit: args[a.axis]?.benefit || "Des ameliorations concretes et durables.",
+    };
+  });
+
+  axeArguments.forEach((arg) => {
+    if (y > 255) { doc.addPage(); y = 20; }
+
+    const color = getScoreColor(arg.score);
+    doc.setFillColor(color[0], color[1], color[2]);
+    doc.roundedRect(margin, y, 4, 18, 1, 1, "F");
+
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${arg.label} (${arg.score}/100)`, margin + 8, y + 4);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...COLORS.gray);
+    const argLines = doc.splitTextToSize(`Argument : ${arg.argument}`, contentWidth - 12);
+    doc.text(argLines, margin + 8, y + 9);
+    const benLines = doc.splitTextToSize(`Benefice : ${arg.benefit}`, contentWidth - 12);
+    doc.setTextColor(...COLORS.green);
+    doc.text(benLines, margin + 8, y + 9 + argLines.length * 3.5);
+
+    y += 12 + (argLines.length + benLines.length) * 3.5 + 4;
+  });
+
+  // === PRESENTATION DU PROGRAMME ===
+  doc.addPage();
+  y = 20;
+
+  doc.setFillColor(...COLORS.greenDark);
+  doc.rect(0, 0, pageWidth, 25, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Presentation du Programme 90 Jours", margin, 16);
+
+  y = 35;
+
+  const programSteps = [
+    {
+      phase: "Phase 1 : Reset (Semaines 1-3)",
+      desc: "Bilan approfondi, identification des priorites, premiers ajustements alimentaires. Plan personnalise avec recettes et listes de courses.",
+    },
+    {
+      phase: "Phase 2 : Transformation (Semaines 4-8)",
+      desc: "Mise en place des nouvelles habitudes, suivi hebdomadaire, ajustements en fonction des progres. Travail sur les axes prioritaires.",
+    },
+    {
+      phase: "Phase 3 : Ancrage (Semaines 9-12)",
+      desc: "Consolidation des acquis, autonomie progressive, strategies pour maintenir les resultats sur le long terme.",
+    },
+  ];
+
+  programSteps.forEach((step) => {
+    if (y > 255) { doc.addPage(); y = 20; }
+
+    doc.setFillColor(245, 250, 245);
+    doc.roundedRect(margin, y, contentWidth, 22, 3, 3, "F");
+
+    doc.setTextColor(...COLORS.greenDark);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text(step.phase, margin + 4, y + 6);
+
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    const descLines = doc.splitTextToSize(step.desc, contentWidth - 8);
+    doc.text(descLines, margin + 4, y + 12);
+
+    y += 26;
+  });
+
+  y += 4;
+
+  // === CE QUI EST INCLUS ===
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Ce qui est inclus", margin, y);
+  y += 8;
+
+  const inclusions = [
+    "Consultation initiale approfondie (60 min)",
+    "Plan alimentaire 100% personnalise + recettes",
+    "Liste de courses hebdomadaire",
+    `Programme adapte a ${sexe === "femme" ? "votre cycle et vos besoins feminins" : "vos besoins specifiques"}`,
+    "4 consultations de suivi en visio (1 par quinzaine puis mensuelle)",
+    "Messagerie illimitee entre les consultations (WhatsApp/email)",
+    "Complementation ciblee si necessaire",
+    "Fiches pratiques et guides nutritionnels",
+    "Acces a vie aux ressources du programme",
+  ];
+
+  inclusions.forEach((item) => {
+    if (y > 275) { doc.addPage(); y = 20; }
+    doc.setTextColor(...COLORS.green);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("V", margin, y);
+    doc.setTextColor(...COLORS.black);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(item, margin + 6, y);
+    y += 5;
+  });
+
+  y += 8;
+
+  // === TARIFICATION ===
+  if (y > 220) { doc.addPage(); y = 20; }
+
+  doc.setFillColor(...COLORS.greenDark);
+  doc.roundedRect(margin, y, contentWidth, 40, 3, 3, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Programme 90 Jours - Accompagnement complet", margin + contentWidth / 2, y + 10, { align: "center" });
+
+  doc.setFontSize(28);
+  doc.text("297 EUR", margin + contentWidth / 2, y + 26, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("ou 3 x 99 EUR sans frais", margin + contentWidth / 2, y + 34, { align: "center" });
+
+  y += 48;
+
+  // === SCRIPT DE CLOSING ===
+  if (y > 200) { doc.addPage(); y = 20; }
+
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Script de closing", margin, y);
+  y += 8;
+
+  const closingSteps = [
+    {
+      step: "1. Resume de la valeur",
+      script: `"${prenom}, on a vu ensemble que votre bilan revele ${weakAxes.length} axe(s) a travailler. Avec le programme 90 jours, on va pouvoir agir sur chacun d'eux de maniere structuree et personnalisee."`,
+    },
+    {
+      step: "2. Projection de resultat",
+      script: `"Dans 3 mois, l'objectif c'est que vous ayez ${objectifs.includes("perte_poids") ? "atteint votre objectif de poids, " : ""}retrouve une energie stable, une digestion confortable, et surtout que vous ayez les cles pour maintenir ces resultats seul${accord}."`,
+    },
+    {
+      step: "3. Transition vers l'offre",
+      script: `"Est-ce que vous aimeriez qu'on travaille ensemble sur ces ${weakAxes.length} axes pendant 90 jours ? Je peux vous expliquer comment ca se passe concretement."`,
+    },
+    {
+      step: "4. Faciliter la decision",
+      script: `"Le programme est a 297 EUR, et on peut etaler en 3 fois sans frais. Vous pourrez commencer des ${new Date(Date.now() + 7 * 86400000).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}."`,
+    },
+  ];
+
+  closingSteps.forEach((cs) => {
+    if (y > 255) { doc.addPage(); y = 20; }
+
+    doc.setTextColor(...COLORS.green);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text(cs.step, margin, y);
+    y += 5;
+
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    const scriptLines = doc.splitTextToSize(cs.script, contentWidth - 8);
+    doc.text(scriptLines, margin + 4, y);
+    y += scriptLines.length * 3.5 + 5;
+  });
+
+  // === OBJECTIONS & REPONSES ===
+  doc.addPage();
+  y = 20;
+
+  doc.setFillColor(...COLORS.greenDark);
+  doc.rect(0, 0, pageWidth, 25, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Objections courantes & Reponses", margin, 16);
+
+  y = 35;
+
+  const objections = [
+    {
+      objection: "C'est trop cher",
+      response: "Rapporte a 90 jours, c'est 3,30 EUR/jour — moins qu'un cafe. Et c'est un investissement dans votre sante qui va vous faire economiser en consultations medicales, medicaments et fatigue. De plus, le paiement en 3 fois est disponible.",
+      tip: "Comparer avec le cout de NE RIEN FAIRE (medicaments, fatigue, arret maladie...)",
+    },
+    {
+      objection: "J'ai pas le temps",
+      response: "Le programme est concu pour les gens occupes. Les recettes prennent 15-20 min max, et les consultations sont en visio — vous choisissez votre creneau. Les listes de courses sont toutes faites.",
+      tip: "Demander : \"Combien de temps passez-vous a etre fatigue(e) ou a gerer vos symptomes ?\"",
+    },
+    {
+      objection: "J'ai deja essaye des regimes et ca n'a pas marche",
+      response: "Justement, c'est pour ca que je ne propose PAS de regime. Mon approche est une reeducation alimentaire douce et personnalisee. On ne supprime rien, on reequilibre. 90% de mes patients gardent leurs resultats apres le programme.",
+      tip: "Valider l'echec passe : \"C'est normal, les regimes ne marchent pas. Ce que je propose est fondamentalement different.\"",
+    },
+    {
+      objection: "Je vais reflechir / J'en parle a mon conjoint",
+      response: "Bien sur, prenez le temps. Sachez que votre bilan est une photographie d'aujourd'hui — plus on attend, plus les desequilibres s'installent. Si vous vous inscrivez cette semaine, je peux demarrer votre plan des la semaine prochaine.",
+      tip: "Creer l'urgence douce. Proposer un rappel dans 48h : \"Je vous rappelle jeudi pour voir si vous avez des questions ?\"",
+    },
+    {
+      objection: "Je peux le faire seul(e)",
+      response: `Avec un score de ${result.overallScore}/100 et ${weakAxes.length} axes a travailler, il y a beaucoup de parametres a ajuster en meme temps. L'accompagnement vous evite les erreurs, la demotivation et les fausses pistes. C'est comme avoir un GPS au lieu de chercher votre chemin seul${accord}.`,
+      tip: "Rappeler la complexite revelee par le bilan. Seul(e), il faudrait des mois pour arriver au meme resultat.",
+    },
+    {
+      objection: "Je ne suis pas sur(e) que ca marchera pour moi",
+      response: `Votre profil (motivation a ${motivationLevel}/10, ${objectifs.length} objectif(s) clair(s)) est exactement le type de profil qui obtient les meilleurs resultats. Et si jamais les resultats ne sont pas au rendez-vous apres 30 jours, on ajuste ensemble.`,
+      tip: "Utiliser le bilan comme preuve : les donnees sont la, le plan est personnalise, ce n'est pas du generique.",
+    },
+    {
+      objection: "Est-ce que c'est adapte si j'ai des problemes de sante ?",
+      response: "En tant que Dieteticienne Diplomee d'Etat, je suis habilitee a prendre en charge les pathologies nutritionnelles. Le programme est 100% personnalise et adapte a votre contexte medical. Si necessaire, je travaille en coordination avec votre medecin.",
+      tip: "Rassurer sur les qualifications : DE (diplome d'Etat) = profession reglementee de sante.",
+    },
+    {
+      objection: "Pourquoi 90 jours et pas moins ?",
+      response: "90 jours, c'est le temps scientifiquement prouve pour ancrer de nouvelles habitudes alimentaires. Moins, c'est du bricolage. Plus, c'est souvent inutile si le travail est bien fait. C'est le juste milieu entre efficacite et durabilite.",
+      tip: "Citer les etudes sur les 66-90 jours pour l'ancrage des habitudes (Lally et al., 2010).",
+    },
+  ];
+
+  objections.forEach((obj) => {
+    if (y > 235) { doc.addPage(); y = 20; }
+
+    doc.setFillColor(255, 245, 245);
+    doc.roundedRect(margin, y, contentWidth, 6, 2, 2, "F");
+    doc.setTextColor(...COLORS.red);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text(`"${obj.objection}"`, margin + 3, y + 4);
+    y += 9;
+
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    const respLines = doc.splitTextToSize(`Reponse : ${obj.response}`, contentWidth - 8);
+    doc.text(respLines, margin + 4, y);
+    y += respLines.length * 3.5 + 2;
+
+    doc.setTextColor(...COLORS.green);
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "italic");
+    const tipLines = doc.splitTextToSize(`Astuce : ${obj.tip}`, contentWidth - 8);
+    doc.text(tipLines, margin + 4, y);
+    y += tipLines.length * 3 + 6;
+  });
+
+  // === QUESTIONS FREQUENTES ===
+  if (y > 200) { doc.addPage(); y = 20; }
+
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Questions frequentes", margin, y);
+  y += 8;
+
+  const faqs = [
+    { q: "Comment se passent les consultations ?", a: "En visio (Google Meet ou Zoom), depuis chez vous. Duree : 30-45 min pour les suivis. Vous recevez un recap ecrit apres chaque seance." },
+    { q: "Est-ce que je pourrai manger ce que j'aime ?", a: "Oui ! On ne supprime jamais un aliment. On reequilibre, on ameliore les choix et on adapte a vos gouts et votre culture culinaire." },
+    { q: "Et si je craque ou si j'ai un ecart ?", a: "Les ecarts font partie du processus. On en parle, on comprend pourquoi, et on ajuste. Zero culpabilite, 100% bienveillance." },
+    { q: "Est-ce que je recevrai des menus tout faits ?", a: "Vous recevrez un plan alimentaire avec des recettes et listes de courses, mais adapte a VOS gouts. Pas de menu generique copie-colle." },
+    { q: "Comment je vous contacte entre les consultations ?", a: "Par WhatsApp ou email, en illimite. Je reponds sous 24h en semaine. Vous n'etes jamais seul(e) dans votre demarche." },
+    { q: "Faut-il acheter des complements ?", a: "Pas obligatoirement. Si des complements sont recommandes, ce sera uniquement base sur votre bilan et vos besoins reels, pas du marketing." },
+  ];
+
+  faqs.forEach((faq) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Q : ${faq.q}`, margin, y);
+    y += 4;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...COLORS.gray);
+    const aLines = doc.splitTextToSize(`R : ${faq.a}`, contentWidth - 4);
+    doc.text(aLines, margin + 2, y);
+    y += aLines.length * 3.5 + 5;
+  });
+
+  // === CHECKLIST POST-VISIO ===
+  if (y > 230) { doc.addPage(); y = 20; }
+
+  doc.setTextColor(...COLORS.greenDark);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Checklist post-visio", margin, y);
+  y += 8;
+
+  const checklist = [
+    `Si ${prenom} accepte : envoyer le lien de paiement + email de bienvenue`,
+    "Planifier la premiere consultation de suivi (sous 7 jours)",
+    "Commencer a preparer le plan alimentaire personnalise",
+    "Si hesitation : programmer un rappel dans 48h",
+    "Si refus : remercier, laisser la porte ouverte, proposer un suivi ponctuel",
+    "Dans tous les cas : envoyer un email de suivi post-visio (recap + offre)",
+  ];
+
+  checklist.forEach((item) => {
+    if (y > 275) { doc.addPage(); y = 20; }
+    doc.setTextColor(...COLORS.black);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text(`[ ] ${item}`, margin + 2, y);
+    y += 5;
+  });
+
+  // === FOOTER ===
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(...COLORS.gray);
+    doc.text(
+      `CONFIDENTIEL - NutriByMeli | Argumentaire ${prenom} ${nom} | Page ${i}/${totalPages}`,
+      pageWidth / 2,
+      290,
+      { align: "center" }
+    );
+  }
+
+  return Buffer.from(doc.output("arraybuffer"));
+}
