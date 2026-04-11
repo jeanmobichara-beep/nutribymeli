@@ -275,6 +275,7 @@ export const SCORING_MATRIX: Record<
   // Fréquences alimentaires (Q22 étendu)
   freq_charcuterie: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [{ axis: "inflammatoire", weight: 1 }],
     "3-5x": [
       { axis: "inflammatoire", weight: 3 },
@@ -289,6 +290,7 @@ export const SCORING_MATRIX: Record<
 
   freq_sucres_industriels: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [
       { axis: "nutritionnel", weight: 3 },
@@ -304,6 +306,7 @@ export const SCORING_MATRIX: Record<
 
   freq_boissons_sucrees: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [
       { axis: "nutritionnel", weight: 3 },
@@ -318,6 +321,7 @@ export const SCORING_MATRIX: Record<
 
   freq_gluten: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [],
     "3-5x": [{ axis: "digestif", weight: 1 }],
     tous_les_jours: [
@@ -328,6 +332,7 @@ export const SCORING_MATRIX: Record<
 
   freq_laitiers: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [],
     "3-5x": [{ axis: "digestif", weight: 1 }],
     tous_les_jours: [
@@ -342,6 +347,10 @@ export const SCORING_MATRIX: Record<
       { axis: "digestif", weight: 3 },
       { axis: "inflammatoire", weight: 2 },
     ],
+    occasionnel: [
+      { axis: "nutritionnel", weight: 4 },
+      { axis: "digestif", weight: 2 },
+    ],
     "1-2x": [
       { axis: "nutritionnel", weight: 3 },
       { axis: "digestif", weight: 2 },
@@ -355,6 +364,7 @@ export const SCORING_MATRIX: Record<
       { axis: "nutritionnel", weight: 3 },
       { axis: "inflammatoire", weight: 1 },
     ],
+    occasionnel: [{ axis: "nutritionnel", weight: 2 }],
     "1-2x": [{ axis: "nutritionnel", weight: 2 }],
     "3-5x": [],
     tous_les_jours: [],
@@ -365,6 +375,7 @@ export const SCORING_MATRIX: Record<
       { axis: "nutritionnel", weight: 2 },
       { axis: "digestif", weight: 1 },
     ],
+    occasionnel: [{ axis: "nutritionnel", weight: 1 }],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [],
     tous_les_jours: [],
@@ -376,6 +387,18 @@ export const SCORING_MATRIX: Record<
       { axis: "nutritionnel", weight: 2 },
       { axis: "nerveux", weight: 1 },
     ],
+    occasionnel: [
+      { axis: "inflammatoire", weight: 1 },
+      { axis: "nutritionnel", weight: 1 },
+    ],
+    "1-2x": [],
+    "3-5x": [],
+    tous_les_jours: [],
+  },
+
+  freq_volaille: {
+    jamais: [],
+    occasionnel: [],
     "1-2x": [],
     "3-5x": [],
     tous_les_jours: [],
@@ -383,6 +406,7 @@ export const SCORING_MATRIX: Record<
 
   freq_viande_rouge: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [],
     "3-5x": [
       { axis: "inflammatoire", weight: 2 },
@@ -396,6 +420,7 @@ export const SCORING_MATRIX: Record<
 
   freq_ultra_transformes: {
     jamais: [],
+    occasionnel: [],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [
       { axis: "nutritionnel", weight: 3 },
@@ -412,6 +437,7 @@ export const SCORING_MATRIX: Record<
 
   freq_cereales_completes: {
     jamais: [{ axis: "nutritionnel", weight: 2 }],
+    occasionnel: [{ axis: "nutritionnel", weight: 1 }],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [],
     tous_les_jours: [],
@@ -863,6 +889,7 @@ export const SCORING_MATRIX: Record<
   // Oeufs
   freq_oeufs: {
     jamais: [{ axis: "nutritionnel", weight: 2 }],
+    occasionnel: [{ axis: "nutritionnel", weight: 1 }],
     "1-2x": [],
     "3-5x": [],
     tous_les_jours: [],
@@ -874,6 +901,7 @@ export const SCORING_MATRIX: Record<
       { axis: "nutritionnel", weight: 2 },
       { axis: "inflammatoire", weight: 1 },
     ],
+    occasionnel: [{ axis: "nutritionnel", weight: 1 }],
     "1-2x": [{ axis: "nutritionnel", weight: 1 }],
     "3-5x": [],
     tous_les_jours: [],

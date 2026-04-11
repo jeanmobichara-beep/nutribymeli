@@ -51,6 +51,7 @@ export interface Section {
 
 const FREQUENCY_OPTIONS: QuestionOption[] = [
   { value: "jamais", label: "Jamais" },
+  { value: "occasionnel", label: "Occasionnellement" },
   { value: "1-2x", label: "1-2x / sem." },
   { value: "3-5x", label: "3-5x / sem." },
   { value: "tous_les_jours", label: "Tous les jours" },
@@ -342,7 +343,7 @@ export const SECTIONS: Section[] = [
         label: "Lesquels consommez-vous principalement ?",
         type: "checkbox",
         helpText: "Cochez tout ce qui vous concerne.",
-        conditionalOn: { questionId: "freq_oleagineux", values: ["1-2x", "3-5x", "tous_les_jours"] },
+        conditionalOn: { questionId: "freq_oleagineux", values: ["occasionnel", "1-2x", "3-5x", "tous_les_jours"] },
         options: [
           { value: "amandes", label: "Amandes" },
           { value: "noix", label: "Noix" },
@@ -361,7 +362,7 @@ export const SECTIONS: Section[] = [
         id: "oleagineux_quantite",
         label: "Quantité approximative par jour",
         type: "radio",
-        conditionalOn: { questionId: "freq_oleagineux", values: ["1-2x", "3-5x", "tous_les_jours"] },
+        conditionalOn: { questionId: "freq_oleagineux", values: ["occasionnel", "1-2x", "3-5x", "tous_les_jours"] },
         options: [
           { value: "poignee", label: "Une petite poignée (~15g)" },
           { value: "30g", label: "Une poignée (~30g)" },
@@ -380,7 +381,7 @@ export const SECTIONS: Section[] = [
         label: "Lesquels consommez-vous ?",
         type: "checkbox",
         helpText: "Cochez tout ce qui vous concerne.",
-        conditionalOn: { questionId: "freq_poisson_gras", values: ["1-2x", "3-5x", "tous_les_jours"] },
+        conditionalOn: { questionId: "freq_poisson_gras", values: ["occasionnel", "1-2x", "3-5x", "tous_les_jours"] },
         options: [
           { value: "sardines", label: "Sardines" },
           { value: "saumon", label: "Saumon" },
@@ -393,8 +394,15 @@ export const SECTIONS: Section[] = [
         ],
       },
       {
+        id: "freq_volaille",
+        label: "Volaille (poulet, dinde, canard...)",
+        type: "radio",
+        required: true,
+        options: FREQUENCY_OPTIONS,
+      },
+      {
         id: "freq_viande_rouge",
-        label: "Viande rouge",
+        label: "Viande rouge (boeuf, agneau, porc...)",
         type: "radio",
         required: true,
         options: FREQUENCY_OPTIONS,
