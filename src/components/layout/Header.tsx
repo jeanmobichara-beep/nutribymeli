@@ -13,7 +13,7 @@ export function Header() {
             alt="NutriByMeli"
             width={140}
             height={50}
-            className="h-14 w-auto brightness-0 invert"
+            className="h-14 w-auto"
             priority
           />
         </Link>
