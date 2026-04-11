@@ -631,19 +631,19 @@ export async function POST(request: Request) {
 <body style="margin:0;padding:0;background:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:20px;">
 
-    <!-- Header -->
+    <!-- Header avec logo -->
     <div style="text-align:center;padding:32px 20px;">
-      <div style="display:inline-block;background:#6B9E6B;color:white;font-weight:700;font-size:18px;padding:10px 24px;border-radius:12px;letter-spacing:0.5px;">NutriByMeli</div>
-      <p style="color:#888;font-size:13px;margin:12px 0 0 0;">Mélissa Pommez — Diététicienne DE & Naturopathe</p>
+      <img src="https://nutri-meli.com/logo.png" alt="NutriByMeli" width="180" style="display:inline-block;" />
     </div>
 
     <!-- Main Card -->
     <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
 
-      <!-- Greeting -->
-      <div style="padding:32px 32px 20px 32px;">
-        <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
-        <p style="margin:0;color:#666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
+      <!-- Message personnel de Mélissa -->
+      <div style="padding:32px 32px 24px 32px;">
+        <h1 style="margin:0 0 16px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
+        <p style="margin:0 0 12px 0;color:#555;font-size:15px;line-height:1.7;">Je tenais à vous remercier personnellement d'avoir pris le temps de compléter ce bilan. C'est une belle première étape vers un meilleur équilibre, et je suis ravie de vous accompagner dans cette démarche.</p>
+        <p style="margin:0;color:#555;font-size:15px;line-height:1.7;">J'ai analysé vos réponses avec attention. Voici une synthèse de votre pré-bilan :</p>
       </div>
 
       <!-- Score global -->
@@ -683,7 +683,7 @@ export async function POST(request: Request) {
         <table style="border-collapse:collapse;width:100%;">
           <tr>
             <td style="vertical-align:top;padding-right:16px;width:60px;">
-              <img src="https://nutri-meli.com/melissa-blouse.png" alt="Mélissa Pommez" width="56" height="56" style="border-radius:50%;object-fit:cover;display:block;" />
+              <img src="https://nutri-meli.com/melissa-profil.jpg" alt="Mélissa Pommez" width="56" height="56" style="border-radius:50%;object-fit:cover;display:block;" />
             </td>
             <td style="vertical-align:top;">
               <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
