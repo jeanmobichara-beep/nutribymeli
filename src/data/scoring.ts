@@ -828,10 +828,116 @@ export const SCORING_MATRIX: Record<
     ],
   },
 
-  // Compléments alimentaires (ajout)
+  // Compléments alimentaires
   complements: {
     oui: [{ axis: "nutritionnel", weight: 1 }],
     non: [],
+  },
+
+  // Heure dernier repas
+  heure_dernier_repas: {
+    avant_19h: [],
+    "19h_20h": [],
+    "20h_21h": [
+      { axis: "digestif", weight: 1 },
+    ],
+    apres_21h: [
+      { axis: "digestif", weight: 2 },
+      { axis: "hormonal", weight: 1 },
+    ],
+  },
+
+  // Sel
+  sel: {
+    jamais: [],
+    parfois: [],
+    souvent: [
+      { axis: "inflammatoire", weight: 1 },
+    ],
+    systematique: [
+      { axis: "inflammatoire", weight: 2 },
+      { axis: "hormonal", weight: 1 },
+    ],
+  },
+
+  // Oeufs
+  freq_oeufs: {
+    jamais: [{ axis: "nutritionnel", weight: 2 }],
+    "1-2x": [],
+    "3-5x": [],
+    tous_les_jours: [],
+  },
+
+  // Oléagineux
+  freq_oleagineux: {
+    jamais: [
+      { axis: "nutritionnel", weight: 2 },
+      { axis: "inflammatoire", weight: 1 },
+    ],
+    "1-2x": [{ axis: "nutritionnel", weight: 1 }],
+    "3-5x": [],
+    tous_les_jours: [],
+  },
+
+  // Évolution du poids
+  evolution_poids: {
+    stable: [],
+    prise_legere: [{ axis: "hormonal", weight: 1 }],
+    prise_importante: [
+      { axis: "hormonal", weight: 3 },
+      { axis: "inflammatoire", weight: 2 },
+    ],
+    perte_legere: [{ axis: "hormonal", weight: 1 }],
+    perte_importante: [
+      { axis: "hormonal", weight: 2 },
+      { axis: "nutritionnel", weight: 2 },
+    ],
+    yoyo: [
+      { axis: "hormonal", weight: 3 },
+      { axis: "nerveux", weight: 2 },
+      { axis: "energetique", weight: 1 },
+    ],
+  },
+
+  // Durée de sommeil
+  sommeil_duree: {
+    "<5h": [
+      { axis: "nerveux", weight: 4 },
+      { axis: "energetique", weight: 3 },
+      { axis: "hormonal", weight: 2 },
+    ],
+    "5-6h": [
+      { axis: "nerveux", weight: 2 },
+      { axis: "energetique", weight: 2 },
+      { axis: "hormonal", weight: 1 },
+    ],
+    "6-7h": [
+      { axis: "nerveux", weight: 1 },
+      { axis: "energetique", weight: 1 },
+    ],
+    "7-8h": [],
+    "+8h": [],
+  },
+
+  // Heure coucher
+  heure_coucher: {
+    avant_22h: [],
+    "22h_23h": [],
+    "23h_00h": [
+      { axis: "nerveux", weight: 1 },
+    ],
+    apres_00h: [
+      { axis: "nerveux", weight: 2 },
+      { axis: "hormonal", weight: 1 },
+    ],
+  },
+
+  // Grossesse / Allaitement (red flag potentiel, pas de pénalité)
+  grossesse_allaitement: {
+    non: [],
+    enceinte: [],
+    allaitement: [],
+    enceinte_allaitement: [],
   },
 };
 
@@ -987,6 +1093,33 @@ export const RED_FLAGS: RedFlag[] = [
     conditions: [{ questionId: "alcool", values: ["quotidien"] }],
     recommendation:
       "Une consommation d'alcool quotidienne nécessite un accompagnement médical spécifique avant ou en parallèle de tout suivi nutritionnel.",
+  },
+  {
+    id: "grossesse",
+    message: "Grossesse en cours",
+    conditions: [
+      { questionId: "grossesse_allaitement", values: ["enceinte", "enceinte_allaitement"] },
+    ],
+    recommendation:
+      "Votre grossesse nécessite un accompagnement nutritionnel adapté. Certaines recommandations standard ne s'appliquent pas aux femmes enceintes. Nous en tiendrons compte lors de la consultation.",
+  },
+  {
+    id: "sommeil_critique",
+    message: "Durée de sommeil très insuffisante",
+    conditions: [
+      { questionId: "sommeil_duree", values: ["<5h"] },
+    ],
+    recommendation:
+      "Dormir moins de 5h par nuit a des conséquences majeures sur le métabolisme, la régulation hormonale et l'inflammation. Ce point sera prioritaire dans votre accompagnement.",
+  },
+  {
+    id: "poids_yoyo",
+    message: "Fluctuations de poids importantes (effet yoyo)",
+    conditions: [
+      { questionId: "evolution_poids", values: ["yoyo"] },
+    ],
+    recommendation:
+      "L'effet yoyo fragilise le métabolisme et le rapport à l'alimentation. L'objectif sera de stabiliser durablement avant toute démarche de perte de poids.",
   },
 ];
 
