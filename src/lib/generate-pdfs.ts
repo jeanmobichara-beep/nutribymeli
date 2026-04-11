@@ -1,15 +1,7 @@
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { SECTIONS, type Question } from "@/data/questionnaire";
 import type { BilanResult } from "@/data/scoring";
-
-// Extend jsPDF type for autotable
-declare module "jspdf" {
-  interface jsPDF {
-    autoTable: (options: Record<string, unknown>) => jsPDF;
-    lastAutoTable: { finalY: number };
-  }
-}
 
 // ============================================================================
 // COULEURS & CONSTANTES
@@ -137,7 +129,7 @@ export function generateDossierPDF(
   const imcRounded = Math.round(imc * 10) / 10;
   const imcCat = imc < 18.5 ? "Maigreur" : imc < 25 ? "Normal" : imc < 30 ? "Surpoids" : "Obesite";
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     head: [],
     body: [
@@ -157,7 +149,7 @@ export function generateDossierPDF(
     margin: { left: margin, right: margin },
   });
 
-  y = doc.lastAutoTable.finalY + 10;
+  y = (doc as any).lastAutoTable.finalY + 10;
 
   // --- SCORE GLOBAL ---
   const scoreColor = getScoreColor(result.overallScore);
@@ -188,7 +180,7 @@ export function generateDossierPDF(
     return [a.label, `${a.score}/100`, getScoreLabel(a.score)];
   });
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     head: [["Axe", "Score", "Niveau"]],
     body: axesData,
@@ -206,7 +198,8 @@ export function generateDossierPDF(
       2: { cellWidth: 40, halign: "center" },
     },
     margin: { left: margin, right: margin },
-    didParseCell: (data: { section: string; column: { index: number }; cell: { styles: { textColor: number[] } }; row: { index: number } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    didParseCell: (data: any) => {
       if (data.section === "body" && (data.column.index === 1 || data.column.index === 2)) {
         const axis = result.axes[data.row.index];
         if (axis) {
@@ -216,7 +209,7 @@ export function generateDossierPDF(
     },
   });
 
-  y = doc.lastAutoTable.finalY + 10;
+  y = (doc as any).lastAutoTable.finalY + 10;
 
   // --- RED FLAGS ---
   if (result.redFlags.length > 0) {
@@ -457,7 +450,7 @@ export function generateBriefingPDF(
   const sexeLabel = (answers.sexe as string) === "homme" ? "Homme" : (answers.sexe as string) === "femme" ? "Femme" : (answers.sexe as string) || "";
   const objectifs = Array.isArray(answers.objectif) ? answers.objectif : [];
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     head: [],
     body: [
@@ -488,7 +481,7 @@ export function generateBriefingPDF(
     margin: { left: margin, right: margin },
   });
 
-  y = doc.lastAutoTable.finalY + 10;
+  y = (doc as any).lastAutoTable.finalY + 10;
 
   // --- DRAPEAUX ROUGES ---
   if (result.redFlags.length > 0) {
@@ -529,7 +522,7 @@ export function generateBriefingPDF(
     return [a.label, `${a.score}/100`, label, prios];
   });
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     head: [["Axe", "Score", "Niveau", "Actions suggerees"]],
     body: axesTableData,
@@ -548,7 +541,8 @@ export function generateBriefingPDF(
       3: { cellWidth: 70 },
     },
     margin: { left: margin, right: margin },
-    didParseCell: (data: { section: string; column: { index: number }; cell: { styles: { textColor: number[] } }; row: { index: number } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    didParseCell: (data: any) => {
       if (data.section === "body" && (data.column.index === 1 || data.column.index === 2)) {
         const axis = sortedAxes[data.row.index];
         if (axis) {
@@ -558,7 +552,7 @@ export function generateBriefingPDF(
     },
   });
 
-  y = doc.lastAutoTable.finalY + 10;
+  y = (doc as any).lastAutoTable.finalY + 10;
 
   // --- NOTES CLINIQUES (toutes les annotations) ---
   if (y > 200) { doc.addPage(); y = 20; }
@@ -593,7 +587,7 @@ export function generateBriefingPDF(
       a.notes.join("\n"),
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: y,
       head: [["Question", "Notes / Points a aborder en visio"]],
       body: notesData,
@@ -612,7 +606,7 @@ export function generateBriefingPDF(
       margin: { left: margin, right: margin },
     });
 
-    y = doc.lastAutoTable.finalY + 10;
+    y = (doc as any).lastAutoTable.finalY + 10;
   } else {
     doc.setTextColor(...COLORS.gray);
     doc.setFontSize(10);
