@@ -633,10 +633,7 @@ export async function POST(request: Request) {
 
     <!-- Header avec logo -->
     <div style="text-align:center;padding:32px 20px;">
-      <div style="display:inline-block;">
-        <span style="font-size:28px;font-weight:700;letter-spacing:-0.5px;"><span style="color:#6B9E6B;">Nutri</span><span style="color:#6B9E6B;">By</span><span style="color:#6B9E6B;">Meli</span></span>
-        <p style="margin:4px 0 0 0;font-size:11px;color:#888;letter-spacing:0.5px;">Mélissa P. | Diététicienne & Naturopathe</p>
-      </div>
+      <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="200" height="150" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
     </div>
 
     <!-- Main Card -->
@@ -690,9 +687,11 @@ export async function POST(request: Request) {
             </td>
             <td style="vertical-align:top;">
               <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
-              <p style="margin:0 0 6px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État & Naturopathe</p>
-              <p style="margin:0 0 2px 0;font-size:12px;color:#888;">NutriByMeli — Guadeloupe & Visio France entière</p>
-              <p style="margin:8px 0 0 0;">
+              <p style="margin:0 0 8px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État & Naturopathe</p>
+              <p style="margin:0 0 3px 0;font-size:11px;color:#888;">🎓 Expertise certifiée</p>
+              <p style="margin:0 0 3px 0;font-size:11px;color:#888;">🔒 Secret professionnel garanti</p>
+              <p style="margin:0 0 6px 0;font-size:11px;color:#888;">📍 Guadeloupe</p>
+              <p style="margin:0;">
                 <a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a>
               </p>
             </td>
