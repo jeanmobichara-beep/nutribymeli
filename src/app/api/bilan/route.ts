@@ -677,11 +677,30 @@ export async function POST(request: Request) {
 
     </div>
 
-    <!-- Footer -->
-    <div style="text-align:center;padding:24px 20px;color:#aaa;font-size:12px;line-height:1.6;">
-      <p style="margin:0 0 4px 0;">Mélissa Pommez — Diététicienne Diplômée d'État & Naturopathe</p>
-      <p style="margin:0 0 4px 0;">NutriByMeli — nutri-meli.com</p>
-      <p style="margin:12px 0 0 0;font-size:11px;">Cet email est envoyé automatiquement suite à votre bilan.<br>Vos données sont protégées par le secret professionnel.</p>
+    <!-- Signature pro -->
+    <div style="padding:24px 20px;">
+      <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,0.04);">
+        <table style="border-collapse:collapse;width:100%;">
+          <tr>
+            <td style="vertical-align:top;padding-right:16px;width:60px;">
+              <img src="https://nutri-meli.com/melissa-blouse.png" alt="Mélissa Pommez" width="56" height="56" style="border-radius:50%;object-fit:cover;display:block;" />
+            </td>
+            <td style="vertical-align:top;">
+              <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
+              <p style="margin:0 0 6px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État & Naturopathe</p>
+              <p style="margin:0 0 2px 0;font-size:12px;color:#888;">NutriByMeli — Guadeloupe & Visio France entière</p>
+              <p style="margin:8px 0 0 0;">
+                <a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div style="text-align:center;padding:8px 20px 24px 20px;">
+      <p style="margin:0;font-size:11px;color:#bbb;line-height:1.5;">Cet email est envoyé automatiquement suite à votre bilan nutritionnel.<br>Vos données sont protégées par le secret professionnel conformément au RGPD.</p>
     </div>
 
   </div>
