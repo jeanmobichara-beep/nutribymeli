@@ -11,7 +11,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const MELISSA_EMAIL = process.env.MELISSA_EMAIL || "contact@nutribymeli.fr";
+const MELISSA_EMAIL = process.env.MELISSA_EMAIL || "contact@nutri-meli.com";
 
 // ============================================================================
 // Annotations cliniques automatiques pour préparer la visio
@@ -188,6 +188,174 @@ function getAnnotations(
     annotations.push({
       icon: "⚠️",
       text: "+8h assis/jour → impact inflammatoire et métabolique. Proposer des micro-pauses actives.",
+    });
+  }
+
+  // Nouvelles questions — Régime alimentaire
+  if (questionId === "regime_alimentaire") {
+    if (val.includes("vegan")) {
+      annotations.push({
+        icon: "🔴",
+        text: "Régime végan → VISIO : Vérifier B12, fer, zinc, oméga-3, calcium, vitamine D. Complémentation obligatoire.",
+      });
+    }
+    if (val.includes("vegetarien")) {
+      annotations.push({
+        icon: "💡",
+        text: "Végétarien → VISIO : Vérifier fer, B12, zinc. Combinaisons protéiques végétales suffisantes ?",
+      });
+    }
+    if (val.includes("cetogene")) {
+      annotations.push({
+        icon: "⚠️",
+        text: "Régime cétogène → VISIO : Depuis combien de temps ? Suivi médical ? Impact sur thyroïde et cortisol à long terme.",
+      });
+    }
+    if (val.includes("jeune_intermittent")) {
+      annotations.push({
+        icon: "💡",
+        text: "Jeûne intermittent → VISIO : Fenêtre horaire ? Apports suffisants sur les repas ? Impact sur énergie et hormones.",
+      });
+    }
+  }
+
+  // Heure dernier repas
+  if (questionId === "heure_dernier_repas" && val.includes("apres_21h")) {
+    annotations.push({
+      icon: "⚠️",
+      text: "Repas tardif (après 21h) → perturbation du rythme circadien, digestion compromise, impact sommeil et métabolisme.",
+    });
+  }
+
+  // Sel
+  if (questionId === "sel" && val.includes("systematique")) {
+    annotations.push({
+      icon: "⚠️",
+      text: "Ajout systématique de sel → VISIO : Vérifier tension artérielle. Rétention d'eau ? Éduquer au goût.",
+    });
+  }
+
+  // Évolution du poids
+  if (questionId === "evolution_poids") {
+    if (val.includes("prise_importante")) {
+      annotations.push({
+        icon: "🔴",
+        text: "Prise de poids importante sur 6 mois → VISIO : Événement déclencheur ? Changement de mode de vie ? Bilan hormonal ?",
+      });
+    }
+    if (val.includes("perte_importante")) {
+      annotations.push({
+        icon: "🔴",
+        text: "Perte de poids importante → VISIO : Volontaire ou involontaire ? Si involontaire, orienter vers bilan médical.",
+      });
+    }
+    if (val.includes("yoyo")) {
+      annotations.push({
+        icon: "⚠️",
+        text: "Effet yoyo → VISIO : Historique des régimes, relation à l'alimentation. Stabilisation métabolique avant toute restriction.",
+      });
+    }
+  }
+
+  // Oléagineux
+  if (questionId === "freq_oleagineux" && val.includes("jamais")) {
+    annotations.push({
+      icon: "💡",
+      text: "Aucun oléagineux → manque de bons lipides, magnésium, sélénium. Introduire progressivement.",
+    });
+  }
+
+  // Volaille
+  if (questionId === "freq_volaille" && val.includes("jamais") && !val.includes("vegan") && !val.includes("vegetarien")) {
+    annotations.push({
+      icon: "💡",
+      text: "VISIO : Pas de volaille → vérifier les sources de protéines maigres alternatives.",
+    });
+  }
+
+  // Sommeil durée
+  if (questionId === "sommeil_duree") {
+    if (val.includes("<5h")) {
+      annotations.push({
+        icon: "🔴",
+        text: "Moins de 5h de sommeil → URGENT. Impact majeur : cortisol, r��sistance à l'insuline, inflammation, prise de poids. Priorité n°1.",
+      });
+    }
+    if (val.includes("5-6h")) {
+      annotations.push({
+        icon: "⚠️",
+        text: "Sommeil insuffisant (5-6h) → VISIO : Identifier les causes (écrans, stress, travail ?). Objectif 7h minimum.",
+      });
+    }
+  }
+
+  // Heure coucher
+  if (questionId === "heure_coucher" && val.includes("apres_00h")) {
+    annotations.push({
+      icon: "⚠️",
+      text: "Coucher après minuit → décalage circadien. Impact cortisol, mélatonine, récupération. Recaler progressivement.",
+    });
+  }
+
+  // Grossesse / Allaitement
+  if (questionId === "grossesse_allaitement") {
+    if (val.includes("enceinte") || val.includes("enceinte_allaitement")) {
+      annotations.push({
+        icon: "🔴",
+        text: "GROSSESSE EN COURS → Adapter TOUTES les recommandations. Pas de détox, pas de jeûne. Vérifier folates, fer, iode, DHA.",
+      });
+    }
+    if (val.includes("allaitement") || val.includes("enceinte_allaitement")) {
+      annotations.push({
+        icon: "⚠️",
+        text: "Allaitement en cours → besoins caloriques et hydriques accrus. Pas de restriction. Qualité nutritionnelle ++.",
+      });
+    }
+  }
+
+  // Thyroïde détaillée
+  if (questionId === "thyroide_type") {
+    if (val.includes("hashimoto")) {
+      annotations.push({
+        icon: "🔴",
+        text: "Hashimoto → VISIO : Bilan complet (anti-TPO, anti-TG). Alimentation anti-inflammatoire, éviter gluten ? Sélénium, zinc.",
+      });
+    }
+    if (val.includes("hypothyroidie")) {
+      annotations.push({
+        icon: "💡",
+        text: "Hypothyroïdie → VISIO : Traitement actuel ? Dosage TSH récent ? Aliments goitrogènes à modérer si crus.",
+      });
+    }
+    if (val.includes("hyperthyroidie") || val.includes("basedow")) {
+      annotations.push({
+        icon: "💡",
+        text: "Hyperthyroïdie/Basedow → VISIO : Besoins caloriques augmentés, perte de poids ? Risque cardiaque, anxiété.",
+      });
+    }
+  }
+
+  // Troubles digestifs — fréquence
+  if (questionId === "troubles_digestifs_frequence" && val.includes("permanent")) {
+    annotations.push({
+      icon: "🔴",
+      text: "Troubles digestifs permanents → VISIO : Bilan médical fait ? Envisager test SIBO, coloscopie, bilan coeliaque si non fait.",
+    });
+  }
+
+  // Fatigue post-repas moment
+  if (questionId === "fatigue_post_repas_moment" && val.includes("midi")) {
+    annotations.push({
+      icon: "💡",
+      text: "Fatigue après le déjeuner → VISIO : Analyser la composition du repas de midi. Charge glycémique ? Trop de glucides ?",
+    });
+  }
+
+  // Libido (échelle)
+  if (questionId === "libido" && (val.includes("1") || val.includes("2"))) {
+    annotations.push({
+      icon: "💡",
+      text: "Libido basse → VISIO : Lien hormonal (testostérone, oestrogènes), stress, fatigue, thyroïde. Zinc, maca, ashwagandha.",
     });
   }
 
@@ -406,7 +574,7 @@ export async function POST(request: Request) {
     // === EMAIL 1 : Notification à Mélissa (dossier complet) ===
     if (resend) {
       await resend.emails.send({
-        from: "NutriByMeli <notifications@nutribymeli.fr>",
+        from: "NutriByMeli <notifications@nutri-meli.com>",
         to: [MELISSA_EMAIL],
         subject: `📋 Nouveau bilan — ${prenom} ${nom} (${result.overallScore}/100) — ${summary}`,
         text: dossier,
@@ -422,7 +590,7 @@ export async function POST(request: Request) {
           .join("\n");
 
         await resend!.emails.send({
-          from: "Mélissa P. — NutriByMeli <contact@nutribymeli.fr>",
+          from: "Mélissa P. — NutriByMeli <contact@nutri-meli.com>",
           to: [patientEmail],
           subject: `${prenom}, votre pré-bilan NutriByMeli est prêt (${result.overallScore}/100)`,
           text: `Bonjour ${prenom},
