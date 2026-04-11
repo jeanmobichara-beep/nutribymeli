@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-border/50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1a1a]/85 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -13,18 +13,18 @@ export function Header() {
             alt="NutriByMeli"
             width={140}
             height={50}
-            className="h-14 w-auto"
+            className="h-14 w-auto brightness-0 invert"
             priority
           />
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <a href="#methode" className="hover:text-foreground transition-colors">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+          <a href="#methode" className="hover:text-white transition-colors">
             Méthode
           </a>
-          <a href="#a-propos" className="hover:text-foreground transition-colors">
+          <a href="#a-propos" className="hover:text-white transition-colors">
             À propos
           </a>
-          <a href="#faq" className="hover:text-foreground transition-colors">
+          <a href="#faq" className="hover:text-white transition-colors">
             FAQ
           </a>
         </nav>
