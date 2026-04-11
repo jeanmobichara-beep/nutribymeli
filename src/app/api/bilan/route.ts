@@ -631,22 +631,18 @@ export async function POST(request: Request) {
 <body style="margin:0;padding:0;background:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:20px;">
 
-    <!-- Header avec logo -->
+    <!-- Header -->
     <div style="text-align:center;padding:32px 20px;">
-      <div style="display:inline-block;">
-        <span style="font-size:28px;font-weight:700;letter-spacing:-0.5px;"><span style="color:#6B9E6B;">Nutri</span><span style="color:#6B9E6B;">By</span><span style="color:#6B9E6B;">Meli</span></span>
-        <p style="margin:4px 0 0 0;font-size:11px;color:#888;letter-spacing:0.5px;">Mélissa P. | Diététicienne & Naturopathe</p>
-      </div>
+      <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="200" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
     </div>
 
     <!-- Main Card -->
     <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
 
-      <!-- Message personnel de Mélissa -->
-      <div style="padding:32px 32px 24px 32px;">
-        <h1 style="margin:0 0 16px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
-        <p style="margin:0 0 12px 0;color:#555;font-size:15px;line-height:1.7;">Je tenais à vous remercier personnellement d'avoir pris le temps de compléter ce bilan. C'est une belle première étape vers un meilleur équilibre, et je suis ravie de vous accompagner dans cette démarche.</p>
-        <p style="margin:0;color:#555;font-size:15px;line-height:1.7;">J'ai analysé vos réponses avec attention. Voici une synthèse de votre pré-bilan :</p>
+      <!-- Greeting -->
+      <div style="padding:32px 32px 20px 32px;">
+        <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
+        <p style="margin:0;color:#666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
       </div>
 
       <!-- Score global -->
@@ -678,11 +674,8 @@ export async function POST(request: Request) {
         <a href="https://nutri-meli.com" style="display:inline-block;background:#6B9E6B;color:white;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:600;font-size:15px;">Réserver ma consultation</a>
       </div>
 
-    </div>
-
-    <!-- Signature pro -->
-    <div style="padding:24px 20px;">
-      <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,0.04);">
+      <!-- Signature -->
+      <div style="padding:24px 32px;border-top:1px solid #f0ede8;">
         <table style="border-collapse:collapse;width:100%;">
           <tr>
             <td style="vertical-align:top;padding-right:16px;width:60px;">
@@ -691,9 +684,9 @@ export async function POST(request: Request) {
             <td style="vertical-align:top;">
               <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
               <p style="margin:0 0 8px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État & Naturopathe</p>
-              <p style="margin:0 0 3px 0;font-size:11px;color:#888;">🎓 Expertise certifiée</p>
-              <p style="margin:0 0 3px 0;font-size:11px;color:#888;">🔒 Secret professionnel garanti</p>
-              <p style="margin:0 0 6px 0;font-size:11px;color:#888;">📍 Guadeloupe</p>
+              <p style="margin:0 0 3px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Expertise certifiée</p>
+              <p style="margin:0 0 3px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Secret professionnel</p>
+              <p style="margin:0 0 6px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Guadeloupe</p>
               <p style="margin:0;">
                 <a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a>
               </p>
@@ -701,11 +694,12 @@ export async function POST(request: Request) {
           </tr>
         </table>
       </div>
+
     </div>
 
     <!-- Legal -->
-    <div style="text-align:center;padding:8px 20px 24px 20px;">
-      <p style="margin:0;font-size:11px;color:#bbb;line-height:1.5;">Cet email est envoyé automatiquement suite à votre bilan nutritionnel.<br>Vos données sont protégées par le secret professionnel conformément au RGPD.</p>
+    <div style="text-align:center;padding:16px 20px 24px 20px;">
+      <p style="margin:0;font-size:11px;color:#bbb;line-height:1.5;">Cet email est envoyé automatiquement suite à votre bilan.<br>Vos données sont protégées par le secret professionnel.</p>
     </div>
 
   </div>
