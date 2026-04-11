@@ -69,6 +69,15 @@ export default function BilanPage() {
 
   const prenom = (answers.prenom as string) || "vous";
 
+  // Calcul IMC
+  const taille = parseFloat(answers.taille as string) || 0;
+  const poids = parseFloat(answers.poids as string) || 0;
+  const imc = taille > 0 ? poids / ((taille / 100) ** 2) : 0;
+  const imcRounded = Math.round(imc * 10) / 10;
+  const imcCategory = imc < 16.5 ? "Dénutrition" : imc < 18.5 ? "Maigreur" : imc < 25 ? "Poids santé" : imc < 30 ? "Surpoids" : imc < 35 ? "Obésité modérée" : imc < 40 ? "Obésité sévère" : "Obésité morbide";
+  const imcColor = imc < 18.5 ? "#E5A100" : imc < 25 ? "#22c55e" : imc < 30 ? "#E5A100" : "#ef4444";
+  const imcAdvice = imc < 18.5 ? "Un apport calorique adapté et un suivi nutritionnel peuvent aider à retrouver un poids santé." : imc < 25 ? "Votre poids est dans la zone recommandée. Continuez à maintenir de bonnes habitudes alimentaires." : imc < 30 ? "Quelques ajustements alimentaires ciblés peuvent vous aider à retrouver un meilleur équilibre." : "Un accompagnement nutritionnel personnalisé est fortement recommandé pour améliorer votre santé.";
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F9F6F1] to-white">
       {/* Header */}
@@ -171,6 +180,35 @@ export default function BilanPage() {
               100 = optimal &middot; Plus votre score est élevé, meilleur est votre terrain.
             </p>
           </div>
+
+          {/* IMC */}
+          {imc > 0 && (
+            <div className="mb-8">
+              <div className="bg-[#F9F6F1] rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-[#1a1a1a]">Votre IMC</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold" style={{ color: imcColor }}>{imcRounded}</span>
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: imcColor + "20", color: imcColor }}>{imcCategory}</span>
+                  </div>
+                </div>
+                {/* Barre IMC */}
+                <div className="relative w-full h-3 rounded-full overflow-hidden mb-3" style={{ background: "linear-gradient(to right, #E5A100 0%, #22c55e 25%, #22c55e 50%, #E5A100 60%, #ef4444 80%, #ef4444 100%)" }}>
+                  <div className="absolute top-0 w-1 h-full bg-white border border-gray-400 rounded-full" style={{ left: `${Math.min(Math.max(((imc - 15) / 30) * 100, 0), 100)}%` }} />
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground mb-3">
+                  <span>Maigreur</span>
+                  <span>Normal</span>
+                  <span>Surpoids</span>
+                  <span>Obésité</span>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">{imcAdvice}</p>
+                <p className="text-xs text-muted-foreground mt-2 italic">
+                  Calcul basé sur {poids} kg et {taille} cm. L&apos;IMC est un indicateur global qui ne tient pas compte de la masse musculaire, de l&apos;ossature ou de la répartition des graisses.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Axes détaillés */}
           <div className="space-y-4">

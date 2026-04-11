@@ -587,7 +587,7 @@ export async function POST(request: Request) {
 
         const axesHtml = result.axes.map((a) => {
           const color = a.score >= 65 ? "#6B9E6B" : a.score >= 45 ? "#E5A100" : a.score >= 25 ? "#E07A3A" : "#D94343";
-          const levelLabel = a.level === "optimal" ? "Optimal" : a.level === "attention" ? "Attention" : a.level === "préoccupant" ? "Préoccupant" : "Critique";
+          const levelLabel = a.score >= 65 ? "Bon" : a.score >= 45 ? "À améliorer" : a.score >= 25 ? "Préoccupant" : "Critique";
           const pct = Math.max(a.score, 5);
           return `<tr>
             <td colspan="3" style="padding:10px 0 2px 0;font-size:13px;color:#333333;font-weight:500;">${a.label} <span style="float:right;color:${color};font-weight:700;">${a.score}/100 <span style="font-weight:400;font-size:11px;">${levelLabel}</span></span></td>
