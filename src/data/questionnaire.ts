@@ -209,6 +209,19 @@ export const SECTIONS: Section[] = [
         ],
       },
       {
+        id: "fatigue_post_repas_moment",
+        label: "À quel(s) moment(s) ressentez-vous cette fatigue ?",
+        type: "checkbox",
+        helpText: "Plusieurs réponses possibles.",
+        conditionalOn: { questionId: "fatigue_post_repas", values: ["oui", "parfois"] },
+        required: true,
+        options: [
+          { value: "matin", label: "Après le petit-déjeuner" },
+          { value: "midi", label: "Après le déjeuner" },
+          { value: "soir", label: "Après le dîner" },
+        ],
+      },
+      {
         id: "hydratation",
         label: "Quelle est votre hydratation quotidienne (eau) ?",
         type: "radio",
