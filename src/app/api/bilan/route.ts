@@ -638,8 +638,8 @@ export async function POST(request: Request) {
         const patientHtml = `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#F9F6F1;">
+<body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#ffffff;">
     <tr><td align="center" style="padding:20px;">
       <table cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;">
 
@@ -650,12 +650,13 @@ export async function POST(request: Request) {
 
         <!-- Main Card -->
         <tr><td>
-          <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#ffffff;border-radius:12px;border:1px solid #eeebe5;">
+          <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#ffffff;border-radius:12px;border:1px solid #e8e5e0;">
 
             <!-- Greeting -->
             <tr><td style="padding:28px 28px 16px 28px;">
-              <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
-              <p style="margin:0;color:#666666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
+              <h1 style="margin:0 0 12px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
+              <p style="margin:0 0 10px 0;color:#555555;font-size:15px;line-height:1.7;">Je tenais à vous remercier personnellement d'avoir pris le temps de compléter ce bilan. C'est une belle première étape vers un meilleur équilibre, et je suis ravie de vous accompagner dans cette démarche.</p>
+              <p style="margin:0;color:#555555;font-size:15px;line-height:1.7;">J'ai analysé vos réponses avec attention. Voici une synthèse de votre pré-bilan :</p>
             </td></tr>
 
             <!-- Score global -->
@@ -703,7 +704,7 @@ export async function POST(request: Request) {
                     <p style="margin:0 0 6px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État &amp; Naturopathe</p>
                     <p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Expertise certifiée</p>
                     <p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Secret professionnel</p>
-                    <p style="margin:0 0 6px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Guadeloupe</p>
+                    <p style="margin:0 0 6px 0;font-size:11px;color:#888888;">&#128205; Guadeloupe</p>
                     <p style="margin:0;"><a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a></p>
                   </td>
                 </tr>
