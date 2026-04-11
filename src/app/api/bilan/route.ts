@@ -582,11 +582,11 @@ export async function POST(request: Request) {
 
       // === EMAIL 2 : Confirmation au patient (HTML pro) ===
       if (patientEmail) {
-        const scoreColor = result.overallScore >= 80 ? "#6B9E6B" : result.overallScore >= 55 ? "#E5A100" : result.overallScore >= 30 ? "#E07A3A" : "#D94343";
-        const scoreLabel = result.overallScore >= 80 ? "Terrain globalement équilibré" : result.overallScore >= 55 ? "Quelques axes méritent attention" : result.overallScore >= 30 ? "Plusieurs axes à travailler" : "Prise en charge recommandée";
+        const scoreColor = result.overallScore >= 65 ? "#6B9E6B" : result.overallScore >= 45 ? "#E5A100" : result.overallScore >= 25 ? "#E07A3A" : "#D94343";
+        const scoreLabel = result.overallScore >= 65 ? "Terrain globalement équilibré" : result.overallScore >= 45 ? "Quelques axes méritent attention" : result.overallScore >= 25 ? "Plusieurs axes à travailler" : "Prise en charge recommandée";
 
         const axesHtml = result.axes.map((a) => {
-          const color = a.score >= 80 ? "#6B9E6B" : a.score >= 55 ? "#E5A100" : a.score >= 30 ? "#E07A3A" : "#D94343";
+          const color = a.score >= 65 ? "#6B9E6B" : a.score >= 45 ? "#E5A100" : a.score >= 25 ? "#E07A3A" : "#D94343";
           const levelLabel = a.level === "optimal" ? "Optimal" : a.level === "attention" ? "Attention" : a.level === "préoccupant" ? "Préoccupant" : "Critique";
           const pct = Math.max(a.score, 5);
           return `<tr>
@@ -621,13 +621,14 @@ export async function POST(request: Request) {
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
 <!-- Logo -->
-<tr><td align="center" style="padding:30px 20px 20px 20px;">
+<tr><td align="center" style="padding:30px 20px 10px 20px;">
 <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="160" style="display:block;max-width:160px;height:auto;" />
 </td></tr>
 
 <!-- Contenu -->
 <tr><td style="padding:0 24px;">
 
+<p style="margin:0;font-size:1px;line-height:1px;height:20px;">&nbsp;</p>
 <h1 style="margin:0 0 12px 0;font-size:22px;color:#1a1a1a;font-weight:700;">Bonjour ${prenom},</h1>
 <p style="margin:0 0 10px 0;color:#555555;font-size:15px;line-height:1.7;">Je tenais à vous remercier personnellement d'avoir pris le temps de compléter ce bilan. C'est une belle première étape vers un meilleur équilibre, et je suis ravie de vous accompagner dans cette démarche.</p>
 <p style="margin:0 0 24px 0;color:#555555;font-size:15px;line-height:1.7;">J'ai analysé vos réponses avec attention. Voici une synthèse de votre pré-bilan :</p>
