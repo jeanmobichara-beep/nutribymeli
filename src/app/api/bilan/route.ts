@@ -6,6 +6,7 @@ import {
   type BilanResult,
   type AxisScore,
 } from "@/data/scoring";
+import { generateDossierPDF, generateBriefingPDF } from "@/lib/generate-pdfs";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -563,6 +564,10 @@ export async function POST(request: Request) {
     // Générer le dossier patient annoté
     const dossier = generatePatientDossier(answers, result);
 
+    // Générer les PDFs
+    const dossierPDF = generateDossierPDF(answers, result, getAnnotations);
+    const briefingPDF = generateBriefingPDF(answers, result, getAnnotations);
+
     // Résumé rapide pour l'objet de l'email
     const worstAxes = result.axes
       .filter((a) => a.score < 55)
@@ -571,13 +576,35 @@ export async function POST(request: Request) {
       ? `Axes à travailler : ${worstAxes.join(", ")}`
       : "Terrain globalement bon";
 
-    // === EMAIL 1 : Notification à Mélissa (dossier complet) ===
+    // === EMAIL 1 : Notification à Mélissa (dossier + PDFs) ===
     if (resend) {
       await resend.emails.send({
         from: "NutriByMeli <notifications@nutri-meli.com>",
         to: [MELISSA_EMAIL],
-        subject: `📋 Nouveau bilan — ${prenom} ${nom} (${result.overallScore}/100) — ${summary}`,
-        text: dossier,
+        subject: `Nouveau bilan — ${prenom} ${nom} (${result.overallScore}/100) — ${summary}`,
+        html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+          <h2 style="color:#2D5A3D;">Nouveau bilan recu</h2>
+          <p><strong>${prenom} ${nom}</strong> vient de completer son questionnaire.</p>
+          <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Score global</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;font-size:18px;color:${result.overallScore >= 65 ? "#6B9E6B" : result.overallScore >= 45 ? "#E5A100" : "#D94343"};">${result.overallScore}/100</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Email</td><td style="padding:8px;border-bottom:1px solid #eee;">${patientEmail}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Axes critiques</td><td style="padding:8px;border-bottom:1px solid #eee;">${worstAxes.length > 0 ? worstAxes.join(", ") : "Aucun"}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Red flags</td><td style="padding:8px;border-bottom:1px solid #eee;color:${result.redFlags.length > 0 ? "#D94343" : "#6B9E6B"};">${result.redFlags.length > 0 ? result.redFlags.length + " signal(aux)" : "Aucun"}</td></tr>
+          </table>
+          <p style="color:#888;font-size:13px;">2 PDFs en piece jointe :<br>- <strong>Dossier patient</strong> : recap complet du questionnaire avec annotations<br>- <strong>Briefing visio</strong> : notes de preparation pour ta consultation</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+          <pre style="font-size:12px;color:#555;white-space:pre-wrap;line-height:1.6;">${dossier}</pre>
+        </div>`,
+        attachments: [
+          {
+            filename: `Dossier_${prenom}_${nom}_${new Date().toISOString().split("T")[0]}.pdf`,
+            content: dossierPDF,
+          },
+          {
+            filename: `Briefing_Visio_${prenom}_${nom}_${new Date().toISOString().split("T")[0]}.pdf`,
+            content: briefingPDF,
+          },
+        ],
       });
 
       // === EMAIL 2 : Confirmation au patient (HTML pro) ===
