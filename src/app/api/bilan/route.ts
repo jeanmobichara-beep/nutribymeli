@@ -7,7 +7,9 @@ import {
   type AxisScore,
 } from "@/data/scoring";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 const MELISSA_EMAIL = process.env.MELISSA_EMAIL || "contact@nutribymeli.fr";
 
@@ -402,7 +404,7 @@ export async function POST(request: Request) {
       : "Terrain globalement bon";
 
     // === EMAIL 1 : Notification à Mélissa (dossier complet) ===
-    if (process.env.RESEND_API_KEY) {
+    if (resend) {
       await resend.emails.send({
         from: "NutriByMeli <notifications@nutribymeli.fr>",
         to: [MELISSA_EMAIL],
@@ -419,7 +421,7 @@ export async function POST(request: Request) {
           )
           .join("\n");
 
-        await resend.emails.send({
+        await resend!.emails.send({
           from: "Mélissa P. — NutriByMeli <contact@nutribymeli.fr>",
           to: [patientEmail],
           subject: `${prenom}, votre pré-bilan NutriByMeli est prêt (${result.overallScore}/100)`,
