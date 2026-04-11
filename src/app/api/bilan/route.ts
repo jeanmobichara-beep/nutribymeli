@@ -580,50 +580,119 @@ export async function POST(request: Request) {
         text: dossier,
       });
 
-      // === EMAIL 2 : Confirmation au patient ===
+      // === EMAIL 2 : Confirmation au patient (HTML pro) ===
       if (patientEmail) {
-        const patientAxesSummary = result.axes
-          .map(
-            (a) =>
-              `• ${a.label} : ${a.score}/100 (${a.level === "optimal" ? "✅ Optimal" : a.level === "attention" ? "⚠️ À surveiller" : a.level === "préoccupant" ? "🟠 Préoccupant" : "🔴 Critique"})`
-          )
-          .join("\n");
+        const scoreColor = result.overallScore >= 80 ? "#6B9E6B" : result.overallScore >= 55 ? "#E5A100" : result.overallScore >= 30 ? "#E07A3A" : "#D94343";
+        const scoreLabel = result.overallScore >= 80 ? "Terrain globalement équilibré" : result.overallScore >= 55 ? "Quelques axes méritent attention" : result.overallScore >= 30 ? "Plusieurs axes à travailler" : "Prise en charge recommandée";
+
+        const axesHtml = result.axes.map((a) => {
+          const color = a.score >= 80 ? "#6B9E6B" : a.score >= 55 ? "#E5A100" : a.score >= 30 ? "#E07A3A" : "#D94343";
+          const levelLabel = a.level === "optimal" ? "Optimal" : a.level === "attention" ? "À surveiller" : a.level === "préoccupant" ? "Préoccupant" : "Critique";
+          return `
+            <tr>
+              <td style="padding:12px 16px;font-size:14px;color:#333;border-bottom:1px solid #f0ede8;">${a.label}</td>
+              <td style="padding:12px 16px;border-bottom:1px solid #f0ede8;">
+                <div style="background:#f0ede8;border-radius:20px;overflow:hidden;height:8px;width:100%;">
+                  <div style="background:${color};height:8px;width:${a.score}%;border-radius:20px;"></div>
+                </div>
+              </td>
+              <td style="padding:12px 16px;font-size:14px;font-weight:600;color:${color};border-bottom:1px solid #f0ede8;text-align:right;white-space:nowrap;">${a.score}/100</td>
+              <td style="padding:12px 16px;font-size:12px;color:${color};border-bottom:1px solid #f0ede8;white-space:nowrap;">${levelLabel}</td>
+            </tr>`;
+        }).join("");
+
+        const patternsHtml = result.detectedPatterns.length > 0
+          ? `<div style="background:#FFF8F0;border-left:4px solid #E07A3A;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+              <p style="margin:0 0 8px 0;font-weight:600;color:#333;font-size:14px;">${result.detectedPatterns.length} pattern(s) clinique(s) détecté(s)</p>
+              <p style="margin:0;color:#666;font-size:13px;">Ces éléments seront analysés en détail lors de votre consultation personnalisée.</p>
+            </div>`
+          : "";
+
+        const redFlagsHtml = result.redFlags.length > 0
+          ? `<div style="background:#FFF5F5;border-left:4px solid #D94343;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
+              <p style="margin:0 0 8px 0;font-weight:600;color:#D94343;font-size:14px;">${result.redFlags.length} signal(aux) d'alerte identifié(s)</p>
+              <p style="margin:0;color:#666;font-size:13px;">Nous en parlerons en détail lors de la consultation pour adapter l'accompagnement.</p>
+            </div>`
+          : "";
+
+        const prioritiesHtml = result.topPriorities.length > 0
+          ? `<div style="margin:20px 0;">
+              <p style="font-weight:600;color:#333;font-size:14px;margin:0 0 12px 0;">Vos priorités :</p>
+              ${result.topPriorities.map((p, i) => `<div style="display:flex;align-items:center;gap:10px;margin:8px 0;">
+                <span style="background:#6B9E6B;color:white;width:24px;height:24px;border-radius:50%;display:inline-block;text-align:center;line-height:24px;font-size:12px;font-weight:600;">${i + 1}</span>
+                <span style="font-size:13px;color:#555;">${p}</span>
+              </div>`).join("")}
+            </div>`
+          : "";
+
+        const patientHtml = `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:20px;">
+
+    <!-- Header -->
+    <div style="text-align:center;padding:32px 20px;">
+      <div style="display:inline-block;background:#6B9E6B;color:white;font-weight:700;font-size:18px;padding:10px 24px;border-radius:12px;letter-spacing:0.5px;">NutriByMeli</div>
+      <p style="color:#888;font-size:13px;margin:12px 0 0 0;">Mélissa Pommez — Diététicienne DE & Naturopathe</p>
+    </div>
+
+    <!-- Main Card -->
+    <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+
+      <!-- Greeting -->
+      <div style="padding:32px 32px 20px 32px;">
+        <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
+        <p style="margin:0;color:#666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
+      </div>
+
+      <!-- Score global -->
+      <div style="margin:0 32px;padding:28px;background:linear-gradient(135deg,${scoreColor}10,${scoreColor}05);border:2px solid ${scoreColor}20;border-radius:16px;text-align:center;">
+        <p style="margin:0 0 4px 0;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:1px;">Score global</p>
+        <p style="margin:0;font-size:48px;font-weight:700;color:${scoreColor};">${result.overallScore}<span style="font-size:20px;color:#aaa;">/100</span></p>
+        <p style="margin:8px 0 0 0;font-size:14px;color:${scoreColor};font-weight:500;">${scoreLabel}</p>
+      </div>
+
+      <!-- Axes -->
+      <div style="padding:28px 32px;">
+        <h2 style="margin:0 0 16px 0;font-size:16px;color:#1a1a1a;">Vos 6 axes de santé</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          ${axesHtml}
+        </table>
+      </div>
+
+      <!-- Patterns & Red Flags -->
+      <div style="padding:0 32px;">
+        ${patternsHtml}
+        ${redFlagsHtml}
+        ${prioritiesHtml}
+      </div>
+
+      <!-- CTA -->
+      <div style="padding:32px;text-align:center;border-top:1px solid #f0ede8;margin-top:20px;">
+        <h2 style="margin:0 0 8px 0;font-size:18px;color:#1a1a1a;">Prochaine étape</h2>
+        <p style="margin:0 0 24px 0;color:#666;font-size:14px;line-height:1.6;">60 minutes en visio pour approfondir votre bilan et construire votre feuille de route personnalisée.</p>
+        <a href="https://nutri-meli.com" style="display:inline-block;background:#6B9E6B;color:white;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:600;font-size:15px;">Réserver ma consultation</a>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;padding:24px 20px;color:#aaa;font-size:12px;line-height:1.6;">
+      <p style="margin:0 0 4px 0;">Mélissa Pommez — Diététicienne Diplômée d'État & Naturopathe</p>
+      <p style="margin:0 0 4px 0;">NutriByMeli — nutri-meli.com</p>
+      <p style="margin:12px 0 0 0;font-size:11px;">Cet email est envoyé automatiquement suite à votre bilan.<br>Vos données sont protégées par le secret professionnel.</p>
+    </div>
+
+  </div>
+</body>
+</html>`;
 
         await resend!.emails.send({
           from: "Mélissa P. — NutriByMeli <contact@nutri-meli.com>",
           to: [patientEmail],
-          subject: `${prenom}, votre pré-bilan NutriByMeli est prêt (${result.overallScore}/100)`,
-          text: `Bonjour ${prenom},
-
-Merci d'avoir complété votre bilan nutrition chez NutriByMeli !
-
-Voici un résumé de vos résultats :
-
-Score global : ${result.overallScore}/100
-${result.overallScore >= 80 ? "✅ Votre terrain est globalement équilibré." : result.overallScore >= 55 ? "⚠️ Quelques axes méritent attention." : "🟠 Plusieurs axes nécessitent un accompagnement."}
-
-${patientAxesSummary}
-
-${result.detectedPatterns.length > 0 ? `${result.detectedPatterns.length} pattern(s) clinique(s) détecté(s) dans vos réponses.` : ""}
-${result.redFlags.length > 0 ? `⚠️ ${result.redFlags.length} signal(aux) d'alerte identifié(s). Nous en parlerons en détail lors de la consultation.` : ""}
-
-${result.topPriorities.length > 0 ? `Vos priorités : ${result.topPriorities.join(", ")}` : ""}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📅 Prochaine étape : réserver votre consultation
-60 minutes en visio pour approfondir votre bilan et construire votre feuille de route personnalisée.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Retrouvez votre bilan complet sur le site.
-
-À très vite,
-Mélissa P.
-Diététicienne Diplômée d'État & Naturopathe
-NutriByMeli
-
----
-Cet email est envoyé automatiquement suite à votre bilan. Vos données sont protégées par le secret professionnel.
-`,
+          subject: `${prenom}, votre pré-bilan NutriByMeli est prêt`,
+          html: patientHtml,
         });
       }
     }
