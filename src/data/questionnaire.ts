@@ -644,7 +644,7 @@ export const SECTIONS: Section[] = [
         id: "troubles_digestifs",
         label: "Êtes-vous concerné(e) par l'un de ces troubles ?",
         type: "checkbox",
-        helpText: "Cochez tout ce qui vous concerne.",
+        helpText: "Cochez tout ce qui vous concerne. Si aucun trouble ne vous concerne, ne cochez rien et passez à la suite.",
         options: [
           { value: "ballonnements", label: "Ballonnements" },
           { value: "gaz", label: "Gaz" },
@@ -656,6 +656,38 @@ export const SECTIONS: Section[] = [
           { value: "douleurs_abdominales", label: "Douleurs abdominales" },
           { value: "langue_chargee", label: "Langue chargée / pâteuse" },
           { value: "mauvaise_haleine", label: "Mauvaise haleine" },
+        ],
+      },
+      {
+        id: "troubles_digestifs_frequence",
+        label: "À quelle fréquence ressentez-vous ces troubles ?",
+        type: "radio",
+        required: true,
+        conditionalOn: {
+          questionId: "troubles_digestifs",
+          values: ["ballonnements", "gaz", "rgo", "digestion_lente", "nausees", "constipation", "diarrhee", "douleurs_abdominales", "langue_chargee", "mauvaise_haleine"],
+        },
+        options: [
+          { value: "occasionnel", label: "Occasionnellement (quelques fois par mois)" },
+          { value: "regulier", label: "Régulièrement (plusieurs fois par semaine)" },
+          { value: "permanent", label: "Quasi permanent (tous les jours ou presque)" },
+        ],
+      },
+      {
+        id: "troubles_digestifs_moment",
+        label: "À quel(s) moment(s) de la journée principalement ?",
+        type: "checkbox",
+        helpText: "Plusieurs réponses possibles.",
+        conditionalOn: {
+          questionId: "troubles_digestifs",
+          values: ["ballonnements", "gaz", "rgo", "digestion_lente", "nausees", "constipation", "diarrhee", "douleurs_abdominales", "langue_chargee", "mauvaise_haleine"],
+        },
+        options: [
+          { value: "matin", label: "Le matin / au réveil" },
+          { value: "apres_midi", label: "Après le déjeuner (midi)" },
+          { value: "apres_soir", label: "Après le dîner (soir)" },
+          { value: "nuit", label: "La nuit" },
+          { value: "variable", label: "Variable / pas de moment précis" },
         ],
       },
       {
