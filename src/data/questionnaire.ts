@@ -370,10 +370,27 @@ export const SECTIONS: Section[] = [
       },
       {
         id: "freq_poisson_gras",
-        label: "Poissons gras (saumon, sardines, maquereau...)",
+        label: "Poissons gras",
         type: "radio",
         required: true,
         options: FREQUENCY_OPTIONS,
+      },
+      {
+        id: "poisson_gras_types",
+        label: "Lesquels consommez-vous ?",
+        type: "checkbox",
+        helpText: "Cochez tout ce qui vous concerne.",
+        conditionalOn: { questionId: "freq_poisson_gras", values: ["1-2x", "3-5x", "tous_les_jours"] },
+        options: [
+          { value: "sardines", label: "Sardines" },
+          { value: "saumon", label: "Saumon" },
+          { value: "maquereau", label: "Maquereau" },
+          { value: "thon", label: "Thon" },
+          { value: "hareng", label: "Hareng" },
+          { value: "truite", label: "Truite" },
+          { value: "anchois", label: "Anchois" },
+          { value: "autre", label: "Autre" },
+        ],
       },
       {
         id: "freq_viande_rouge",
