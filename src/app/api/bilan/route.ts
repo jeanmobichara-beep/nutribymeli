@@ -585,124 +585,142 @@ export async function POST(request: Request) {
         const scoreColor = result.overallScore >= 80 ? "#6B9E6B" : result.overallScore >= 55 ? "#E5A100" : result.overallScore >= 30 ? "#E07A3A" : "#D94343";
         const scoreLabel = result.overallScore >= 80 ? "Terrain globalement équilibré" : result.overallScore >= 55 ? "Quelques axes méritent attention" : result.overallScore >= 30 ? "Plusieurs axes à travailler" : "Prise en charge recommandée";
 
+        const scoreBg = result.overallScore >= 80 ? "#f0f7f0" : result.overallScore >= 55 ? "#fdf8f0" : result.overallScore >= 30 ? "#fdf4f0" : "#fdf0f0";
+        const scoreBorder = result.overallScore >= 80 ? "#c8e0c8" : result.overallScore >= 55 ? "#f0ddb8" : result.overallScore >= 30 ? "#f0c8b0" : "#f0b0b0";
+
         const axesHtml = result.axes.map((a) => {
           const color = a.score >= 80 ? "#6B9E6B" : a.score >= 55 ? "#E5A100" : a.score >= 30 ? "#E07A3A" : "#D94343";
           const levelLabel = a.level === "optimal" ? "Optimal" : a.level === "attention" ? "À surveiller" : a.level === "préoccupant" ? "Préoccupant" : "Critique";
-          return `
-            <tr>
-              <td style="padding:12px 16px;font-size:14px;color:#333;border-bottom:1px solid #f0ede8;">${a.label}</td>
-              <td style="padding:12px 16px;border-bottom:1px solid #f0ede8;">
-                <div style="background:#f0ede8;border-radius:20px;overflow:hidden;height:8px;width:100%;">
-                  <div style="background:${color};height:8px;width:${a.score}%;border-radius:20px;"></div>
-                </div>
+          const barWidth = Math.max(a.score, 5);
+          return `<tr>
+              <td style="padding:10px 8px;font-size:13px;color:#333;border-bottom:1px solid #f0ede8;width:40%;">${a.label}</td>
+              <td style="padding:10px 8px;border-bottom:1px solid #f0ede8;width:30%;">
+                <table cellpadding="0" cellspacing="0" style="width:100%;"><tr>
+                  <td style="background:${color};height:8px;width:${barWidth}%;border-radius:4px;font-size:1px;">&nbsp;</td>
+                  <td style="background:#f0ede8;height:8px;width:${100 - barWidth}%;border-radius:0 4px 4px 0;font-size:1px;">&nbsp;</td>
+                </tr></table>
               </td>
-              <td style="padding:12px 16px;font-size:14px;font-weight:600;color:${color};border-bottom:1px solid #f0ede8;text-align:right;white-space:nowrap;">${a.score}/100</td>
-              <td style="padding:12px 16px;font-size:12px;color:${color};border-bottom:1px solid #f0ede8;white-space:nowrap;">${levelLabel}</td>
+              <td style="padding:10px 8px;font-size:13px;font-weight:600;color:${color};border-bottom:1px solid #f0ede8;text-align:right;white-space:nowrap;width:15%;">${a.score}/100</td>
+              <td style="padding:10px 8px;font-size:11px;color:${color};border-bottom:1px solid #f0ede8;white-space:nowrap;width:15%;">${levelLabel}</td>
             </tr>`;
         }).join("");
 
         const patternsHtml = result.detectedPatterns.length > 0
-          ? `<div style="background:#FFF8F0;border-left:4px solid #E07A3A;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-              <p style="margin:0 0 8px 0;font-weight:600;color:#333;font-size:14px;">${result.detectedPatterns.length} pattern(s) clinique(s) détecté(s)</p>
-              <p style="margin:0;color:#666;font-size:13px;">Ces éléments seront analysés en détail lors de votre consultation personnalisée.</p>
-            </div>`
+          ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;"><tr>
+              <td style="width:4px;background:#E07A3A;"></td>
+              <td style="background:#FFF8F0;padding:14px 16px;">
+                <p style="margin:0 0 6px 0;font-weight:600;color:#333;font-size:13px;">${result.detectedPatterns.length} pattern(s) clinique(s) détecté(s)</p>
+                <p style="margin:0;color:#666;font-size:12px;">Ces éléments seront analysés en détail lors de votre consultation personnalisée.</p>
+              </td>
+            </tr></table>`
           : "";
 
         const redFlagsHtml = result.redFlags.length > 0
-          ? `<div style="background:#FFF5F5;border-left:4px solid #D94343;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">
-              <p style="margin:0 0 8px 0;font-weight:600;color:#D94343;font-size:14px;">${result.redFlags.length} signal(aux) d'alerte identifié(s)</p>
-              <p style="margin:0;color:#666;font-size:13px;">Nous en parlerons en détail lors de la consultation pour adapter l'accompagnement.</p>
-            </div>`
+          ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;"><tr>
+              <td style="width:4px;background:#D94343;"></td>
+              <td style="background:#FFF5F5;padding:14px 16px;">
+                <p style="margin:0 0 6px 0;font-weight:600;color:#D94343;font-size:13px;">${result.redFlags.length} signal(aux) d'alerte identifié(s)</p>
+                <p style="margin:0;color:#666;font-size:12px;">Nous en parlerons en détail lors de la consultation pour adapter l'accompagnement.</p>
+              </td>
+            </tr></table>`
           : "";
 
         const prioritiesHtml = result.topPriorities.length > 0
-          ? `<div style="margin:20px 0;">
-              <p style="font-weight:600;color:#333;font-size:14px;margin:0 0 12px 0;">Vos priorités :</p>
-              ${result.topPriorities.map((p, i) => `<div style="display:flex;align-items:center;gap:10px;margin:8px 0;">
-                <span style="background:#6B9E6B;color:white;width:24px;height:24px;border-radius:50%;display:inline-block;text-align:center;line-height:24px;font-size:12px;font-weight:600;">${i + 1}</span>
-                <span style="font-size:13px;color:#555;">${p}</span>
-              </div>`).join("")}
-            </div>`
+          ? `<p style="font-weight:600;color:#333;font-size:13px;margin:16px 0 10px 0;">Vos priorités :</p>
+            <table cellpadding="0" cellspacing="0" style="width:100%;">
+              ${result.topPriorities.map((p, i) => `<tr>
+                <td style="width:28px;padding:4px 0;vertical-align:top;"><span style="background:#6B9E6B;color:white;width:22px;height:22px;border-radius:50%;display:inline-block;text-align:center;line-height:22px;font-size:11px;font-weight:600;">${i + 1}</span></td>
+                <td style="padding:4px 0;font-size:13px;color:#555;vertical-align:middle;">${p}</td>
+              </tr>`).join("")}
+            </table>`
           : "";
 
         const patientHtml = `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:20px;">
+<body style="margin:0;padding:0;background-color:#F9F6F1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#F9F6F1;">
+    <tr><td align="center" style="padding:20px;">
+      <table cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;">
 
-    <!-- Header -->
-    <div style="text-align:center;padding:32px 20px;">
-      <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="200" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
-    </div>
+        <!-- Header -->
+        <tr><td align="center" style="padding:32px 20px;">
+          <img src="https://nutri-meli.com/logo-email.png" alt="NutriByMeli" width="180" style="display:block;max-width:180px;height:auto;" />
+        </td></tr>
 
-    <!-- Main Card -->
-    <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <!-- Main Card -->
+        <tr><td>
+          <table cellpadding="0" cellspacing="0" style="width:100%;background-color:#ffffff;border-radius:12px;border:1px solid #eeebe5;">
 
-      <!-- Greeting -->
-      <div style="padding:32px 32px 20px 32px;">
-        <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
-        <p style="margin:0;color:#666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
-      </div>
+            <!-- Greeting -->
+            <tr><td style="padding:28px 28px 16px 28px;">
+              <h1 style="margin:0 0 8px 0;font-size:22px;color:#1a1a1a;">Bonjour ${prenom},</h1>
+              <p style="margin:0;color:#666666;font-size:15px;line-height:1.6;">Merci d'avoir complété votre bilan nutrition. Voici une synthèse de vos résultats.</p>
+            </td></tr>
 
-      <!-- Score global -->
-      <div style="margin:0 32px;padding:28px;background:linear-gradient(135deg,${scoreColor}10,${scoreColor}05);border:2px solid ${scoreColor}20;border-radius:16px;text-align:center;">
-        <p style="margin:0 0 4px 0;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:1px;">Score global</p>
-        <p style="margin:0;font-size:48px;font-weight:700;color:${scoreColor};">${result.overallScore}<span style="font-size:20px;color:#aaa;">/100</span></p>
-        <p style="margin:8px 0 0 0;font-size:14px;color:${scoreColor};font-weight:500;">${scoreLabel}</p>
-      </div>
+            <!-- Score global -->
+            <tr><td style="padding:8px 28px 20px 28px;">
+              <table cellpadding="0" cellspacing="0" style="width:100%;background-color:${scoreBg};border:2px solid ${scoreBorder};border-radius:12px;">
+                <tr><td align="center" style="padding:24px;">
+                  <p style="margin:0 0 4px 0;font-size:12px;color:#888888;text-transform:uppercase;letter-spacing:1px;">Score global</p>
+                  <p style="margin:0;font-size:48px;font-weight:700;color:${scoreColor};">${result.overallScore}<span style="font-size:20px;color:#aaaaaa;">/100</span></p>
+                  <p style="margin:8px 0 0 0;font-size:14px;color:${scoreColor};font-weight:500;">${scoreLabel}</p>
+                </td></tr>
+              </table>
+            </td></tr>
 
-      <!-- Axes -->
-      <div style="padding:28px 32px;">
-        <h2 style="margin:0 0 16px 0;font-size:16px;color:#1a1a1a;">Vos 6 axes de santé</h2>
-        <table style="width:100%;border-collapse:collapse;">
-          ${axesHtml}
-        </table>
-      </div>
+            <!-- Axes -->
+            <tr><td style="padding:8px 28px 20px 28px;">
+              <h2 style="margin:0 0 12px 0;font-size:16px;color:#1a1a1a;">Vos 6 axes de santé</h2>
+              <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">
+                ${axesHtml}
+              </table>
+            </td></tr>
 
-      <!-- Patterns & Red Flags -->
-      <div style="padding:0 32px;">
-        ${patternsHtml}
-        ${redFlagsHtml}
-        ${prioritiesHtml}
-      </div>
+            <!-- Patterns & Red Flags & Priorities -->
+            <tr><td style="padding:0 28px 12px 28px;">
+              ${patternsHtml}
+              ${redFlagsHtml}
+              ${prioritiesHtml}
+            </td></tr>
 
-      <!-- CTA -->
-      <div style="padding:32px;text-align:center;border-top:1px solid #f0ede8;margin-top:20px;">
-        <h2 style="margin:0 0 8px 0;font-size:18px;color:#1a1a1a;">Prochaine étape</h2>
-        <p style="margin:0 0 24px 0;color:#666;font-size:14px;line-height:1.6;">60 minutes en visio pour approfondir votre bilan et construire votre feuille de route personnalisée.</p>
-        <a href="https://nutri-meli.com" style="display:inline-block;background:#6B9E6B;color:white;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:600;font-size:15px;">Réserver ma consultation</a>
-      </div>
+            <!-- CTA -->
+            <tr><td style="padding:24px 28px;text-align:center;border-top:1px solid #f0ede8;">
+              <h2 style="margin:0 0 8px 0;font-size:18px;color:#1a1a1a;">Prochaine étape</h2>
+              <p style="margin:0 0 20px 0;color:#666666;font-size:14px;line-height:1.6;">60 minutes en visio pour approfondir votre bilan et construire votre feuille de route personnalisée.</p>
+              <a href="https://nutri-meli.com" style="display:inline-block;background-color:#6B9E6B;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:600;font-size:15px;">Réserver ma consultation</a>
+            </td></tr>
 
-      <!-- Signature -->
-      <div style="padding:24px 32px;border-top:1px solid #f0ede8;">
-        <table style="border-collapse:collapse;width:100%;">
-          <tr>
-            <td style="vertical-align:top;padding-right:16px;width:60px;">
-              <img src="https://nutri-meli.com/melissa-profil.jpg" alt="Mélissa Pommez" width="56" height="56" style="border-radius:50%;object-fit:cover;display:block;" />
-            </td>
-            <td style="vertical-align:top;">
-              <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
-              <p style="margin:0 0 8px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État & Naturopathe</p>
-              <p style="margin:0 0 3px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Expertise certifiée</p>
-              <p style="margin:0 0 3px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Secret professionnel</p>
-              <p style="margin:0 0 6px 0;font-size:11px;color:#888;"><span style="color:#6B9E6B;font-weight:700;">✓</span> Guadeloupe</p>
-              <p style="margin:0;">
-                <a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </div>
+            <!-- Signature -->
+            <tr><td style="padding:20px 28px;border-top:1px solid #f0ede8;">
+              <table cellpadding="0" cellspacing="0" style="width:100%;">
+                <tr>
+                  <td style="vertical-align:top;padding-right:14px;width:56px;">
+                    <img src="https://nutri-meli.com/melissa-profil.jpg" alt="Mélissa Pommez" width="52" height="52" style="border-radius:50%;display:block;" />
+                  </td>
+                  <td style="vertical-align:top;">
+                    <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
+                    <p style="margin:0 0 6px 0;font-size:12px;color:#6B9E6B;font-weight:500;">Diététicienne Diplômée d'État &amp; Naturopathe</p>
+                    <p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Expertise certifiée</p>
+                    <p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Secret professionnel</p>
+                    <p style="margin:0 0 6px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Guadeloupe</p>
+                    <p style="margin:0;"><a href="https://nutri-meli.com" style="font-size:12px;color:#6B9E6B;text-decoration:none;font-weight:500;">nutri-meli.com</a></p>
+                  </td>
+                </tr>
+              </table>
+            </td></tr>
 
-    </div>
+          </table>
+        </td></tr>
 
-    <!-- Legal -->
-    <div style="text-align:center;padding:16px 20px 24px 20px;">
-      <p style="margin:0;font-size:11px;color:#bbb;line-height:1.5;">Cet email est envoyé automatiquement suite à votre bilan.<br>Vos données sont protégées par le secret professionnel.</p>
-    </div>
+        <!-- Legal -->
+        <tr><td align="center" style="padding:16px 20px 24px 20px;">
+          <p style="margin:0;font-size:11px;color:#bbbbbb;line-height:1.5;">Cet email est envoyé automatiquement suite à votre bilan.<br>Vos données sont protégées par le secret professionnel.</p>
+        </td></tr>
 
-  </div>
+      </table>
+    </td></tr>
+  </table>
 </body>
 </html>`;
 
