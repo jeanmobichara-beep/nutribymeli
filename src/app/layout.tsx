@@ -28,6 +28,10 @@ export const metadata: Metadata = {
     "bilan alimentaire",
     "alimentation saine",
   ],
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -515,7 +515,7 @@ export default function Home() {
                     "Support par messagerie illimité",
                     "Guide micronutrition personnalisé",
                     "Protocole longévité & anti-inflammation",
-                    "Accès à la communauté NutriByMeli",
+                    "E-book nutrition offert",
                   ].map((item) => (
                     <li key={item} className="flex gap-2 text-sm text-[#444]">
                       <CheckCircle2 className="w-4 h-4 text-[#6B9E6B] flex-shrink-0 mt-0.5" />
