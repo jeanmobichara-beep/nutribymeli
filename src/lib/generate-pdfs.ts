@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { SECTIONS, type Question } from "@/data/questionnaire";
 import type { BilanResult } from "@/data/scoring";
+import { AXIS_LABELS } from "@/data/scoring";
 
 // ============================================================================
 // COULEURS & CONSTANTES
@@ -178,7 +179,7 @@ export function generateDossierPDF(
 
   const axesData = result.axes.map((a) => {
     const color = getScoreColor(a.score);
-    return [a.label, `${a.score}/100`, getScoreLabel(a.score)];
+    return [a.label || AXIS_LABELS[a.axis] || a.axis, `${a.score}/100`, getScoreLabel(a.score)];
   });
 
   autoTable(doc, {
@@ -550,8 +551,8 @@ export function generateBriefingPDF(
   const sortedAxes = [...result.axes].sort((a, b) => a.score - b.score);
   const axesTableData = sortedAxes.map((a) => {
     const label = getScoreLabel(a.score);
-    const prios = a.priorities.length > 0 ? a.priorities.map((p) => sanitize(p)).join("\n") : "RAS";
-    return [a.label, `${a.score}/100`, label, prios];
+    const prios = a.priorities && a.priorities.length > 0 ? a.priorities.map((p) => sanitize(p)).join("\n") : "RAS";
+    return [a.label || AXIS_LABELS[a.axis] || a.axis, `${a.score}/100`, label, prios];
   });
 
   autoTable(doc, {
@@ -705,13 +706,13 @@ export function generateBriefingPDF(
       points: sortedAxes
         .filter((a) => a.score < 65)
         .slice(0, 3)
-        .map((a) => `${a.label} (${a.score}/100) : approfondir les causes`),
+        .map((a) => `${a.label || AXIS_LABELS[a.axis] || a.axis} (${a.score}/100) : approfondir les causes`),
     },
     {
       title: "4. Drapeaux rouges et patterns (10 min)",
       points: [
-        ...(result.redFlags.length > 0 ? result.redFlags.map((f) => `ALERTE : ${sanitize(f.message)}`) : ["Aucun drapeau rouge identifie"]),
-        ...(result.detectedPatterns.length > 0 ? result.detectedPatterns.map((p) => `Pattern : ${sanitize(p.name)}`) : []),
+        ...(result.redFlags && result.redFlags.length > 0 ? result.redFlags.map((f) => `ALERTE : ${sanitize(f.message)}`) : ["Aucun drapeau rouge identifie"]),
+        ...(result.detectedPatterns && result.detectedPatterns.length > 0 ? result.detectedPatterns.map((p) => `Pattern : ${sanitize(p.name || p.description)}`) : []),
       ],
     },
     {
@@ -849,7 +850,7 @@ export function generateArgumentairePDF(
       ["Objectif(s)", objectifs.map((o) => objectifLabels[o] || o).join(", ") || "Non precise"],
       ["Motivation", `${motivationLevel}/10`],
       ["Pret(e) 90 jours", pret90 === "oui" ? "OUI" : pret90 === "pourquoi_pas" ? "Interesse(e) mais hesitant(e)" : "Non pour l'instant"],
-      ["Axes faibles", weakAxes.length > 0 ? weakAxes.map((a) => `${a.label} (${a.score})`).join(", ") : "Aucun"],
+      ["Axes faibles", weakAxes.length > 0 ? weakAxes.map((a) => `${a.label || AXIS_LABELS[a.axis] || a.axis} (${a.score})`).join(", ") : "Aucun"],
       ["Red flags", result.redFlags.length > 0 ? result.redFlags.map((f) => sanitize(f.message)).join(", ") : "Aucun"],
     ],
     tableWidth: contentWidth,
@@ -959,7 +960,7 @@ export function generateArgumentairePDF(
       },
     };
     return {
-      label: a.label,
+      label: a.label || AXIS_LABELS[a.axis] || a.axis,
       score: a.score,
       axis: a.axis,
       argument: args[a.axis]?.argument || "Cet axe necessite un accompagnement structure.",
