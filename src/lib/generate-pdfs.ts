@@ -34,7 +34,8 @@ function getScoreLabel(score: number): string {
 }
 
 // Helper to sanitize text for jsPDF (remove emojis that cause issues)
-function sanitize(text: string): string {
+function sanitize(text: string | undefined | null): string {
+  if (!text) return "";
   return text
     .replace(/[\u{1F600}-\u{1F9FF}]/gu, "")
     .replace(/[\u{2600}-\u{26FF}]/gu, "")
@@ -499,11 +500,11 @@ export function generateBriefingPDF(
       }).join(", ")],
       ["Motivation", `${answers.motivation || "?"}/10`],
     ],
+    tableWidth: contentWidth,
     theme: "plain",
-    styles: { fontSize: 10, cellPadding: 3 },
+    styles: { fontSize: 10, cellPadding: 3, overflow: "linebreak" },
     columnStyles: {
       0: { fontStyle: "bold", cellWidth: 40, textColor: COLORS.green },
-      1: { textColor: COLORS.black },
     },
     margin: { left: margin, right: margin },
   });
@@ -851,11 +852,11 @@ export function generateArgumentairePDF(
       ["Axes faibles", weakAxes.length > 0 ? weakAxes.map((a) => `${a.label} (${a.score})`).join(", ") : "Aucun"],
       ["Red flags", result.redFlags.length > 0 ? result.redFlags.map((f) => sanitize(f.message)).join(", ") : "Aucun"],
     ],
+    tableWidth: contentWidth,
     theme: "plain",
-    styles: { fontSize: 9, cellPadding: 3 },
+    styles: { fontSize: 9, cellPadding: 3, overflow: "linebreak" },
     columnStyles: {
       0: { fontStyle: "bold", cellWidth: 40, textColor: COLORS.greenDark },
-      1: { textColor: COLORS.black },
     },
     margin: { left: margin, right: margin },
   });
