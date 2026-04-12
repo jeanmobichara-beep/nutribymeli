@@ -29,8 +29,8 @@ function getScoreColor(score: number): [number, number, number] {
 
 function getScoreLabel(score: number): string {
   if (score >= 65) return "Bon";
-  if (score >= 45) return "A ameliorer";
-  if (score >= 25) return "Preoccupant";
+  if (score >= 45) return "A am\u00E9liorer";
+  if (score >= 25) return "Pr\u00E9occupant";
   return "Critique";
 }
 
@@ -42,6 +42,10 @@ function sanitize(text: string | undefined | null): string {
     .replace(/[\u{2600}-\u{26FF}]/gu, "")
     .replace(/[\u{2700}-\u{27BF}]/gu, "")
     .replace(/[💡⚠️🔴📍🎓🔒]/g, "")
+    .replace(/\u{2192}/gu, " - ")   // → arrow breaks jsPDF font encoding
+    .replace(/\u{2026}/gu, "...")    // … ellipsis
+    .replace(/[\u{2000}-\u{206F}]/gu, " ") // misc Unicode punctuation
+    .replace(/[\u{FE00}-\u{FE0F}]/gu, "") // variation selectors
     .trim();
 }
 
@@ -105,7 +109,7 @@ export function generateDossierPDF(
   doc.text("Dossier Patient Complet", margin, 26);
 
   doc.setFontSize(9);
-  doc.text(`Genere le ${new Date().toLocaleDateString("fr-FR")}`, margin, 33);
+  doc.text(`G\u00E9n\u00E9r\u00E9 le ${new Date().toLocaleDateString("fr-FR")}`, margin, 33);
 
   doc.setTextColor(...COLORS.white);
   doc.setFontSize(12);
@@ -129,13 +133,13 @@ export function generateDossierPDF(
   const poidsNum = parseFloat(poids);
   const imc = tailleNum > 0 ? poidsNum / ((tailleNum / 100) ** 2) : 0;
   const imcRounded = Math.round(imc * 10) / 10;
-  const imcCat = imc < 18.5 ? "Maigreur" : imc < 25 ? "Normal" : imc < 30 ? "Surpoids" : "Obesite";
+  const imcCat = imc < 18.5 ? "Maigreur" : imc < 25 ? "Normal" : imc < 30 ? "Surpoids" : "Ob\u00E9sit\u00E9";
 
   autoTable(doc, {
     startY: y,
     head: [],
     body: [
-      ["Prenom / Nom", `${prenom} ${nom}`],
+      ["Pr\u00E9nom / Nom", `${prenom} ${nom}`],
       ["Email", email],
       ["Age", `${age} ans`],
       ["Sexe", sexe === "homme" ? "Homme" : sexe === "femme" ? "Femme" : sexe],
@@ -165,7 +169,7 @@ export function generateDossierPDF(
 
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
-  const scoreText = result.overallScore >= 65 ? "Terrain globalement equilibre" : result.overallScore >= 45 ? "Quelques axes meritent attention" : result.overallScore >= 25 ? "Plusieurs axes a travailler" : "Prise en charge recommandee";
+  const scoreText = result.overallScore >= 65 ? "Terrain globalement \u00E9quilibr\u00E9" : result.overallScore >= 45 ? "Quelques axes m\u00E9ritent attention" : result.overallScore >= 25 ? "Plusieurs axes \u00E0 travailler" : "Prise en charge recommand\u00E9e";
   doc.text(scoreText, margin + contentWidth / 2, y + 23, { align: "center" });
 
   y += 38;
@@ -174,7 +178,7 @@ export function generateDossierPDF(
   doc.setTextColor(...COLORS.black);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Vos 6 axes de sante", margin, y);
+  doc.text("Vos 6 axes de sant\u00E9", margin, y);
   y += 3;
 
   const axesData = result.axes.map((a) => {
@@ -256,7 +260,7 @@ export function generateDossierPDF(
     doc.setTextColor(...COLORS.orange);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Patterns cliniques detectes", margin, y);
+    doc.text("Patterns cliniques d\u00E9tect\u00E9s", margin, y);
     y += 7;
 
     doc.setFont("helvetica", "normal");
@@ -280,7 +284,7 @@ export function generateDossierPDF(
   }
 
   // ===========================================================================
-  // SECTION PAR SECTION : REPONSES + ANNOTATIONS
+  // SECTION PAR SECTION : R\u00C9PONSES + ANNOTATIONS
   // ===========================================================================
 
   doc.addPage();
@@ -291,7 +295,7 @@ export function generateDossierPDF(
   doc.setTextColor(...COLORS.white);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Recapitulatif des reponses", margin, 16);
+  doc.text("R\u00E9capitulatif des r\u00E9ponses", margin, 16);
   y = 35;
 
   for (const section of SECTIONS) {
@@ -417,7 +421,7 @@ export function generateDossierPDF(
     doc.setFontSize(8);
     doc.setTextColor(...COLORS.gray);
     doc.text(
-      `NutriByMeli - M. Pommez, Diet. DE & Naturopathe | Confidentiel | Page ${i}/${totalPages}`,
+      `NutriByMeli - M. Pommez, Di\u00E9t. DE & Naturopathe | Confidentiel | Page ${i}/${totalPages}`,
       pageWidth / 2,
       290,
       { align: "center" }
@@ -459,7 +463,7 @@ export function generateBriefingPDF(
   doc.text(`Patient : ${prenom} ${nom}`, margin, 25);
 
   doc.setFontSize(9);
-  doc.text(`Prepare le ${new Date().toLocaleDateString("fr-FR")} | NutriByMeli`, margin, 32);
+  doc.text(`Pr\u00E9par\u00E9 le ${new Date().toLocaleDateString("fr-FR")} | NutriByMeli`, margin, 32);
 
   y = 45;
 
@@ -467,7 +471,7 @@ export function generateBriefingPDF(
   doc.setTextColor(...COLORS.black);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Synthese rapide", margin, y);
+  doc.text("Synth\u00E8se rapide", margin, y);
   y += 8;
 
   // Score + IMC
@@ -488,17 +492,26 @@ export function generateBriefingPDF(
       ["Profil", `${sexeLabel}, ${answers.age || "?"}, ${answers.taille || "?"}cm / ${answers.poids || "?"}kg`],
       ["Objectif(s)", objectifs.map((o) => {
         const map: Record<string, string> = {
+          perte_poids: "Perte de poids",
           perdre_poids: "Perte de poids",
+          prise_masse: "Prise de masse",
           prendre_poids: "Prise de poids",
-          plus_energie: "Plus d'energie",
+          energie: "Retrouver de l'\u00E9nergie",
+          plus_energie: "Plus d'\u00E9nergie",
+          digestion: "Am\u00E9liorer la digestion",
           meilleure_digestion: "Meilleure digestion",
-          equilibre_alimentaire: "Equilibre alimentaire",
+          equilibre: "R\u00E9\u00E9quilibrage alimentaire",
+          equilibre_alimentaire: "\u00C9quilibre alimentaire",
+          stress_sommeil: "Gestion stress/sommeil",
           gestion_stress: "Gestion du stress",
+          hormones: "\u00C9quilibre hormonal",
+          immunite: "Renforcer l'immunit\u00E9",
+          peau: "Sant\u00E9 de la peau",
           performance_sportive: "Performance sportive",
           grossesse: "Grossesse/allaitement",
         };
         return map[o] || o;
-      }).join(", ")],
+      }).join(", ") || "Non pr\u00E9cis\u00E9"],
       ["Motivation", `${answers.motivation || "?"}/10`],
     ],
     tableWidth: contentWidth,
@@ -517,7 +530,7 @@ export function generateBriefingPDF(
     doc.setTextColor(...COLORS.red);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("DRAPEAUX ROUGES - A ABORDER EN PRIORITE", margin, y);
+    doc.text("DRAPEAUX ROUGES - \u00C0 ABORDER EN PRIORIT\u00C9", margin, y);
     y += 7;
 
     result.redFlags.forEach((flag) => {
@@ -545,7 +558,7 @@ export function generateBriefingPDF(
   doc.setTextColor(...COLORS.black);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Axes a travailler (par priorite)", margin, y);
+  doc.text("Axes \u00E0 travailler (par priorit\u00E9)", margin, y);
   y += 3;
 
   const sortedAxes = [...result.axes].sort((a, b) => a.score - b.score);
@@ -557,7 +570,7 @@ export function generateBriefingPDF(
 
   autoTable(doc, {
     startY: y,
-    head: [["Axe", "Score", "Niveau", "Actions suggerees"]],
+    head: [["Axe", "Score", "Niveau", "Actions sugg\u00E9r\u00E9es"]],
     body: axesTableData,
     theme: "striped",
     headStyles: {
@@ -622,7 +635,7 @@ export function generateBriefingPDF(
 
     autoTable(doc, {
       startY: y,
-      head: [["Question", "Notes / Points a aborder en visio"]],
+      head: [["Question", "Notes / Points \u00E0 aborder en visio"]],
       body: notesData,
       theme: "striped",
       tableWidth: contentWidth,
@@ -644,7 +657,7 @@ export function generateBriefingPDF(
     doc.setTextColor(...COLORS.gray);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Aucune annotation clinique particuliere pour ce profil.", margin, y + 6);
+    doc.text("Aucune annotation clinique particuli\u00E8re pour ce profil.", margin, y + 6);
     y += 14;
   }
 
@@ -655,7 +668,7 @@ export function generateBriefingPDF(
     doc.setTextColor(...COLORS.orange);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Patterns cliniques detectes", margin, y);
+    doc.text("Patterns cliniques d\u00E9tect\u00E9s", margin, y);
     y += 7;
 
     result.detectedPatterns.forEach((p) => {
@@ -681,7 +694,7 @@ export function generateBriefingPDF(
   doc.setTextColor(...COLORS.greenDark);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Guide d'entretien suggere", margin, y);
+  doc.text("Guide d'entretien sugg\u00E9r\u00E9", margin, y);
   y += 8;
 
   const entretienSteps = [
@@ -689,16 +702,16 @@ export function generateBriefingPDF(
       title: "1. Accueil & mise en confiance (5 min)",
       points: [
         "Remercier pour le questionnaire",
-        "Expliquer le deroulement de la consultation",
-        `Rappeler l'objectif principal : ${Array.isArray(answers.objectif) ? answers.objectif[0] || "equilibre" : "equilibre"}`,
+        "Expliquer le d\u00E9roulement de la consultation",
+        `Rappeler l'objectif principal : \u00E9quilibre`,
       ],
     },
     {
       title: "2. Exploration du rappel 24h (10 min)",
       points: [
-        "Reprendre le rappel alimentaire en detail",
-        "Questionner les horaires, quantites, contexte emotionnel",
-        "Identifier les ecarts entre ce qui est declare et la realite",
+        "Reprendre le rappel alimentaire en d\u00E9tail",
+        "Questionner les horaires, quantit\u00E9s, contexte \u00E9motionnel",
+        "Identifier les \u00E9carts entre ce qui est d\u00E9clar\u00E9 et la r\u00E9alit\u00E9",
       ],
     },
     {
@@ -711,24 +724,24 @@ export function generateBriefingPDF(
     {
       title: "4. Drapeaux rouges et patterns (10 min)",
       points: [
-        ...(result.redFlags && result.redFlags.length > 0 ? result.redFlags.map((f) => `ALERTE : ${sanitize(f.message)}`) : ["Aucun drapeau rouge identifie"]),
+        ...(result.redFlags && result.redFlags.length > 0 ? result.redFlags.map((f) => `ALERTE : ${sanitize(f.message)}`) : ["Aucun drapeau rouge identifi\u00E9"]),
         ...(result.detectedPatterns && result.detectedPatterns.length > 0 ? result.detectedPatterns.map((p) => `Pattern : ${sanitize(p.name || p.description)}`) : []),
       ],
     },
     {
       title: "5. Plan d'action & objectifs (15 min)",
       points: [
-        "Definir 3 objectifs concrets pour les 90 jours",
-        ...result.topPriorities.slice(0, 3).map((p) => `Priorite : ${sanitize(p)}`),
+        "D\u00E9finir 3 objectifs concrets pour les 90 jours",
+        ...result.topPriorities.slice(0, 3).map((p) => `Priorit\u00E9 : ${sanitize(p)}`),
         "Fixer le prochain rendez-vous de suivi",
       ],
     },
     {
       title: "6. Conclusion (5 min)",
       points: [
-        "Recapituler les 3 actions principales",
+        "R\u00E9capituler les 3 actions principales",
         "S'assurer que le patient a bien compris",
-        "Envoyer le plan d'action par email apres la visio",
+        "Envoyer le plan d'action par email apr\u00E8s la visio",
       ],
     },
   ];
@@ -794,14 +807,25 @@ export function generateArgumentairePDF(
   const objectifs = Array.isArray(answers.objectif) ? answers.objectif : [];
   const objectifLabels: Record<string, string> = {
     perte_poids: "Perte de poids",
+    perdre_poids: "Perte de poids",
+    prise_masse: "Prise de masse",
     prendre_poids: "Prise de poids",
-    energie: "Retrouver de l'energie",
-    digestion: "Ameliorer la digestion",
-    hormones: "Equilibrer les hormones",
-    alimentation: "Ameliorer l'alimentation",
+    energie: "Retrouver de l'\u00E9nergie",
+    plus_energie: "Plus d'\u00E9nergie",
+    digestion: "Am\u00E9liorer la digestion",
+    meilleure_digestion: "Meilleure digestion",
+    hormones: "\u00C9quilibrer les hormones",
+    alimentation: "Am\u00E9liorer l'alimentation",
+    equilibre: "R\u00E9\u00E9quilibrage alimentaire",
+    equilibre_alimentaire: "\u00C9quilibre alimentaire",
     douleurs: "Diminuer les douleurs/inflammations",
     sommeil: "Mieux dormir",
-    stress: "Gerer le stress",
+    stress: "G\u00E9rer le stress",
+    stress_sommeil: "Gestion stress/sommeil",
+    immunite: "Renforcer l'immunit\u00E9",
+    peau: "Sant\u00E9 de la peau",
+    performance_sportive: "Performance sportive",
+    grossesse: "Grossesse/allaitement",
   };
 
   // Axes faibles = arguments de vente
@@ -826,7 +850,7 @@ export function generateArgumentairePDF(
   doc.text("Programme 90 Jours - NutriByMeli", margin, 27);
 
   doc.setFontSize(9);
-  doc.text(`Prepare pour : ${prenom} ${nom} | ${new Date().toLocaleDateString("fr-FR")}`, margin, 35);
+  doc.text(`Pr\u00E9par\u00E9 pour : ${prenom} ${nom} | ${new Date().toLocaleDateString("fr-FR")}`, margin, 35);
 
   y = 52;
 
@@ -847,9 +871,9 @@ export function generateArgumentairePDF(
       ["Nom", `${prenom} ${nom}`],
       ["Score global", `${result.overallScore}/100 (${getScoreLabel(result.overallScore)})`],
       ["IMC", imc > 0 ? `${Math.round(imc * 10) / 10} kg/m2` : "N/A"],
-      ["Objectif(s)", objectifs.map((o) => objectifLabels[o] || o).join(", ") || "Non precise"],
+      ["Objectif(s)", objectifs.map((o) => objectifLabels[o] || o).join(", ") || "Non pr\u00E9cis\u00E9"],
       ["Motivation", `${motivationLevel}/10`],
-      ["Pret(e) 90 jours", pret90 === "oui" ? "OUI" : pret90 === "pourquoi_pas" ? "Interesse(e) mais hesitant(e)" : "Non pour l'instant"],
+      ["Pr\u00EAt(e) 90 jours", pret90 === "oui" ? "OUI" : pret90 === "pourquoi_pas" ? "Int\u00E9ress\u00E9(e) mais h\u00E9sitant(e)" : "Non pour l'instant"],
       ["Axes faibles", weakAxes.length > 0 ? weakAxes.map((a) => `${a.label || AXIS_LABELS[a.axis] || a.axis} (${a.score})`).join(", ") : "Aucun"],
       ["Red flags", result.redFlags.length > 0 ? result.redFlags.map((f) => sanitize(f.message)).join(", ") : "Aucun"],
     ],
@@ -868,7 +892,7 @@ export function generateArgumentairePDF(
   doc.setTextColor(...COLORS.greenDark);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Strategie de vente personnalisee", margin, y);
+  doc.text("Strat\u00E9gie de vente personnalis\u00E9e", margin, y);
   y += 8;
 
   // Determine la temperature du lead
@@ -893,9 +917,9 @@ export function generateArgumentairePDF(
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   const tempAdvice = leadTemp === "CHAUD"
-    ? `${prenom} est tres motive${accord} et pret${accord}. Presenter l'offre directement en fin de visio.`
+    ? `${prenom} est tr\u00E8s motiv\u00E9${accord} et pr\u00EAt${accord}. Pr\u00E9senter l'offre directement en fin de visio.`
     : leadTemp === "TIEDE"
-      ? `${prenom} est interesse${accord} mais hesite. Construire la valeur, lever les objections, creer l'urgence.`
+      ? `${prenom} est int\u00E9ress\u00E9${accord} mais h\u00E9site. Construire la valeur, lever les objections, cr\u00E9er l'urgence.`
       : `${prenom} n'est pas encore convaincu${accord}. Focus sur la valeur du bilan gratuit, planter les graines pour un suivi.`;
   const tempLines = doc.splitTextToSize(tempAdvice, contentWidth - 60);
   doc.text(tempLines, margin + 55, y + 4);
@@ -908,11 +932,12 @@ export function generateArgumentairePDF(
   doc.setTextColor(...COLORS.greenDark);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("Accroche d'ouverture suggeree", margin, y);
+  doc.text("Accroche d'ouverture sugg\u00E9r\u00E9e", margin, y);
   y += 6;
 
-  const mainObjectif = objectifs[0] ? (objectifLabels[objectifs[0]] || objectifs[0]).toLowerCase() : "ameliorer votre sante";
-  const hookText = `"${prenom}, au vu de votre bilan, je vois clairement que vous avez un potentiel enorme d'amelioration, surtout sur ${weakAxes.length > 0 ? weakAxes[0].label.toLowerCase() : "votre terrain global"}. Avec un score de ${result.overallScore}/100, il y a de vrais leviers qu'on peut activer ensemble pour ${mainObjectif}. Et la bonne nouvelle, c'est que votre motivation a ${motivationLevel}/10 me montre que vous etes pret${accord} a passer a l'action."`;
+  const mainObjectif = objectifs[0] ? (objectifLabels[objectifs[0]] || objectifs[0]).toLowerCase() : "am\u00E9liorer votre sant\u00E9";
+  const weakLabel = weakAxes.length > 0 ? (weakAxes[0].label || AXIS_LABELS[weakAxes[0].axis] || weakAxes[0].axis).toLowerCase() : "votre terrain global";
+  const hookText = `"${prenom}, au vu de votre bilan, je vois clairement que vous avez un potentiel \u00E9norme d'am\u00E9lioration, surtout sur ${weakLabel}. Avec un score de ${result.overallScore}/100, il y a de vrais leviers qu'on peut activer ensemble pour ${mainObjectif}. Et la bonne nouvelle, c'est que votre motivation \u00E0 ${motivationLevel}/10 me montre que vous \u00EAtes pr\u00EAt${accord} \u00E0 passer \u00E0 l'action."`;
 
   doc.setTextColor(...COLORS.black);
   doc.setFontSize(9);
@@ -934,37 +959,37 @@ export function generateArgumentairePDF(
 
   const axeArguments = weakAxes.map((a) => {
     const args: Record<string, { argument: string; benefit: string }> = {
-      equilibre_alimentaire: {
-        argument: "Votre alimentation presente des desequilibres que je peux corriger avec un plan structure.",
-        benefit: "En 90 jours, vous aurez une alimentation equilibree sans frustration, avec des recettes adaptees a vos gouts.",
+      nutritionnel: {
+        argument: "Votre alimentation pr\u00E9sente des d\u00E9s\u00E9quilibres que je peux corriger avec un plan structur\u00E9.",
+        benefit: "En 90 jours, vous aurez une alimentation \u00E9quilibr\u00E9e sans frustration, avec des recettes adapt\u00E9es \u00E0 vos go\u00FBts.",
       },
-      hydratation_micronutriments: {
-        argument: "Votre hydratation et vos apports en micronutriments sont insuffisants, ce qui impacte tout votre organisme.",
-        benefit: "Meilleure energie, meilleure peau, meilleure digestion — juste en optimisant eau et micronutriments.",
+      digestif: {
+        argument: "Votre syst\u00E8me digestif montre des signes de d\u00E9s\u00E9quilibre qui m\u00E9ritent un protocole structur\u00E9.",
+        benefit: "Fini les ballonnements, la fatigue apr\u00E8s manger et les troubles du transit - en 90 jours, tout change.",
       },
-      habitudes_repas: {
-        argument: "Vos habitudes de repas (horaires, contexte, vitesse) freinent votre digestion et votre metabolisme.",
-        benefit: "Des ajustements simples dans votre routine vont transformer votre confort digestif et votre energie.",
+      energetique: {
+        argument: "Votre \u00E9nergie et votre vitalit\u00E9 sont en dessous de votre potentiel - c'est souvent le premier b\u00E9n\u00E9fice visible.",
+        benefit: "Vous retrouverez une \u00E9nergie stable toute la journ\u00E9e, un meilleur sommeil et une clart\u00E9 mentale.",
       },
-      digestif_transit: {
-        argument: "Votre systeme digestif montre des signes de desequilibre qui meritent un protocole structure.",
-        benefit: "Fini les ballonnements, la fatigue apres manger et les troubles du transit — en 90 jours, tout change.",
+      inflammatoire: {
+        argument: "Votre terrain inflammatoire est \u00E9lev\u00E9, ce qui peut expliquer douleurs, fatigue et difficult\u00E9s \u00E0 perdre du poids.",
+        benefit: "En r\u00E9duisant l'inflammation par l'alimentation, vous retrouverez confort articulaire et \u00E9nergie.",
       },
-      energie_vitalite: {
-        argument: "Votre energie et votre vitalite sont en dessous de votre potentiel — c'est souvent le premier benefice visible.",
-        benefit: "Vous retrouverez une energie stable toute la journee, un meilleur sommeil et une clarte mentale.",
+      hormonal: {
+        argument: "Votre \u00E9quilibre hormonal et m\u00E9tabolique n\u00E9cessite une attention particuli\u00E8re pour optimiser vos r\u00E9sultats.",
+        benefit: "Un m\u00E9tabolisme r\u00E9\u00E9quilibr\u00E9 pour une gestion du poids plus facile et une meilleure \u00E9nergie.",
       },
-      mode_de_vie: {
-        argument: "Votre mode de vie (stress, activite, sommeil) impacte directement vos resultats nutritionnels.",
-        benefit: "On va integrer des routines simples dans votre quotidien pour que les changements tiennent sur le long terme.",
+      nerveux: {
+        argument: "Votre mode de vie (stress, sommeil) impacte directement vos r\u00E9sultats nutritionnels.",
+        benefit: "On va int\u00E9grer des routines simples dans votre quotidien pour que les changements tiennent sur le long terme.",
       },
     };
     return {
       label: a.label || AXIS_LABELS[a.axis] || a.axis,
       score: a.score,
       axis: a.axis,
-      argument: args[a.axis]?.argument || "Cet axe necessite un accompagnement structure.",
-      benefit: args[a.axis]?.benefit || "Des ameliorations concretes et durables.",
+      argument: args[a.axis]?.argument || "Cet axe n\u00E9cessite un accompagnement structur\u00E9.",
+      benefit: args[a.axis]?.benefit || "Des am\u00E9liorations concr\u00E8tes et durables.",
     };
   });
 
@@ -985,7 +1010,7 @@ export function generateArgumentairePDF(
     doc.setTextColor(...COLORS.gray);
     const argLines = doc.splitTextToSize(`Argument : ${arg.argument}`, contentWidth - 12);
     doc.text(argLines, margin + 8, y + 9);
-    const benLines = doc.splitTextToSize(`Benefice : ${arg.benefit}`, contentWidth - 12);
+    const benLines = doc.splitTextToSize(`B\u00E9n\u00E9fice : ${arg.benefit}`, contentWidth - 12);
     doc.setTextColor(...COLORS.green);
     doc.text(benLines, margin + 8, y + 9 + argLines.length * 3.5);
 
@@ -1001,22 +1026,22 @@ export function generateArgumentairePDF(
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Presentation du Programme 90 Jours", margin, 16);
+  doc.text("Pr\u00E9sentation du Programme 90 Jours", margin, 16);
 
   y = 35;
 
   const programSteps = [
     {
       phase: "Phase 1 : Reset (Semaines 1-3)",
-      desc: "Bilan approfondi, identification des priorites, premiers ajustements alimentaires. Plan personnalise avec recettes et listes de courses.",
+      desc: "Bilan approfondi, identification des priorit\u00E9s, premiers ajustements alimentaires. Plan personnalis\u00E9 avec recettes et listes de courses.",
     },
     {
       phase: "Phase 2 : Transformation (Semaines 4-8)",
-      desc: "Mise en place des nouvelles habitudes, suivi hebdomadaire, ajustements en fonction des progres. Travail sur les axes prioritaires.",
+      desc: "Mise en place des nouvelles habitudes, suivi hebdomadaire, ajustements en fonction des progr\u00E8s. Travail sur les axes prioritaires.",
     },
     {
       phase: "Phase 3 : Ancrage (Semaines 9-12)",
-      desc: "Consolidation des acquis, autonomie progressive, strategies pour maintenir les resultats sur le long terme.",
+      desc: "Consolidation des acquis, autonomie progressive, strat\u00E9gies pour maintenir les r\u00E9sultats sur le long terme.",
     },
   ];
 
@@ -1051,14 +1076,14 @@ export function generateArgumentairePDF(
 
   const inclusions = [
     "Consultation initiale approfondie (60 min)",
-    "Plan alimentaire 100% personnalise + recettes",
+    "Plan alimentaire 100% personnalis\u00E9 + recettes",
     "Liste de courses hebdomadaire",
-    `Programme adapte a ${sexe === "femme" ? "votre cycle et vos besoins feminins" : "vos besoins specifiques"}`,
+    `Programme adapt\u00E9 \u00E0 ${sexe === "femme" ? "votre cycle et vos besoins f\u00E9minins" : "vos besoins sp\u00E9cifiques"}`,
     "4 consultations de suivi en visio (1 par quinzaine puis mensuelle)",
-    "Messagerie illimitee entre les consultations (WhatsApp/email)",
-    "Complementation ciblee si necessaire",
+    "Messagerie illimit\u00E9e entre les consultations (WhatsApp/email)",
+    "Compl\u00E9mentation cibl\u00E9e si n\u00E9cessaire",
     "Fiches pratiques et guides nutritionnels",
-    "Acces a vie aux ressources du programme",
+    "Acc\u00E8s \u00E0 vie aux ressources du programme",
   ];
 
   inclusions.forEach((item) => {
@@ -1107,20 +1132,20 @@ export function generateArgumentairePDF(
 
   const closingSteps = [
     {
-      step: "1. Resume de la valeur",
-      script: `"${prenom}, on a vu ensemble que votre bilan revele ${weakAxes.length} axe(s) a travailler. Avec le programme 90 jours, on va pouvoir agir sur chacun d'eux de maniere structuree et personnalisee."`,
+      step: "1. R\u00E9sum\u00E9 de la valeur",
+      script: `"${prenom}, on a vu ensemble que votre bilan r\u00E9v\u00E8le ${weakAxes.length} axe(s) \u00E0 travailler. Avec le programme 90 jours, on va pouvoir agir sur chacun d'eux de mani\u00E8re structur\u00E9e et personnalis\u00E9e."`,
     },
     {
-      step: "2. Projection de resultat",
-      script: `"Dans 3 mois, l'objectif c'est que vous ayez ${objectifs.includes("perte_poids") ? "atteint votre objectif de poids, " : ""}retrouve une energie stable, une digestion confortable, et surtout que vous ayez les cles pour maintenir ces resultats seul${accord}."`,
+      step: "2. Projection de r\u00E9sultat",
+      script: `"Dans 3 mois, l'objectif c'est que vous ayez ${objectifs.includes("perte_poids") ? "atteint votre objectif de poids, " : ""}retrouv\u00E9 une \u00E9nergie stable, une digestion confortable, et surtout que vous ayez les cl\u00E9s pour maintenir ces r\u00E9sultats seul${accord}."`,
     },
     {
       step: "3. Transition vers l'offre",
-      script: `"Est-ce que vous aimeriez qu'on travaille ensemble sur ces ${weakAxes.length} axes pendant 90 jours ? Je peux vous expliquer comment ca se passe concretement."`,
+      script: `"Est-ce que vous aimeriez qu'on travaille ensemble sur ces ${weakAxes.length} axes pendant 90 jours ? Je peux vous expliquer comment \u00E7a se passe concr\u00E8tement."`,
     },
     {
-      step: "4. Faciliter la decision",
-      script: `"Le programme est a 790 EUR, et on peut etaler en 3 fois sans frais. Vous pourrez commencer des ${new Date(Date.now() + 7 * 86400000).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}."`,
+      step: "4. Faciliter la d\u00E9cision",
+      script: `"Le programme est \u00E0 790 EUR, et on peut \u00E9taler en 3 fois sans frais. Vous pourrez commencer d\u00E8s ${new Date(Date.now() + 7 * 86400000).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}."`,
     },
   ];
 
@@ -1150,50 +1175,50 @@ export function generateArgumentairePDF(
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Objections courantes & Reponses", margin, 16);
+  doc.text("Objections courantes & R\u00E9ponses", margin, 16);
 
   y = 35;
 
   const objections = [
     {
       objection: "C'est trop cher",
-      response: "Rapporte a 90 jours, c'est 8,78 EUR/jour — moins qu'un cafe. Et c'est un investissement dans votre sante qui va vous faire economiser en consultations medicales, medicaments et fatigue. De plus, le paiement en 3 fois est disponible.",
-      tip: "Comparer avec le cout de NE RIEN FAIRE (medicaments, fatigue, arret maladie...)",
+      response: "Rapport\u00E9 \u00E0 90 jours, c'est 8,78 EUR/jour - moins qu'un caf\u00E9. Et c'est un investissement dans votre sant\u00E9 qui va vous faire \u00E9conomiser en consultations m\u00E9dicales, m\u00E9dicaments et fatigue. De plus, le paiement en 3 fois est disponible.",
+      tip: "Comparer avec le co\u00FBt de NE RIEN FAIRE (m\u00E9dicaments, fatigue, arr\u00EAt maladie...)",
     },
     {
       objection: "J'ai pas le temps",
-      response: "Le programme est concu pour les gens occupes. Les recettes prennent 15-20 min max, et les consultations sont en visio — vous choisissez votre creneau. Les listes de courses sont toutes faites.",
-      tip: "Demander : \"Combien de temps passez-vous a etre fatigue(e) ou a gerer vos symptomes ?\"",
+      response: "Le programme est con\u00E7u pour les gens occup\u00E9s. Les recettes prennent 15-20 min max, et les consultations sont en visio - vous choisissez votre cr\u00E9neau. Les listes de courses sont toutes faites.",
+      tip: "Demander : \"Combien de temps passez-vous \u00E0 \u00EAtre fatigu\u00E9(e) ou \u00E0 g\u00E9rer vos sympt\u00F4mes ?\"",
     },
     {
-      objection: "J'ai deja essaye des regimes et ca n'a pas marche",
-      response: "Justement, c'est pour ca que je ne propose PAS de regime. Mon approche est une reeducation alimentaire douce et personnalisee. On ne supprime rien, on reequilibre. 90% de mes patients gardent leurs resultats apres le programme.",
-      tip: "Valider l'echec passe : \"C'est normal, les regimes ne marchent pas. Ce que je propose est fondamentalement different.\"",
+      objection: "J'ai d\u00E9j\u00E0 essay\u00E9 des r\u00E9gimes et \u00E7a n'a pas march\u00E9",
+      response: "Justement, c'est pour \u00E7a que je ne propose PAS de r\u00E9gime. Mon approche est une r\u00E9\u00E9ducation alimentaire douce et personnalis\u00E9e. On ne supprime rien, on r\u00E9\u00E9quilibre. 90% de mes patients gardent leurs r\u00E9sultats apr\u00E8s le programme.",
+      tip: "Valider l'\u00E9chec pass\u00E9 : \"C'est normal, les r\u00E9gimes ne marchent pas. Ce que je propose est fondamentalement diff\u00E9rent.\"",
     },
     {
-      objection: "Je vais reflechir / J'en parle a mon conjoint",
-      response: "Bien sur, prenez le temps. Sachez que votre bilan est une photographie d'aujourd'hui — plus on attend, plus les desequilibres s'installent. Si vous vous inscrivez cette semaine, je peux demarrer votre plan des la semaine prochaine.",
-      tip: "Creer l'urgence douce. Proposer un rappel dans 48h : \"Je vous rappelle jeudi pour voir si vous avez des questions ?\"",
+      objection: "Je vais r\u00E9fl\u00E9chir / J'en parle \u00E0 mon conjoint",
+      response: "Bien s\u00FBr, prenez le temps. Sachez que votre bilan est une photographie d'aujourd'hui - plus on attend, plus les d\u00E9s\u00E9quilibres s'installent. Si vous vous inscrivez cette semaine, je peux d\u00E9marrer votre plan d\u00E8s la semaine prochaine.",
+      tip: "Cr\u00E9er l'urgence douce. Proposer un rappel dans 48h : \"Je vous rappelle jeudi pour voir si vous avez des questions ?\"",
     },
     {
       objection: "Je peux le faire seul(e)",
-      response: `Avec un score de ${result.overallScore}/100 et ${weakAxes.length} axes a travailler, il y a beaucoup de parametres a ajuster en meme temps. L'accompagnement vous evite les erreurs, la demotivation et les fausses pistes. C'est comme avoir un GPS au lieu de chercher votre chemin seul${accord}.`,
-      tip: "Rappeler la complexite revelee par le bilan. Seul(e), il faudrait des mois pour arriver au meme resultat.",
+      response: `Avec un score de ${result.overallScore}/100 et ${weakAxes.length} axes \u00E0 travailler, il y a beaucoup de param\u00E8tres \u00E0 ajuster en m\u00EAme temps. L'accompagnement vous \u00E9vite les erreurs, la d\u00E9motivation et les fausses pistes. C'est comme avoir un GPS au lieu de chercher votre chemin seul${accord}.`,
+      tip: "Rappeler la complexit\u00E9 r\u00E9v\u00E9l\u00E9e par le bilan. Seul(e), il faudrait des mois pour arriver au m\u00EAme r\u00E9sultat.",
     },
     {
-      objection: "Je ne suis pas sur(e) que ca marchera pour moi",
-      response: `Votre profil (motivation a ${motivationLevel}/10, ${objectifs.length} objectif(s) clair(s)) est exactement le type de profil qui obtient les meilleurs resultats. Et si jamais les resultats ne sont pas au rendez-vous apres 30 jours, on ajuste ensemble.`,
-      tip: "Utiliser le bilan comme preuve : les donnees sont la, le plan est personnalise, ce n'est pas du generique.",
+      objection: "Je ne suis pas s\u00FBr(e) que \u00E7a marchera pour moi",
+      response: `Votre profil (motivation \u00E0 ${motivationLevel}/10, ${objectifs.length} objectif(s) clair(s)) est exactement le type de profil qui obtient les meilleurs r\u00E9sultats. Et si jamais les r\u00E9sultats ne sont pas au rendez-vous apr\u00E8s 30 jours, on ajuste ensemble.`,
+      tip: "Utiliser le bilan comme preuve : les donn\u00E9es sont l\u00E0, le plan est personnalis\u00E9, ce n'est pas du g\u00E9n\u00E9rique.",
     },
     {
-      objection: "Est-ce que c'est adapte si j'ai des problemes de sante ?",
-      response: "En tant que Dieteticienne Diplomee d'Etat, je suis habilitee a prendre en charge les pathologies nutritionnelles. Le programme est 100% personnalise et adapte a votre contexte medical. Si necessaire, je travaille en coordination avec votre medecin.",
-      tip: "Rassurer sur les qualifications : DE (diplome d'Etat) = profession reglementee de sante.",
+      objection: "Est-ce que c'est adapt\u00E9 si j'ai des probl\u00E8mes de sant\u00E9 ?",
+      response: "En tant que Di\u00E9t\u00E9ticienne Dipl\u00F4m\u00E9e d'\u00C9tat, je suis habilit\u00E9e \u00E0 prendre en charge les pathologies nutritionnelles. Le programme est 100% personnalis\u00E9 et adapt\u00E9 \u00E0 votre contexte m\u00E9dical. Si n\u00E9cessaire, je travaille en coordination avec votre m\u00E9decin.",
+      tip: "Rassurer sur les qualifications : DE (dipl\u00F4me d'\u00C9tat) = profession r\u00E9glement\u00E9e de sant\u00E9.",
     },
     {
       objection: "Pourquoi 90 jours et pas moins ?",
-      response: "90 jours, c'est le temps scientifiquement prouve pour ancrer de nouvelles habitudes alimentaires. Moins, c'est du bricolage. Plus, c'est souvent inutile si le travail est bien fait. C'est le juste milieu entre efficacite et durabilite.",
-      tip: "Citer les etudes sur les 66-90 jours pour l'ancrage des habitudes (Lally et al., 2010).",
+      response: "90 jours, c'est le temps scientifiquement prouv\u00E9 pour ancrer de nouvelles habitudes alimentaires. Moins, c'est du bricolage. Plus, c'est souvent inutile si le travail est bien fait. C'est le juste milieu entre efficacit\u00E9 et durabilit\u00E9.",
+      tip: "Citer les \u00E9tudes sur les 66-90 jours pour l'ancrage des habitudes (Lally et al., 2010).",
     },
   ];
 
@@ -1211,7 +1236,7 @@ export function generateArgumentairePDF(
     doc.setTextColor(...COLORS.black);
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    const respLines = doc.splitTextToSize(`Reponse : ${obj.response}`, contentWidth - 8);
+    const respLines = doc.splitTextToSize(`R\u00E9ponse : ${obj.response}`, contentWidth - 8);
     doc.text(respLines, margin + 4, y);
     y += respLines.length * 3.5 + 2;
 
@@ -1229,16 +1254,16 @@ export function generateArgumentairePDF(
   doc.setTextColor(...COLORS.greenDark);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Questions frequentes", margin, y);
+  doc.text("Questions fr\u00E9quentes", margin, y);
   y += 8;
 
   const faqs = [
-    { q: "Comment se passent les consultations ?", a: "En visio (Google Meet ou Zoom), depuis chez vous. Duree : 30-45 min pour les suivis. Vous recevez un recap ecrit apres chaque seance." },
-    { q: "Est-ce que je pourrai manger ce que j'aime ?", a: "Oui ! On ne supprime jamais un aliment. On reequilibre, on ameliore les choix et on adapte a vos gouts et votre culture culinaire." },
-    { q: "Et si je craque ou si j'ai un ecart ?", a: "Les ecarts font partie du processus. On en parle, on comprend pourquoi, et on ajuste. Zero culpabilite, 100% bienveillance." },
-    { q: "Est-ce que je recevrai des menus tout faits ?", a: "Vous recevrez un plan alimentaire avec des recettes et listes de courses, mais adapte a VOS gouts. Pas de menu generique copie-colle." },
-    { q: "Comment je vous contacte entre les consultations ?", a: "Par WhatsApp ou email, en illimite. Je reponds sous 24h en semaine. Vous n'etes jamais seul(e) dans votre demarche." },
-    { q: "Faut-il acheter des complements ?", a: "Pas obligatoirement. Si des complements sont recommandes, ce sera uniquement base sur votre bilan et vos besoins reels, pas du marketing." },
+    { q: "Comment se passent les consultations ?", a: "En visio (Google Meet ou Zoom), depuis chez vous. Dur\u00E9e : 30-45 min pour les suivis. Vous recevez un r\u00E9cap \u00E9crit apr\u00E8s chaque s\u00E9ance." },
+    { q: "Est-ce que je pourrai manger ce que j'aime ?", a: "Oui ! On ne supprime jamais un aliment. On r\u00E9\u00E9quilibre, on am\u00E9liore les choix et on adapte \u00E0 vos go\u00FBts et votre culture culinaire." },
+    { q: "Et si je craque ou si j'ai un \u00E9cart ?", a: "Les \u00E9carts font partie du processus. On en parle, on comprend pourquoi, et on ajuste. Z\u00E9ro culpabilit\u00E9, 100% bienveillance." },
+    { q: "Est-ce que je recevrai des menus tout faits ?", a: "Vous recevrez un plan alimentaire avec des recettes et listes de courses, mais adapt\u00E9 \u00E0 VOS go\u00FBts. Pas de menu g\u00E9n\u00E9rique copi\u00E9-coll\u00E9." },
+    { q: "Comment je vous contacte entre les consultations ?", a: "Par WhatsApp ou email, en illimit\u00E9. Je r\u00E9ponds sous 24h en semaine. Vous n'\u00EAtes jamais seul(e) dans votre d\u00E9marche." },
+    { q: "Faut-il acheter des compl\u00E9ments ?", a: "Pas obligatoirement. Si des compl\u00E9ments sont recommand\u00E9s, ce sera uniquement bas\u00E9 sur votre bilan et vos besoins r\u00E9els, pas du marketing." },
   ];
 
   faqs.forEach((faq) => {
@@ -1269,11 +1294,11 @@ export function generateArgumentairePDF(
 
   const checklist = [
     `Si ${prenom} accepte : envoyer le lien de paiement + email de bienvenue`,
-    "Planifier la premiere consultation de suivi (sous 7 jours)",
-    "Commencer a preparer le plan alimentaire personnalise",
-    "Si hesitation : programmer un rappel dans 48h",
+    "Planifier la premi\u00E8re consultation de suivi (sous 7 jours)",
+    "Commencer \u00E0 pr\u00E9parer le plan alimentaire personnalis\u00E9",
+    "Si h\u00E9sitation : programmer un rappel dans 48h",
     "Si refus : remercier, laisser la porte ouverte, proposer un suivi ponctuel",
-    "Dans tous les cas : envoyer un email de suivi post-visio (recap + offre)",
+    "Dans tous les cas : envoyer un email de suivi post-visio (r\u00E9cap + offre)",
   ];
 
   checklist.forEach((item) => {
