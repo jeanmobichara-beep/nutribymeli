@@ -135,16 +135,16 @@ export function generateDossierPDF(
     body: [
       ["Prenom / Nom", `${prenom} ${nom}`],
       ["Email", email],
-      ["Age", age],
+      ["Age", `${age} ans`],
       ["Sexe", sexe === "homme" ? "Homme" : sexe === "femme" ? "Femme" : sexe],
       ["Taille / Poids", `${taille} cm / ${poids} kg`],
       ["IMC", `${imcRounded} (${imcCat})`],
     ],
+    tableWidth: contentWidth,
     theme: "plain",
-    styles: { fontSize: 10, cellPadding: 3 },
+    styles: { fontSize: 10, cellPadding: 3, overflow: "linebreak" },
     columnStyles: {
       0: { fontStyle: "bold", cellWidth: 45, textColor: COLORS.gray },
-      1: { textColor: COLORS.black },
     },
     margin: { left: margin, right: margin },
   });
@@ -191,11 +191,12 @@ export function generateDossierPDF(
       fontStyle: "bold",
       fontSize: 10,
     },
-    styles: { fontSize: 10, cellPadding: 4 },
+    tableWidth: contentWidth,
+    styles: { fontSize: 10, cellPadding: 3 },
     columnStyles: {
-      0: { cellWidth: 80 },
-      1: { cellWidth: 30, halign: "center", fontStyle: "bold" },
-      2: { cellWidth: 40, halign: "center" },
+      0: { cellWidth: 70 },
+      1: { cellWidth: 25, halign: "center", fontStyle: "bold" },
+      2: { cellWidth: 35, halign: "center" },
     },
     margin: { left: margin, right: margin },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -326,16 +327,17 @@ export function generateDossierPDF(
       doc.setTextColor(...COLORS.gray);
       doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
-      const questionLines = doc.splitTextToSize(sanitize(question.label), contentWidth - 8);
-      doc.text(questionLines, margin + 2, y);
+      const maxTextW = contentWidth - 10;
+      const questionLines = doc.splitTextToSize(sanitize(question.label), maxTextW);
+      doc.text(questionLines, margin + 4, y);
       y += questionLines.length * 3.5;
 
       // Answer
       doc.setTextColor(...COLORS.black);
       doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
-      const answerLines = doc.splitTextToSize(sanitize(formattedAnswer), contentWidth - 8);
-      doc.text(answerLines, margin + 2, y);
+      const answerLines = doc.splitTextToSize(sanitize(formattedAnswer), maxTextW);
+      doc.text(answerLines, margin + 4, y);
       y += answerLines.length * 4;
 
       // Annotations
@@ -344,13 +346,14 @@ export function generateDossierPDF(
           if (y > 268) { doc.addPage(); y = 20; }
           doc.setFillColor(255, 252, 245);
           const annText = sanitize(ann.text);
-          const annLines = doc.splitTextToSize(annText, contentWidth - 20);
-          const annHeight = annLines.length * 3.5 + 4;
-          doc.roundedRect(margin + 4, y - 2, contentWidth - 8, annHeight, 1, 1, "F");
+          const annW = contentWidth - 16;
+          const annLines = doc.splitTextToSize(annText, annW);
+          const annHeight = annLines.length * 3.5 + 3;
+          doc.roundedRect(margin + 6, y - 1, contentWidth - 12, annHeight, 1, 1, "F");
 
-          const isRed = ann.icon.includes("\u{1F534}") || ann.text.includes("URGENT");
-          const isWarn = ann.icon.includes("\u{26A0}") || ann.text.includes("VISIO");
-          const isGood = ann.icon.includes("\u{2705}") || ann.text.startsWith("Bon") || ann.text.startsWith("Excellente");
+          const isRed = ann.text.includes("URGENT") || ann.text.includes("Priorite");
+          const isWarn = ann.text.includes("VISIO") || ann.text.includes("Explorer");
+          const isGood = ann.text.startsWith("Bon") || ann.text.startsWith("Excellente") || ann.text.startsWith("Pas de");
           doc.setTextColor(
             isRed ? 217 : isWarn ? 180 : isGood ? 45 : 107,
             isRed ? 67 : isWarn ? 100 : isGood ? 90 : 158,
@@ -358,7 +361,7 @@ export function generateDossierPDF(
           );
           doc.setFontSize(7);
           doc.setFont("helvetica", "italic");
-          doc.text(annLines, margin + 8, y + 1);
+          doc.text(annLines, margin + 10, y + 1);
           y += annHeight + 1;
         });
       }
@@ -561,12 +564,12 @@ export function generateBriefingPDF(
       fontStyle: "bold",
       fontSize: 9,
     },
-    styles: { fontSize: 8, cellPadding: 3, overflow: "linebreak" },
+    tableWidth: contentWidth,
+    styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak" },
     columnStyles: {
-      0: { cellWidth: 42 },
+      0: { cellWidth: 38 },
       1: { cellWidth: 18, halign: "center", fontStyle: "bold" },
-      2: { cellWidth: 25, halign: "center" },
-      3: { cellWidth: contentWidth - 85 },
+      2: { cellWidth: 22, halign: "center" },
     },
     margin: { left: margin, right: margin },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -620,16 +623,16 @@ export function generateBriefingPDF(
       head: [["Question", "Notes / Points a aborder en visio"]],
       body: notesData,
       theme: "striped",
+      tableWidth: contentWidth,
       headStyles: {
         fillColor: COLORS.greenDark,
         textColor: COLORS.white,
         fontStyle: "bold",
         fontSize: 8,
       },
-      styles: { fontSize: 7, cellPadding: 3, overflow: "linebreak" },
+      styles: { fontSize: 7, cellPadding: 2, overflow: "linebreak" },
       columnStyles: {
-        0: { cellWidth: 45, fontStyle: "bold" },
-        1: { cellWidth: contentWidth - 45 },
+        0: { cellWidth: 40, fontStyle: "bold" },
       },
       margin: { left: margin, right: margin },
     });
