@@ -43,7 +43,8 @@ export const REPAS_SECTIONS: Section[] = [
         { value: "moderee", label: "Modérée (1-3 séances / sem.)" },
         { value: "sportive", label: "Sportive (4+ séances / sem.)" },
       ] },
-      { id: "jours", label: "Quels jours veux-tu tes déjeuners ?", type: "checkbox", required: true, maxChoices: 4, helpText: "Places limitées — jusqu'à 4 jours par semaine.", options: [
+      { id: "jours", label: "Quels jours veux-tu tes déjeuners ?", type: "checkbox", required: true, maxChoices: 5, helpText: "Places limitées — de 1 à 5 jours (du lundi au vendredi).", options: [
+        { value: "lundi", label: "Lundi" },
         { value: "mardi", label: "Mardi" },
         { value: "mercredi", label: "Mercredi" },
         { value: "jeudi", label: "Jeudi" },
