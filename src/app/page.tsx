@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "./home.css";
 import { RevealInit } from "@/components/home/RevealInit";
+import { NewsletterForm } from "@/components/home/NewsletterForm";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -298,8 +299,9 @@ export default function HomePage() {
               </h2>
               <p className="lead" style={{ marginTop: 14, maxWidth: "46ch" }}>
                 En plus de tes repas, Mélissa t&apos;accompagne en profondeur&nbsp;: commence par
-                ton bilan nutritionnel offert (2&nbsp;min), puis une consultation ou le programme
-                90&nbsp;jours si tu veux transformer tes habitudes pour de bon.
+                ton bilan nutritionnel complet offert (10&nbsp;min, ça les vaut), puis une
+                consultation ou le programme 90&nbsp;jours si tu veux transformer tes habitudes
+                pour de bon.
               </p>
             </div>
             <Link className="btn btn-ghost btn-arrow" href="/questionnaire">
@@ -330,6 +332,7 @@ export default function HomePage() {
           <div style={{ marginTop: 12 }}>
             Mélissa P. · Diététicienne Diplômée d&apos;État &amp; Naturopathe · Guadeloupe
           </div>
+          <NewsletterForm />
           <div className="flinks">
             <Link href="/questionnaire">Bilan nutritionnel</Link>
             <Link href="/questionnaire-repas">Composer mon menu</Link>

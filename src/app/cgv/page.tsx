@@ -6,17 +6,17 @@ export const metadata = {
 
 export default function CGV() {
   return (
-    <div className="min-h-screen bg-[#F9F6F1]">
+    <div className="min-h-screen bg-[#FBFCF9]">
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center">
-          <Link href="/" className="text-[#2D5A3D] font-bold text-lg hover:opacity-80 transition">
+          <Link href="/" className="text-[#2A5A3A] font-bold text-lg hover:opacity-80 transition">
             NutriByMeli
           </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="text-3xl font-bold text-[#2D5A3D] mb-8">Conditions Générales de Vente</h1>
+        <h1 className="text-3xl font-bold text-[#2A5A3A] mb-8">Conditions Générales de Vente</h1>
 
         <div className="prose prose-gray max-w-none space-y-8 text-[#1a1a1a]/80">
           <section>
@@ -90,7 +90,7 @@ export default function CGV() {
             <h2 className="text-xl font-semibold text-[#1a1a1a]">Article 8 — Confidentialité</h2>
             <p>
               Toutes les informations échangées lors des consultations sont strictement confidentielles, conformément au secret professionnel applicable aux Diététiciens Diplômés d&apos;État. Pour le traitement des données personnelles, consultez notre{" "}
-              <Link href="/politique-confidentialite" className="text-[#2D5A3D] underline">
+              <Link href="/politique-confidentialite" className="text-[#2A5A3A] underline">
                 Politique de confidentialité
               </Link>.
             </p>
@@ -103,7 +103,7 @@ export default function CGV() {
             </p>
             <p>
               Conformément aux dispositions du Code de la consommation, le client peut recourir gratuitement au service de médiation proposé par MELIMO SARL. Le médiateur peut être saisi via la plateforme européenne de règlement en ligne des litiges :{" "}
-              <a href="https://ec.europa.eu/consumers/odr" className="text-[#2D5A3D] underline" target="_blank" rel="noopener noreferrer">
+              <a href="https://ec.europa.eu/consumers/odr" className="text-[#2A5A3A] underline" target="_blank" rel="noopener noreferrer">
                 ec.europa.eu/consumers/odr
               </a>.
             </p>
@@ -116,12 +116,12 @@ export default function CGV() {
               Capital social : 1 000 €<br />
               Siège social : Route de Blonzac, 97128 Goyave, Guadeloupe<br />
               RCS Basse-Terre : 987 946 449<br />
-              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2D5A3D] underline">contact@nutri-meli.com</a>
+              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>
             </p>
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[#2D5A3D]/10 text-sm text-[#1a1a1a]/50">
+        <div className="mt-12 pt-8 border-t border-[#2A5A3A]/10 text-sm text-[#1a1a1a]/50">
           Dernière mise à jour : avril 2026
         </div>
       </main>

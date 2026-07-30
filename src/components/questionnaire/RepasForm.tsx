@@ -78,8 +78,8 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 sm:p-12">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#6B9E6B]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <UtensilsCrossed className="w-8 h-8 text-[#6B9E6B]" />
+            <div className="w-16 h-16 bg-[#2A5A3A]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <UtensilsCrossed className="w-8 h-8 text-[#2A5A3A]" />
             </div>
             <h1 className="text-2xl font-bold text-[#1a1a1a] mb-2">
               Tes repas, sur-mesure
@@ -90,7 +90,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
             </p>
           </div>
 
-          <div className="bg-[#F9F6F1] rounded-xl p-6 mb-6">
+          <div className="bg-[#FBFCF9] rounded-xl p-6 mb-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
               Tes réponses sont <strong className="text-foreground">strictement confidentielles</strong> et
               servent uniquement à personnaliser tes repas, dans le respect du secret
@@ -100,7 +100,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           </div>
 
           <div className="flex items-center gap-3 text-sm text-muted-foreground mb-8">
-            <span className="bg-[#6B9E6B]/10 text-[#2D5A3D] px-3 py-1 rounded-full text-xs font-medium">
+            <span className="bg-[#2A5A3A]/10 text-[#2A5A3A] px-3 py-1 rounded-full text-xs font-medium">
               ~2 min
             </span>
             <span>Places limitées</span>
@@ -108,7 +108,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
 
           <Button
             onClick={() => setShowIntro(false)}
-            className="w-full bg-[#6B9E6B] hover:bg-[#5A8A5A] text-white py-6 rounded-full text-base font-semibold"
+            className="w-full bg-[#2A5A3A] hover:bg-[#1F4230] text-white py-6 rounded-full text-base font-semibold"
           >
             Commencer
             <ArrowRight className="w-5 h-5 ml-2" />
@@ -129,7 +129,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           <span className="text-xs text-muted-foreground">
             Étape {currentSection + 1} / {totalSections}
           </span>
-          <span className="text-xs font-medium text-[#6B9E6B]">
+          <span className="text-xs font-medium text-[#2A5A3A]">
             {Math.round(progress)}%
           </span>
         </div>
@@ -139,8 +139,8 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
       {/* Section card */}
       <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 sm:p-10">
         <div className="flex items-start gap-4 mb-8">
-          <div className="w-12 h-12 bg-[#6B9E6B]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-            <SectionIcon className="w-6 h-6 text-[#6B9E6B]" />
+          <div className="w-12 h-12 bg-[#2A5A3A]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <SectionIcon className="w-6 h-6 text-[#2A5A3A]" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-[#1a1a1a]">{section.title}</h2>
@@ -173,7 +173,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           <Button
             onClick={handleNext}
             disabled={!canProceed() || submitting}
-            className="bg-[#6B9E6B] hover:bg-[#5A8A5A] text-white px-8 rounded-full"
+            className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full"
           >
             {submitting ? "Envoi…" : isLast ? "Envoyer mes préférences" : "Continuer"}
             {!submitting && <ArrowRight className="w-4 h-4 ml-2" />}
@@ -215,7 +215,7 @@ function RepasQuestionField({
           placeholder={q.placeholder}
           value={(value as string) || ""}
           onChange={(e) => onChange(q.id, e.target.value)}
-          className="bg-[#F9F6F1] border-0 focus-visible:ring-[#6B9E6B] h-12 rounded-xl"
+          className="bg-[#FBFCF9] border-0 focus-visible:ring-[#2A5A3A] h-12 rounded-xl"
         />
       )}
 
@@ -225,7 +225,7 @@ function RepasQuestionField({
           value={(value as string) || ""}
           onChange={(e) => onChange(q.id, e.target.value)}
           rows={4}
-          className="bg-[#F9F6F1] border-0 focus-visible:ring-[#6B9E6B] rounded-xl resize-none"
+          className="bg-[#FBFCF9] border-0 focus-visible:ring-[#2A5A3A] rounded-xl resize-none"
         />
       )}
 
@@ -240,11 +240,11 @@ function RepasQuestionField({
               key={opt.value}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all text-sm ${
                 value === opt.value
-                  ? "bg-[#6B9E6B]/10 border-2 border-[#6B9E6B] text-[#2D5A3D] font-medium"
-                  : "bg-[#F9F6F1] border-2 border-transparent hover:border-[#6B9E6B]/30"
+                  ? "bg-[#2A5A3A]/10 border-2 border-[#2A5A3A] text-[#2A5A3A] font-medium"
+                  : "bg-[#FBFCF9] border-2 border-transparent hover:border-[#2A5A3A]/30"
               }`}
             >
-              <RadioGroupItem value={opt.value} className="border-[#6B9E6B]" />
+              <RadioGroupItem value={opt.value} className="border-[#2A5A3A]" />
               {opt.label}
             </label>
           ))}
@@ -260,14 +260,14 @@ function RepasQuestionField({
                 key={opt.value}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all text-sm ${
                   checked
-                    ? "bg-[#6B9E6B]/10 border-2 border-[#6B9E6B] text-[#2D5A3D] font-medium"
-                    : "bg-[#F9F6F1] border-2 border-transparent hover:border-[#6B9E6B]/30"
+                    ? "bg-[#2A5A3A]/10 border-2 border-[#2A5A3A] text-[#2A5A3A] font-medium"
+                    : "bg-[#FBFCF9] border-2 border-transparent hover:border-[#2A5A3A]/30"
                 }`}
               >
                 <Checkbox
                   checked={checked}
                   onCheckedChange={() => onToggleCheckbox(q.id, opt.value, q.maxChoices)}
-                  className="border-[#6B9E6B]"
+                  className="border-[#2A5A3A]"
                 />
                 {opt.label}
               </label>

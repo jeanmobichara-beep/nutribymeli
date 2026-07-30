@@ -30,11 +30,11 @@ export default function QuestionnaireRepasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F9F6F1] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#FBFCF9] to-white">
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/">
-            <Image src="/logo.png" alt="NutriByMeli" width={120} height={40} className="h-8 w-auto" />
+            <Image src="/home/logo.svg" alt="NutriByMeli" width={120} height={40} className="h-10 w-auto" />
           </Link>
           <span className="text-xs text-muted-foreground hidden sm:block">
             Vos données sont protégées par le secret professionnel
@@ -50,8 +50,8 @@ export default function QuestionnaireRepasPage() {
         {status === "done" && (
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 sm:p-12 text-center">
-              <div className="w-16 h-16 bg-[#6B9E6B]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-8 h-8 text-[#6B9E6B]" />
+              <div className="w-16 h-16 bg-[#2A5A3A]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-8 h-8 text-[#2A5A3A]" />
               </div>
               <h1 className="text-2xl font-bold text-[#1a1a1a] mb-2">
                 Merci {prenom} ! C&apos;est bien reçu.
@@ -62,7 +62,7 @@ export default function QuestionnaireRepasPage() {
                 tu fais partie du cercle.
               </p>
               <Link href="/">
-                <Button className="bg-[#6B9E6B] hover:bg-[#5A8A5A] text-white px-8 rounded-full">
+                <Button className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full">
                   Retour à l&apos;accueil
                 </Button>
               </Link>
@@ -85,7 +85,7 @@ export default function QuestionnaireRepasPage() {
               </p>
               <Button
                 onClick={() => setStatus("form")}
-                className="bg-[#6B9E6B] hover:bg-[#5A8A5A] text-white px-8 rounded-full"
+                className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full"
               >
                 Réessayer
               </Button>

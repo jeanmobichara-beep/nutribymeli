@@ -6,17 +6,17 @@ export const metadata = {
 
 export default function PolitiqueConfidentialite() {
   return (
-    <div className="min-h-screen bg-[#F9F6F1]">
+    <div className="min-h-screen bg-[#FBFCF9]">
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center">
-          <Link href="/" className="text-[#2D5A3D] font-bold text-lg hover:opacity-80 transition">
+          <Link href="/" className="text-[#2A5A3A] font-bold text-lg hover:opacity-80 transition">
             NutriByMeli
           </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="text-3xl font-bold text-[#2D5A3D] mb-8">Politique de confidentialité</h1>
+        <h1 className="text-3xl font-bold text-[#2A5A3A] mb-8">Politique de confidentialité</h1>
 
         <div className="prose prose-gray max-w-none space-y-8 text-[#1a1a1a]/80">
           <section>
@@ -25,7 +25,7 @@ export default function PolitiqueConfidentialite() {
               Le responsable du traitement des données personnelles est :<br />
               <strong>MELIMO SARL</strong><br />
               Route de Blonzac, 97128 Goyave, Guadeloupe<br />
-              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2D5A3D] underline">contact@nutri-meli.com</a>
+              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>
             </p>
           </section>
 
@@ -98,7 +98,7 @@ export default function PolitiqueConfidentialite() {
             </ul>
             <p>
               Pour exercer ces droits, contactez-nous à{" "}
-              <a href="mailto:contact@nutri-meli.com" className="text-[#2D5A3D] underline">contact@nutri-meli.com</a>.
+              <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>.
               Nous répondrons dans un délai de 30 jours.
             </p>
           </section>
@@ -121,14 +121,14 @@ export default function PolitiqueConfidentialite() {
             <h2 className="text-xl font-semibold text-[#1a1a1a]">10. Réclamation</h2>
             <p>
               Si vous estimez que le traitement de vos données n&apos;est pas conforme à la réglementation, vous pouvez adresser une réclamation à la CNIL :{" "}
-              <a href="https://www.cnil.fr" className="text-[#2D5A3D] underline" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.cnil.fr" className="text-[#2A5A3A] underline" target="_blank" rel="noopener noreferrer">
                 www.cnil.fr
               </a>.
             </p>
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[#2D5A3D]/10 text-sm text-[#1a1a1a]/50">
+        <div className="mt-12 pt-8 border-t border-[#2A5A3A]/10 text-sm text-[#1a1a1a]/50">
           Dernière mise à jour : avril 2026
         </div>
       </main>

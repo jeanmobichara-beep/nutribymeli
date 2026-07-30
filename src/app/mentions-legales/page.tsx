@@ -6,17 +6,17 @@ export const metadata = {
 
 export default function MentionsLegales() {
   return (
-    <div className="min-h-screen bg-[#F9F6F1]">
+    <div className="min-h-screen bg-[#FBFCF9]">
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center">
-          <Link href="/" className="text-[#2D5A3D] font-bold text-lg hover:opacity-80 transition">
+          <Link href="/" className="text-[#2A5A3A] font-bold text-lg hover:opacity-80 transition">
             NutriByMeli
           </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="text-3xl font-bold text-[#2D5A3D] mb-8">Mentions légales</h1>
+        <h1 className="text-3xl font-bold text-[#2A5A3A] mb-8">Mentions légales</h1>
 
         <div className="prose prose-gray max-w-none space-y-8 text-[#1a1a1a]/80">
           <section>
@@ -30,7 +30,7 @@ export default function MentionsLegales() {
               Co-gérants : Jean-Maurice Bichara-Jabour & Mélissa Pommez
             </p>
             <p>
-              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2D5A3D] underline">contact@nutri-meli.com</a>
+              Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>
             </p>
           </section>
 
@@ -47,7 +47,7 @@ export default function MentionsLegales() {
               Le site est hébergé par :<br />
               <strong>Vercel Inc.</strong><br />
               440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis<br />
-              Site : <a href="https://vercel.com" className="text-[#2D5A3D] underline" target="_blank" rel="noopener noreferrer">vercel.com</a>
+              Site : <a href="https://vercel.com" className="text-[#2A5A3A] underline" target="_blank" rel="noopener noreferrer">vercel.com</a>
             </p>
           </section>
 
@@ -62,7 +62,7 @@ export default function MentionsLegales() {
             <h2 className="text-xl font-semibold text-[#1a1a1a]">5. Données personnelles</h2>
             <p>
               Les données personnelles collectées via le questionnaire nutritionnel et les formulaires du site sont traitées conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée. Pour plus d&apos;informations, consultez notre{" "}
-              <Link href="/politique-confidentialite" className="text-[#2D5A3D] underline">
+              <Link href="/politique-confidentialite" className="text-[#2A5A3A] underline">
                 Politique de confidentialité
               </Link>.
             </p>
@@ -83,7 +83,7 @@ export default function MentionsLegales() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[#2D5A3D]/10 text-sm text-[#1a1a1a]/50">
+        <div className="mt-12 pt-8 border-t border-[#2A5A3A]/10 text-sm text-[#1a1a1a]/50">
           Dernière mise à jour : avril 2026
         </div>
       </main>

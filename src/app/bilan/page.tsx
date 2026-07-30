@@ -22,7 +22,7 @@ import {
 
 // Score-based colors/labels aligned with email thresholds
 function getAxisColor(score: number): string {
-  if (score >= 65) return "#6B9E6B";
+  if (score >= 65) return "#2A5A3A";
   if (score >= 45) return "#E5A100";
   if (score >= 25) return "#E07A3A";
   return "#D94343";
@@ -80,17 +80,17 @@ export default function BilanPage() {
   const imcAdvice = imc < 18.5 ? "Un apport calorique adapté et un suivi nutritionnel peuvent aider à retrouver un poids santé." : imc < 25 ? "Votre poids est dans la zone recommandée. Continuez à maintenir de bonnes habitudes alimentaires." : imc < 30 ? "Quelques ajustements alimentaires ciblés peuvent vous aider à retrouver un meilleur équilibre." : "Un accompagnement nutritionnel personnalisé est fortement recommandé pour améliorer votre santé.";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F9F6F1] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#FBFCF9] to-white">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center">
           <Link href="/">
             <Image
-              src="/logo.png"
+              src="/home/logo.svg"
               alt="NutriByMeli"
               width={120}
               height={40}
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default function BilanPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Title */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-[#6B9E6B]/10 text-[#2D5A3D] text-xs font-medium px-3 py-1.5 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 bg-[#2A5A3A]/10 text-[#2A5A3A] text-xs font-medium px-3 py-1.5 rounded-full mb-4">
             <CheckCircle2 className="w-3.5 h-3.5" />
             Bilan généré avec succès
           </div>
@@ -146,7 +146,7 @@ export default function BilanPage() {
 
           {/* Score global */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 bg-[#F9F6F1] rounded-2xl px-6 py-4">
+            <div className="inline-flex items-center gap-3 bg-[#FBFCF9] rounded-2xl px-6 py-4">
               <div
                 className="text-3xl font-bold"
                 style={{ color: getAxisColor(result.overallScore) }}
@@ -176,7 +176,7 @@ export default function BilanPage() {
           {/* IMC */}
           {imc > 0 && (
             <div className="mb-8">
-              <div className="bg-[#F9F6F1] rounded-2xl p-6">
+              <div className="bg-[#FBFCF9] rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-[#1a1a1a]">Votre IMC</h3>
                   <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function BilanPage() {
         {result.detectedPatterns.length > 0 && (
           <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 mb-8">
             <h2 className="text-lg font-bold text-[#1a1a1a] mb-6 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#6B9E6B]" />
+              <TrendingUp className="w-5 h-5 text-[#2A5A3A]" />
               Patterns détectés
             </h2>
             <div className="space-y-4">
@@ -264,9 +264,9 @@ export default function BilanPage() {
               {result.topPriorities.map((priority, i) => (
                 <div
                   key={priority}
-                  className="flex items-center gap-3 bg-[#F9F6F1] rounded-xl px-5 py-4"
+                  className="flex items-center gap-3 bg-[#FBFCF9] rounded-xl px-5 py-4"
                 >
-                  <span className="w-8 h-8 bg-[#6B9E6B] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  <span className="w-8 h-8 bg-[#2A5A3A] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                     {i + 1}
                   </span>
                   <span className="text-sm font-medium text-[#1a1a1a]">
@@ -281,7 +281,7 @@ export default function BilanPage() {
         {/* Synthèse personnalisée */}
         <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 mb-8">
           <h2 className="text-lg font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
-            <ClipboardCheck className="w-5 h-5 text-[#6B9E6B]" />
+            <ClipboardCheck className="w-5 h-5 text-[#2A5A3A]" />
             Synthèse de votre pré-bilan
           </h2>
           <div className="prose prose-sm max-w-none text-[#444] leading-relaxed space-y-3">
@@ -330,7 +330,7 @@ export default function BilanPage() {
         </div>
 
         {/* CTA Consultation */}
-        <div className="bg-[#2D5A3D] rounded-2xl p-8 sm:p-10 text-white text-center">
+        <div className="bg-[#2A5A3A] rounded-2xl p-8 sm:p-10 text-white text-center">
           <p className="text-[#A8C5A0] text-xs font-medium uppercase tracking-wider mb-3">
             Prochaine étape
           </p>
@@ -345,7 +345,7 @@ export default function BilanPage() {
 
           <a
             href="#reserver"
-            className="inline-flex items-center gap-2 bg-white text-[#2D5A3D] font-semibold px-8 py-4 rounded-full text-lg transition-all hover:shadow-xl hover:bg-[#F9F6F1] mb-4"
+            className="inline-flex items-center gap-2 bg-white text-[#2A5A3A] font-semibold px-8 py-4 rounded-full text-lg transition-all hover:shadow-xl hover:bg-[#FBFCF9] mb-4"
           >
             <Calendar className="w-5 h-5" />
             Réserver ma consultation — 69&euro;
@@ -457,9 +457,9 @@ function RadarChart({ axes }: { axes: AxisScore[] }) {
       {/* Data area */}
       <polygon
         points={dataPoints}
-        fill="#6B9E6B"
+        fill="#2A5A3A"
         fillOpacity="0.2"
-        stroke="#6B9E6B"
+        stroke="#2A5A3A"
         strokeWidth="2.5"
       />
 
@@ -541,7 +541,7 @@ function AxisDetail({ axis }: { axis: AxisScore }) {
         <div className="mt-3 space-y-1.5">
           {axis.priorities.map((p) => (
             <div key={p} className="flex gap-2 text-xs">
-              <ArrowRight className="w-3.5 h-3.5 text-[#6B9E6B] flex-shrink-0 mt-0.5" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#2A5A3A] flex-shrink-0 mt-0.5" />
               <span className="text-[#1a1a1a] font-medium">{p}</span>
             </div>
           ))}

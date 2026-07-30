@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
             <Image
-              src="/logo.png"
+              src="/home/logo.svg"
               alt="NutriByMeli"
               width={160}
               height={56}

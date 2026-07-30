@@ -9,7 +9,7 @@ export function Header() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/logo.png"
+            src="/home/logo.svg"
             alt="NutriByMeli"
             width={140}
             height={50}
@@ -30,7 +30,7 @@ export function Header() {
         </nav>
         <Link
           href="/questionnaire"
-          className="bg-[#6B9E6B] hover:bg-[#5A8A5A] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:shadow-lg"
+          className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:shadow-lg"
         >
           Bilan gratuit
         </Link>

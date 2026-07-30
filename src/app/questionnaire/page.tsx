@@ -33,17 +33,17 @@ export default function QuestionnairePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F9F6F1] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#FBFCF9] to-white">
       {/* Mini header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/">
             <Image
-              src="/logo.png"
+              src="/home/logo.svg"
               alt="NutriByMeli"
               width={120}
               height={40}
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
           </Link>
           <span className="text-xs text-muted-foreground hidden sm:block">

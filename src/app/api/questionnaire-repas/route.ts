@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { REPAS_SECTIONS } from "@/data/questionnaire-repas";
+import { genererMenu, type MenuPropose } from "@/lib/menu/engine";
+
+export const maxDuration = 60; // laisse le temps à la génération IA du menu
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -56,23 +59,34 @@ export async function POST(request: Request) {
         })
     ).join("");
 
+    // === Génération du menu proposé (IA + calcul coût/marge) ===
+    let menu: MenuPropose | null = null;
+    try {
+      menu = await genererMenu(answers);
+    } catch (e) {
+      console.error("Génération de menu impossible:", e);
+    }
+
     if (!resend) {
       // Config email absente — on ne bloque pas l'UX mais on le signale au log
       console.error("RESEND_API_KEY manquant — email non envoyé");
-      return NextResponse.json({ success: true, emailed: false });
+      return NextResponse.json({ success: true, emailed: false, menu: menu ? { source: menu.source, jours: menu.jours.length } : null });
     }
 
-    // === Email à Mélissa : la demande repas complète ===
+    const menuHtml = menu ? renderMenuHtml(menu) : `<p style="color:#B45309;font-size:14px;"><strong>⚠️ Menu non généré</strong> — à composer manuellement pour ce client.</p>`;
+
+    // === Email à Mélissa : la demande repas complète + menu proposé ===
     await resend.emails.send({
       from: "NutriByMeli <notifications@nutri-meli.com>",
       to: [MELISSA_EMAIL],
       replyTo: clientEmail || undefined,
-      subject: `Nouvelle demande repas — ${prenom}${jours ? ` (${jours})` : ""}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-        <h2 style="color:#2D5A3D;">Nouvelle demande de repas</h2>
-        <p><strong>${prenom}</strong> souhaite rejoindre l'offre repas. Voici ses préférences pour caler le dosage :</p>
+      subject: `Demande repas — ${prenom}${jours ? ` (${jours})` : ""}${menu ? ` · menu proposé ${menu.source === "ia" ? "🤖" : "(auto)"}` : ""}`,
+      html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;">
+        <h2 style="color:#2A5A3A;">Nouvelle demande de repas</h2>
+        <p><strong>${prenom}</strong> souhaite rejoindre l'offre repas. Voici ses préférences :</p>
         <table style="width:100%;border-collapse:collapse;margin:16px 0;">${rows}</table>
-        <p style="color:#888;font-size:13px;">Réponds directement à cet email pour lui revenir avec son menu.</p>
+        ${menuHtml}
+        <p style="color:#888;font-size:13px;">Réponds directement à cet email pour lui revenir avec son menu validé.</p>
       </div>`,
     });
 
@@ -92,7 +106,11 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ success: true, emailed: true });
+    return NextResponse.json({
+      success: true,
+      emailed: true,
+      menu: menu ? { source: menu.source, jours: menu.jours.length } : null,
+    });
   } catch (error) {
     console.error("Erreur API questionnaire-repas:", error);
     return NextResponse.json(
@@ -100,4 +118,54 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+/* ----------------------- Rendu email du menu proposé ----------------------- */
+
+function euro(n: number | null): string {
+  return n == null ? "—" : n.toFixed(2).replace(".", ",") + " €";
+}
+
+function renderMenuHtml(menu: MenuPropose): string {
+  const lignes = menu.jours
+    .map((j) => {
+      const cout = menu.cout.parRepas.find((c) => c.jour === j.jour)?.cout ?? 0;
+      const prot = Math.round(j.recette.proteines * j.facteur);
+      const kcal = Math.round(j.recette.kcal * j.facteur);
+      const poids = Math.round(j.recette.poids * j.facteur);
+      return `<tr>
+        <td style="padding:8px;border-bottom:1px solid #eee;font-weight:600;text-transform:capitalize;">${j.jour}</td>
+        <td style="padding:8px;border-bottom:1px solid #eee;">
+          <strong>${j.recette.nom}</strong>
+          <div style="color:#888;font-size:12px;">${j.recette.composition}</div>
+          ${j.note ? `<div style="color:#2A5A3A;font-size:12px;font-style:italic;margin-top:2px;">💡 ${j.note}</div>` : ""}
+        </td>
+        <td style="padding:8px;border-bottom:1px solid #eee;white-space:nowrap;font-size:13px;">×${j.facteur}<br>${prot} g prot · ${kcal} kcal<br>${poids} g</td>
+        <td style="padding:8px;border-bottom:1px solid #eee;white-space:nowrap;font-weight:600;">${euro(cout)}</td>
+      </tr>`;
+    })
+    .join("");
+
+  const marge =
+    menu.cout.prixRepas != null
+      ? `<tr><td style="padding:6px 8px;color:#555;">Prix de vente (PRIX_REPAS)</td><td style="padding:6px 8px;font-weight:700;">${euro(menu.cout.prixRepas)}</td></tr>
+         <tr><td style="padding:6px 8px;color:#555;">Marge brute moyenne / repas</td><td style="padding:6px 8px;font-weight:700;color:${(menu.cout.margeMoyenne ?? 0) >= 8 ? "#2A5A3A" : "#B45309"};">${euro(menu.cout.margeMoyenne)} (${menu.cout.margePct}%)</td></tr>`
+      : `<tr><td style="padding:6px 8px;color:#555;">Prix de vente</td><td style="padding:6px 8px;color:#888;">non défini (variable PRIX_REPAS) — marge non calculée</td></tr>`;
+
+  return `
+  <h3 style="color:#2A5A3A;margin:22px 0 8px 0;">Menu proposé ${menu.source === "ia" ? "(composé par IA)" : "(sélection automatique — IA indisponible)"}</h3>
+  <p style="color:#888;font-size:12px;margin:0 0 10px 0;">Cible : ~${menu.cible.proteines} g de protéines · ~${menu.cible.kcal} kcal par repas. <strong>Proposition à valider/ajuster avant tout envoi au client.</strong></p>
+  <table style="width:100%;border-collapse:collapse;margin:0 0 14px 0;font-size:14px;">
+    <tr style="background:#EEF3E8;">
+      <th style="padding:8px;text-align:left;">Jour</th><th style="padding:8px;text-align:left;">Plat</th><th style="padding:8px;text-align:left;">Portion</th><th style="padding:8px;text-align:left;">Coût matière</th>
+    </tr>
+    ${lignes}
+  </table>
+  ${menu.conseil ? `<p style="background:#EEF3E8;border-radius:8px;padding:10px 12px;font-size:13px;color:#2A5A3A;"><strong>Conseil client proposé :</strong> ${menu.conseil}</p>` : ""}
+  <table style="border-collapse:collapse;margin:10px 0;font-size:14px;">
+    <tr><td style="padding:6px 8px;color:#555;">Coût matière total (${menu.jours.length} repas)</td><td style="padding:6px 8px;font-weight:700;">${euro(menu.cout.total)}</td></tr>
+    <tr><td style="padding:6px 8px;color:#555;">Coût matière moyen / repas</td><td style="padding:6px 8px;font-weight:700;">${euro(menu.cout.moyen)}</td></tr>
+    ${marge}
+  </table>
+  <p style="color:#B45309;font-size:12px;">⚠️ Coûts = estimation (base prix Antilles ≈ métropole +35 %, coef pertes 12 %). À recaler sur les tickets de courses réels. Grammages et macros à valider par toi.</p>`;
 }
