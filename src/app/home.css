@@ -117,13 +117,13 @@
 .nb-home .ab-copy p { color: var(--nb-muted); max-width: 50ch; }
 
 /* La différence — section inversée */
-.nb-home .invert { background: #132e1e; color: #eaf3ea; border-radius: 26px; padding: clamp(32px, 6vw, 60px); margin: 0 var(--nb-pad); }
-.nb-home .invert .wrap { padding: 0; }
-.nb-home .invert .eyebrow { color: var(--nb-accent); }
-.nb-home .invert h2 { color: #fff; }
-.nb-home .invert p { color: #c3d6c6; max-width: 52ch; margin-top: 16px; }
-.nb-home .invert .member { margin-top: 22px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.16); color: #c3d6c6; }
-.nb-home .invert .btn-accent { margin-top: 20px; }
+.nb-home .nb-invert { background: #132e1e; color: #eaf3ea; border-radius: 26px; padding: clamp(32px, 6vw, 60px); margin: 0 var(--nb-pad); }
+.nb-home .nb-invert .wrap { padding: 0; }
+.nb-home .nb-invert .eyebrow { color: var(--nb-accent); }
+.nb-home .nb-invert h2 { color: #fff; }
+.nb-home .nb-invert p { color: #c3d6c6; max-width: 52ch; margin-top: 16px; }
+.nb-home .nb-invert .member { margin-top: 22px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.16); color: #c3d6c6; }
+.nb-home .nb-invert .btn-accent { margin-top: 20px; }
 .nb-home .invert-grid { display: grid; gap: 28px; align-items: center; }
 .nb-home .invert-grid .im img { width: 100%; border-radius: 16px; aspect-ratio: 4 / 3; object-fit: cover; }
 

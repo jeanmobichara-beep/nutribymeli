@@ -260,7 +260,7 @@ export default function HomePage() {
 
         {/* ===== La différence ===== */}
         <section>
-          <div className="invert reveal">
+          <div className="nb-invert reveal">
             <div className="wrap invert-grid">
               <div>
                 <span className="eyebrow">La différence</span>
