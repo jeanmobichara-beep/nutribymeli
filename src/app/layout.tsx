@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NutriByMeli | Mélissa Pommez — Diététicienne & Naturopathe",
+  title: "NutriByMeli — Repas sains personnalisés, livrés | Diététicienne D.E. Guadeloupe",
   description:
-    "Diététicienne Diplômée d'État & Naturopathe en Guadeloupe. Retrouvez énergie, équilibre et vitalité par l'alimentation. Bilan nutrition gratuit.",
+    "Des déjeuners frais, pesés et dosés pour ton corps par une diététicienne Diplômée d'État. Compose ton menu en 2 minutes — livraison offerte, places limitées. Bilan nutritionnel offert.",
   keywords: [
     "diététicienne",
     "naturopathe",
