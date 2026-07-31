@@ -123,6 +123,7 @@ async function selectionIA(
       prompt: `Tu es l'assistante d'une diététicienne D.E. qui prépare des déjeuners personnalisés en Guadeloupe.
 Compose le menu de la semaine pour ce client, UNIQUEMENT avec les recettes de la liste (utilise leurs id exacts).
 Varie les protéines sur la semaine (jamais 2 jours de suite le même plat), respecte le profil, privilégie ce qui colle à son objectif.
+IMPORTANT : dans les notes et le conseil, TUTOIE toujours le client (« tu », jamais « vous ») — ton chaleureux et direct, comme le site.
 
 PROFIL CLIENT : ${JSON.stringify(profil)}
 JOURS DEMANDÉS : ${joursDemandes.join(", ")}
