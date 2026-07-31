@@ -2,6 +2,7 @@ import Link from "next/link";
 import "./home.css";
 import { RevealInit } from "@/components/home/RevealInit";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
+import { NewsletterPopup } from "@/components/home/NewsletterPopup";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -56,6 +57,7 @@ export default function HomePage() {
   return (
     <div className="nb-home">
       <RevealInit />
+      <NewsletterPopup />
 
       {/* ===== Nav ===== */}
       <header className="nb-nav">
@@ -120,7 +122,7 @@ export default function HomePage() {
             </div>
             <div className="steps">
               <div className="stepc reveal">
-                <img src="/home/quiz.jpg" alt="Le quiz NutriByMeli sur téléphone" />
+                <img src="/home/quiz.jpg" alt="Des ingrédients pesés, prêts à composer ton menu" />
                 <div className="body">
                   <span className="n">01</span>
                   <h3>Ton profil en 2 min</h3>
@@ -139,8 +141,8 @@ export default function HomePage() {
                 <img src="/home/cuisine.jpg" alt="Cuisine propre, gamelles prêtes à être livrées" />
                 <div className="body">
                   <span className="n">03</span>
-                  <h3>On cuisine, tu profites</h3>
-                  <p>Tu coches tes jours, on cuisine frais et on livre. Tu n&apos;as plus qu&apos;à te régaler.</p>
+                  <h3>Cuisiné, pesé, livré</h3>
+                  <p>Tu coches tes jours, et tes gamelles arrivent fraîches. Plus qu&apos;à te régaler.</p>
                 </div>
               </div>
             </div>

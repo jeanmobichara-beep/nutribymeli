@@ -58,11 +58,10 @@ export default function QuestionnaireRepasPage() {
               </h1>
               <p className="text-muted-foreground text-sm leading-relaxed max-w-lg mx-auto mb-8">
                 Mélissa a reçu tes préférences. Elle revient vers toi avec ton menu
-                de la semaine, pesé et dosé rien que pour toi. Les places sont limitées :
-                tu fais partie du cercle.
+                de la semaine, pesé et dosé rien que pour toi. À très vite.
               </p>
               <Link href="/">
-                <Button className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full">
+                <Button className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-8 rounded-full">
                   Retour à l&apos;accueil
                 </Button>
               </Link>
@@ -85,7 +84,7 @@ export default function QuestionnaireRepasPage() {
               </p>
               <Button
                 onClick={() => setStatus("form")}
-                className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full"
+                className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-8 rounded-full"
               >
                 Réessayer
               </Button>

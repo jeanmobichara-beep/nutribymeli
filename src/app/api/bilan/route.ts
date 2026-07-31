@@ -1281,13 +1281,13 @@ export async function POST(request: Request) {
         to: [MELISSA_EMAIL],
         subject: `Nouveau bilan — ${prenom} ${nom} (${result.overallScore}/100) — ${summary}`,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-          <h2 style="color:#2D5A3D;">Nouveau bilan recu</h2>
+          <h2 style="color:#2A5A3A;">Nouveau bilan recu</h2>
           <p><strong>${prenom} ${nom}</strong> vient de completer son questionnaire.</p>
           <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Score global</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;font-size:18px;color:${result.overallScore >= 65 ? "#6B9E6B" : result.overallScore >= 45 ? "#E5A100" : "#D94343"};">${result.overallScore}/100</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Score global</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;font-size:18px;color:${result.overallScore >= 65 ? "#2A5A3A" : result.overallScore >= 45 ? "#E5A100" : "#D94343"};">${result.overallScore}/100</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Email</td><td style="padding:8px;border-bottom:1px solid #eee;">${patientEmail}</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Axes critiques</td><td style="padding:8px;border-bottom:1px solid #eee;">${worstAxes.length > 0 ? worstAxes.join(", ") : "Aucun"}</td></tr>
-            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Red flags</td><td style="padding:8px;border-bottom:1px solid #eee;color:${result.redFlags.length > 0 ? "#D94343" : "#6B9E6B"};">${result.redFlags.length > 0 ? result.redFlags.length + " signal(aux)" : "Aucun"}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#888;">Red flags</td><td style="padding:8px;border-bottom:1px solid #eee;color:${result.redFlags.length > 0 ? "#D94343" : "#2A5A3A"};">${result.redFlags.length > 0 ? result.redFlags.length + " signal(aux)" : "Aucun"}</td></tr>
           </table>
           <p style="color:#888;font-size:13px;">3 PDFs en piece jointe :<br>- <strong>Dossier patient</strong> : recap complet du questionnaire avec annotations cliniques<br>- <strong>Briefing visio</strong> : notes de preparation pour ta consultation<br>- <strong>Argumentaire 90 jours</strong> : argumentaire de vente + objections/reponses</p>
           <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
@@ -1311,11 +1311,11 @@ export async function POST(request: Request) {
 
       // === EMAIL 2 : Confirmation au patient (HTML pro) ===
       if (patientEmail) {
-        const scoreColor = result.overallScore >= 65 ? "#6B9E6B" : result.overallScore >= 45 ? "#E5A100" : result.overallScore >= 25 ? "#E07A3A" : "#D94343";
+        const scoreColor = result.overallScore >= 65 ? "#2A5A3A" : result.overallScore >= 45 ? "#E5A100" : result.overallScore >= 25 ? "#E07A3A" : "#D94343";
         const scoreLabel = result.overallScore >= 65 ? "Terrain globalement équilibré" : result.overallScore >= 45 ? "Quelques axes méritent attention" : result.overallScore >= 25 ? "Plusieurs axes à travailler" : "Prise en charge recommandée";
 
         const axesHtml = result.axes.map((a) => {
-          const color = a.score >= 65 ? "#6B9E6B" : a.score >= 45 ? "#E5A100" : a.score >= 25 ? "#E07A3A" : "#D94343";
+          const color = a.score >= 65 ? "#2A5A3A" : a.score >= 45 ? "#E5A100" : a.score >= 25 ? "#E07A3A" : "#D94343";
           const levelLabel = a.score >= 65 ? "Bon" : a.score >= 45 ? "À améliorer" : a.score >= 25 ? "Préoccupant" : "Critique";
           const pct = Math.max(a.score, 5);
           return `<tr>
@@ -1339,7 +1339,7 @@ export async function POST(request: Request) {
 
         const prioritiesHtml = result.topPriorities.length > 0
           ? `<p style="margin:16px 0 8px 0;font-size:14px;font-weight:600;color:#333333;">Vos priorités :</p>` +
-            result.topPriorities.map((p, i) => `<p style="margin:4px 0;font-size:13px;color:#555555;"><span style="color:#6B9E6B;font-weight:700;">${i + 1}.</span> ${p}</p>`).join("")
+            result.topPriorities.map((p, i) => `<p style="margin:4px 0;font-size:13px;color:#555555;"><span style="color:#2A5A3A;font-weight:700;">${i + 1}.</span> ${p}</p>`).join("")
           : "";
 
         const patientHtml = `<!DOCTYPE html>
@@ -1388,7 +1388,7 @@ ${prioritiesHtml}
 <tr><td align="center" style="padding:24px 0;">
 <h2 style="margin:0 0 8px 0;font-size:18px;color:#1a1a1a;">Prochaine étape</h2>
 <p style="margin:0 0 16px 0;color:#666666;font-size:14px;line-height:1.6;">60 minutes en visio pour approfondir votre bilan et construire votre feuille de route personnalisée.</p>
-<a href="https://nutri-meli.com" style="background-color:#6B9E6B;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:50px;font-weight:600;font-size:15px;display:inline-block;">Réserver ma consultation</a>
+<a href="https://nutri-meli.com" style="background-color:#2A5A3A;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:50px;font-weight:600;font-size:15px;display:inline-block;">Réserver ma consultation</a>
 </td></tr>
 </table>
 
@@ -1400,10 +1400,10 @@ ${prioritiesHtml}
 </td>
 <td style="padding:16px 0;vertical-align:top;">
 <p style="margin:0 0 2px 0;font-size:14px;font-weight:600;color:#1a1a1a;">Mélissa Pommez</p>
-<p style="margin:0 0 6px 0;font-size:12px;color:#6B9E6B;">Diététicienne Diplômée d'État &amp; Naturopathe</p>
-<p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Expertise certifiée &nbsp; <span style="color:#6B9E6B;font-weight:700;">&#10003;</span> Secret professionnel</p>
+<p style="margin:0 0 6px 0;font-size:12px;color:#2A5A3A;">Diététicienne Diplômée d'État &amp; Naturopathe</p>
+<p style="margin:0 0 2px 0;font-size:11px;color:#888888;"><span style="color:#2A5A3A;font-weight:700;">&#10003;</span> Expertise certifiée &nbsp; <span style="color:#2A5A3A;font-weight:700;">&#10003;</span> Secret professionnel</p>
 <p style="margin:0 0 4px 0;font-size:11px;color:#888888;">&#128205; Guadeloupe</p>
-<p style="margin:0;font-size:11px;"><a href="https://nutri-meli.com" style="color:#6B9E6B;text-decoration:none;">nutri-meli.com</a> &nbsp;|&nbsp; <a href="mailto:contact@nutri-meli.com" style="color:#6B9E6B;text-decoration:none;">contact@nutri-meli.com</a></p>
+<p style="margin:0;font-size:11px;"><a href="https://nutri-meli.com" style="color:#2A5A3A;text-decoration:none;">nutri-meli.com</a> &nbsp;|&nbsp; <a href="mailto:contact@nutri-meli.com" style="color:#2A5A3A;text-decoration:none;">contact@nutri-meli.com</a></p>
 </td>
 </tr>
 </table>

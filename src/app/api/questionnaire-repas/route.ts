@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { REPAS_SECTIONS } from "@/data/questionnaire-repas";
 import { genererMenu, type MenuPropose } from "@/lib/menu/engine";
+import { brandEmail } from "@/lib/email/brand";
+import { encodeMenuToken } from "@/lib/menu/token";
 
 export const maxDuration = 60; // laisse le temps à la génération IA du menu
 
@@ -75,41 +77,64 @@ export async function POST(request: Request) {
 
     const menuHtml = menu ? renderMenuHtml(menu) : `<p style="color:#B45309;font-size:14px;"><strong>⚠️ Menu non généré</strong> — à composer manuellement pour ce client.</p>`;
 
-    // === Email à Mélissa : la demande repas complète + menu proposé ===
+    // Lien vers la page menu personnalisée du client (jeton encodé, pas de BDD)
+    const menuUrl = menu
+      ? `https://nutri-meli.com/menu?d=${encodeMenuToken(menu, prenom, clientEmail || undefined)}`
+      : null;
+
+    // === Email à Mélissa : la demande repas complète + menu proposé (interne : coûts/marge) ===
     await resend.emails.send({
       from: "NutriByMeli <notifications@nutri-meli.com>",
       to: [MELISSA_EMAIL],
       replyTo: clientEmail || undefined,
       subject: `Demande repas — ${prenom}${jours ? ` (${jours})` : ""}${menu ? ` · menu proposé ${menu.source === "ia" ? "🤖" : "(auto)"}` : ""}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;">
-        <h2 style="color:#2A5A3A;">Nouvelle demande de repas</h2>
-        <p><strong>${prenom}</strong> souhaite rejoindre l'offre repas. Voici ses préférences :</p>
-        <table style="width:100%;border-collapse:collapse;margin:16px 0;">${rows}</table>
+      html: brandEmail(`
+        <h2 style="color:#2A5A3A;margin:0 0 10px 0;">Nouvelle demande de repas</h2>
+        <p style="margin:0 0 6px 0;"><strong>${prenom}</strong> vient de composer son menu. Ses préférences :</p>
+        <table style="width:100%;border-collapse:collapse;margin:14px 0;">${rows}</table>
         ${menuHtml}
-        <p style="color:#888;font-size:13px;">Réponds directement à cet email pour lui revenir avec son menu validé.</p>
-      </div>`,
+        ${menuUrl ? `<p style="font-size:13px;color:#586A5B;">Le client a reçu ce menu (sans les coûts) avec ce lien : <a href="${menuUrl}" style="color:#2A5A3A;">sa page menu</a>. S'il confirme ses jours, tu recevras une notification.</p>` : ""}
+        <p style="color:#888;font-size:13px;margin:8px 0 0 0;">Réponds directement à cet email pour ajuster avec lui si besoin.</p>
+      `),
     });
 
-    // === Confirmation au client (courte) ===
+    // === Email au client : SON menu, tout de suite (conversion), sans les coûts ===
     if (clientEmail) {
+      const menuClientHtml = menu
+        ? `
+          <p style="font-size:15px;line-height:1.7;color:#586A5B;margin:0 0 16px 0;">Ton menu de la semaine est prêt — composé selon ton profil, pesé et dosé pour toi. Le voici :</p>
+          <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;font-size:14px;">
+            ${menu.jours
+              .map(
+                (j) => `<tr>
+                  <td style="padding:9px 8px;border-bottom:1px solid #EEF3E8;font-weight:700;color:#2A5A3A;text-transform:capitalize;white-space:nowrap;">${j.jour}</td>
+                  <td style="padding:9px 8px;border-bottom:1px solid #EEF3E8;"><strong>${j.recette.nom}</strong><div style="color:#8A9A8B;font-size:12px;">${j.recette.composition}</div></td>
+                </tr>`
+              )
+              .join("")}
+          </table>
+          ${menu.conseil ? `<p style="background:#EEF3E8;border-radius:10px;padding:12px 14px;font-size:13px;color:#2A5A3A;margin:0 0 18px 0;"><strong>Le mot de Mélissa :</strong> ${menu.conseil}</p>` : ""}
+          <table cellpadding="0" cellspacing="0" style="margin:6px 0 10px 0;"><tr><td style="background:#C4F135;border-radius:999px;">
+            <a href="${menuUrl}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:700;color:#16240F;text-decoration:none;">Voir mon menu &amp; confirmer mes jours →</a>
+          </td></tr></table>
+          <p style="font-size:12px;color:#9AA79B;margin:8px 0 0 0;">Mélissa peut ajuster ton menu à la marge au moment de la confirmation. Un plat ne te tente pas&nbsp;? Réponds à cet email, on l'échange.</p>`
+        : `<p style="font-size:15px;line-height:1.7;color:#586A5B;">Merci ! J'ai bien reçu tes préférences. Je compose ton menu de la semaine, pesé et dosé pour toi, et je reviens vers toi très rapidement.</p>`;
+
       await resend.emails.send({
         from: "Mélissa P. — NutriByMeli <contact@nutri-meli.com>",
         to: [clientEmail],
-        subject: `${prenom}, tes préférences repas sont bien reçues`,
-        html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333;">
-          <p style="font-size:16px;">Bonjour ${prenom},</p>
-          <p style="font-size:15px;line-height:1.7;color:#555;">Merci ! J'ai bien reçu tes préférences. Je te prépare un menu de la semaine
-          pesé et dosé rien que pour toi, et je reviens vers toi très vite.</p>
-          <p style="font-size:15px;line-height:1.7;color:#555;">Les places sont limitées — tu fais partie du cercle. 🌿</p>
-          <p style="font-size:14px;color:#6B9E6B;margin-top:20px;"><strong>Mélissa P.</strong><br>Diététicienne Diplômée d'État &amp; Naturopathe</p>
-        </div>`,
+        subject: menu ? `${prenom}, ton menu de la semaine est prêt 🌿` : `${prenom}, tes préférences sont bien reçues`,
+        html: brandEmail(
+          `<p style="font-size:16px;margin:0 0 12px 0;">Bonjour ${prenom},</p>${menuClientHtml}`,
+          { preheader: menu ? "Ton menu personnalisé t'attend — confirme tes jours." : undefined }
+        ),
       });
     }
 
     return NextResponse.json({
       success: true,
       emailed: true,
-      menu: menu ? { source: menu.source, jours: menu.jours.length } : null,
+      menu: menu ? { source: menu.source, jours: menu.jours.length, url: menuUrl } : null,
     });
   } catch (error) {
     console.error("Erreur API questionnaire-repas:", error);

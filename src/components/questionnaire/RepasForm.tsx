@@ -108,7 +108,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
 
           <Button
             onClick={() => setShowIntro(false)}
-            className="w-full bg-[#2A5A3A] hover:bg-[#1F4230] text-white py-6 rounded-full text-base font-semibold"
+            className="w-full bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] py-6 rounded-full text-base font-semibold"
           >
             Commencer
             <ArrowRight className="w-5 h-5 ml-2" />
@@ -173,7 +173,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           <Button
             onClick={handleNext}
             disabled={!canProceed() || submitting}
-            className="bg-[#2A5A3A] hover:bg-[#1F4230] text-white px-8 rounded-full"
+            className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-8 rounded-full"
           >
             {submitting ? "Envoi…" : isLast ? "Envoyer mes préférences" : "Continuer"}
             {!submitting && <ArrowRight className="w-4 h-4 ml-2" />}

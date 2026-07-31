@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { brandEmail } from "@/lib/email/brand";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -45,11 +46,11 @@ export async function POST(request: Request) {
       from: "NutriByMeli <notifications@nutri-meli.com>",
       to: [MELISSA_EMAIL],
       subject: `Nouvel abonné newsletter — ${email}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:20px;">
+      html: brandEmail(`
         <h2 style="color:#2A5A3A;margin:0 0 10px 0;">Nouvel abonné newsletter</h2>
-        <p style="font-size:15px;color:#333;"><strong>${email}</strong> s'est inscrit à la newsletter bien-être / nutrition depuis nutri-meli.com.</p>
-        <p style="font-size:13px;color:#888;">${stored ? "Contact ajouté à l'audience Resend." : "Astuce : configure RESEND_AUDIENCE_ID pour stocker automatiquement les contacts dans Resend → Audiences."}</p>
-      </div>`,
+        <p style="font-size:15px;margin:0 0 8px 0;"><strong>${email}</strong> s'est inscrit à la newsletter bien-être / nutrition depuis nutri-meli.com.</p>
+        <p style="font-size:13px;color:#888;margin:0;">${stored ? "Contact ajouté à l'audience Resend." : "Astuce : configure RESEND_AUDIENCE_ID pour stocker automatiquement les contacts dans Resend → Audiences."}</p>
+      `),
     });
 
     return NextResponse.json({ success: true, stored });

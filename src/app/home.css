@@ -174,3 +174,16 @@
 .nb-home .nl-input:focus { border-color: var(--nb-brand); }
 .nb-home .nl-hint { font-size: 0.8rem; color: var(--nb-muted); margin-top: 8px; }
 .nb-home .nl-ok { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--nb-line); font-weight: 600; color: var(--nb-brand); }
+
+/* Popup newsletter */
+.nb-home .nl-pop { position: fixed; bottom: 20px; left: 20px; z-index: 90; max-width: 340px; background: var(--nb-card); border: 1px solid var(--nb-line); border-radius: 18px; padding: 20px 20px 18px; box-shadow: 0 28px 70px -28px rgba(20, 50, 30, 0.5); animation: nlpop 0.45s ease; }
+@keyframes nlpop { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .nb-home .nl-pop { animation: none; } }
+.nb-home .nl-pop-x { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--nb-muted); font-size: 0.9rem; cursor: pointer; padding: 4px; }
+.nb-home .nl-pop-eyebrow { font-family: var(--nb-mono); font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--nb-brand); font-weight: 600; margin: 0 0 4px 0; }
+.nb-home .nl-pop-title { font-weight: 800; font-size: 1.05rem; line-height: 1.25; margin: 0 0 6px 0; }
+.nb-home .nl-pop-sub { font-size: 0.82rem; color: var(--nb-muted); margin: 0 0 12px 0; }
+.nb-home .nl-pop-row { display: flex; gap: 8px; }
+.nb-home .nl-pop-ok { font-weight: 700; color: var(--nb-brand); margin: 6px 0 0 0; }
+.nb-home .nl-pop-err { font-size: 0.78rem; color: #b45309; margin: 8px 0 0 0; }
+@media (max-width: 480px) { .nb-home .nl-pop { left: 12px; right: 12px; bottom: 12px; max-width: none; } }
