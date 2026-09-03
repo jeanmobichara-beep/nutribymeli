@@ -25,8 +25,10 @@ export default function MentionsLegales() {
               Le site <strong>nutri-meli.com</strong> est édité par :<br />
               <strong>MELIMO SARL</strong><br />
               Société à responsabilité limitée au capital de 1 000 euros<br />
-              Siège social : Route de Blonzac, 97128 Goyave, Guadeloupe<br />
-              RCS Basse-Terre : 987 946 449<br />
+              Siège social : 762 Route de Grippière, 97170 Petit-Bourg, Guadeloupe<br />
+              RCS Pointe-à-Pitre : 987 946 449<br />
+              SIRET : 987 946 449 00020<br />
+              TVA intracommunautaire : FR91987946449<br />
               Co-gérants : Jean-Maurice Bichara-Jabour & Mélissa Pommez
             </p>
             <p>

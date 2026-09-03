@@ -114,8 +114,10 @@ export default function CGV() {
             <p>
               <strong>MELIMO SARL</strong><br />
               Capital social : 1 000 €<br />
-              Siège social : Route de Blonzac, 97128 Goyave, Guadeloupe<br />
-              RCS Basse-Terre : 987 946 449<br />
+              Siège social : 762 Route de Grippière, 97170 Petit-Bourg, Guadeloupe<br />
+              RCS Pointe-à-Pitre : 987 946 449<br />
+              SIRET : 987 946 449 00020<br />
+              TVA intracommunautaire : FR91987946449<br />
               Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>
             </p>
           </section>

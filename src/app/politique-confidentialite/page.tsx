@@ -24,7 +24,7 @@ export default function PolitiqueConfidentialite() {
             <p>
               Le responsable du traitement des données personnelles est :<br />
               <strong>MELIMO SARL</strong><br />
-              Route de Blonzac, 97128 Goyave, Guadeloupe<br />
+              762 Route de Grippière, 97170 Petit-Bourg, Guadeloupe<br />
               Email : <a href="mailto:contact@nutri-meli.com" className="text-[#2A5A3A] underline">contact@nutri-meli.com</a>
             </p>
           </section>
