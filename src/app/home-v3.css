@@ -62,10 +62,12 @@
 .nb-v3 .v3-photo-note span:not(.v3-note-mark) { display: block; font-size: .71rem; color: var(--nb-muted); }
 .nb-v3 .v3-note-mark { display: grid; place-items: center; width: 37px; height: 37px; background: var(--nb-accent); border-radius: 50%; }
 .nb-v3 .v3-photo-caption { display: block; text-align: right; font-size: .68rem; color: var(--nb-muted); margin-top: 12px; padding-right: 10px; }
-.nb-v3 .v3-principles { border-block: 1px solid var(--nb-line); }
-.nb-v3 .v3-principles > div { display: flex; justify-content: space-between; gap: 20px; padding-block: 23px; }
-.nb-v3 .v3-principles span { font-size: .83rem; font-weight: 500; display: flex; align-items: center; gap: 13px; }
-.nb-v3 .v3-principles span::before { content: ''; width: 6px; height: 6px; background: #7ca061; border-radius: 50%; flex-shrink: 0; }
+.nb-v3 .v3-principles { padding: 0; border-block: 1px solid var(--nb-line); background: var(--nb-surface); }
+.nb-v3 .v3-benefits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; padding: 34px 0 37px; list-style: none; }
+.nb-v3 .v3-benefits li { min-width: 0; }
+.nb-v3 .v3-benefit-icon { display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: 17px; color: var(--nb-brand); background: #fff; border: 1px solid #d8e2d0; border-radius: 14px; }
+.nb-v3 .v3-benefits strong { display: block; max-width: 23ch; font-size: 1.02rem; line-height: 1.4; letter-spacing: -.02em; font-weight: 600; }
+.nb-v3 .v3-benefits p { margin-top: 9px; max-width: 30ch; font-size: .82rem; line-height: 1.6; color: var(--nb-muted); }
 
 /* Personalisation is explained, not reduced to a macro badge. */
 .nb-v3 .v3-section { padding: 105px 0; }
@@ -197,8 +199,10 @@
   .nb-v3 .v3-hero-actions .v3-cta { padding-inline: 20px; gap: 14px; font-size: .84rem; }
   .nb-v3 .v3-reassurance { font-size: .65rem; }
   .nb-v3 .v3-hero-person { margin-top: 25px; }
-  .nb-v3 .v3-principles > div { flex-direction: column; gap: 9px; padding-block: 20px; }
-  .nb-v3 .v3-principles span { font-size: .77rem; }
+  .nb-v3 .v3-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; padding-block: 30px; }
+  .nb-v3 .v3-benefit-icon { width: 41px; height: 41px; margin-bottom: 13px; border-radius: 12px; }
+  .nb-v3 .v3-benefits strong { font-size: .92rem; }
+  .nb-v3 .v3-benefits p { font-size: .76rem; margin-top: 7px; }
   .nb-v3 .v3-section { padding-block: 60px; }
   .nb-v3 h2 { font-size: clamp(2.2rem, 8.6vw, 3.1rem); }
   .nb-v3 .v3-kicker { font-size: .74rem; margin-bottom: 19px; }

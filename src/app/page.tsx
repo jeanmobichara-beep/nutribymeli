@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Check, MapPin, Plus } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Check, ChefHat, MapPin, Plus, Scale, Truck } from "lucide-react";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import "./home.css";
 import "./home-v3.css";
@@ -9,6 +9,13 @@ const ASSIETTES = [
   { image: "/home/plat-saumon.jpg", title: "Saumon laqué miso-érable", detail: "Riz noir, brocolis rôtis au sésame.", note: "Le plaisir des beaux ingrédients", alt: "Saumon laqué accompagné de riz noir et de brocolis" },
   { image: "/home/plat-poulet.jpg", title: "Poulet curcuma & citron confit", detail: "Boulgour aux herbes, grenade, houmous de betterave.", note: "Des saveurs qui réveillent le déjeuner", alt: "Poulet au curcuma avec boulgour et houmous de betterave" },
   { image: "/home/plat-dahl.jpg", title: "Dahl de lentilles corail coco", detail: "Riz basmati, épinards, coriandre, oignons frits.", note: "Toute la gourmandise du végétal", alt: "Dahl de lentilles corail au lait de coco, riz et épinards" },
+];
+
+const BENEFITS = [
+  { icon: BadgeCheck, title: "Une diététicienne aux fourneaux", description: "Mélissa, diplômée d’État, pense et cuisine tes repas." },
+  { icon: Scale, title: "Des portions pesées pour toi", description: "Les quantités s’ajustent à ton profil, ton activité et tes objectifs." },
+  { icon: ChefHat, title: "Du goût, du fait maison", description: "Des recettes gourmandes et des saveurs qui donnent envie de bien manger." },
+  { icon: Truck, title: "Ton déjeuner livré à Jarry", description: "Ta pause déjeuner arrive sur ton lieu de travail, aux jours convenus." },
 ];
 
 const FAQ = [
@@ -20,7 +27,7 @@ const FAQ = [
   { question: "J’ai une allergie ou une contrainte alimentaire.", answer: "Précise-la dans le questionnaire, même si elle ne figure pas dans les choix proposés. Mélissa examine ta demande avant de confirmer ce qui est possible en cuisine. Une demande avec une allergie ou une intolérance nécessite sa validation ; le questionnaire ne garantit pas à lui seul la compatibilité des repas." },
 ];
 
-function ProfileLink({ children = "Créer mon profil", className = "" }: { children?: React.ReactNode; className?: string }) {
+function ProfileLink({ children = "Composer mon menu", className = "" }: { children?: React.ReactNode; className?: string }) {
   return <Link href="/questionnaire-repas" className={"btn btn-accent v3-cta " + className}>{children}<ArrowUpRight size={19} aria-hidden="true" /></Link>;
 }
 
@@ -45,9 +52,9 @@ export default function HomePage() {
             <div className="v3-hero-copy">
               <p className="v3-kicker"><span className="v3-dot" />La cuisine d’une diététicienne. Pour toi.</p>
               <h1 id="hero-title">Bien manger,<br />à ta mesure.</h1>
-              <p className="v3-hero-description">Des plats qui donnent envie. Des portions pensées pour toi. Mélissa, diététicienne diplômée d’État, met son expertise et sa cuisine dans ton quotidien.</p>
+              <p className="v3-hero-description">Des plats qui donnent envie. Des portions pesées pour toi. Mélissa, diététicienne diplômée d’État, cuisine tes déjeuners en tenant compte de tes besoins. Tu n’as plus qu’à savourer.</p>
               <div className="v3-hero-actions"><ProfileLink /><a className="v3-text-link" href="#approche">Découvrir l’approche</a></div>
-              <p className="v3-reassurance">Quelques minutes pour parler de toi. Sans engagement.</p>
+              <p className="v3-reassurance">D’abord, quelques questions sur toi. Sans engagement.</p>
               <div className="v3-hero-person">
                 <Image src="/home/melissa.jpg" alt="" width={52} height={52} />
                 <div><strong>Mélissa, derrière chaque assiette.</strong><span>Diététicienne D.E. & naturopathe</span></div>
@@ -61,7 +68,16 @@ export default function HomePage() {
           </div>
         </section>
 
-        <div className="v3-principles"><div className="v3-container"><span>Une vraie diététicienne</span><span>Une cuisine pleine de goût</span><span>Des portions qui te correspondent</span></div></div>
+        <section className="v3-principles" aria-label="Les avantages NutriByMeli">
+          <ul className="v3-container v3-benefits">
+            {BENEFITS.map(({ icon: Icon, title, description }) => (
+              <li key={title}>
+                <span className="v3-benefit-icon"><Icon size={25} strokeWidth={1.6} aria-hidden="true" /></span>
+                <div><strong>{title}</strong><p>{description}</p></div>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section id="approche" className="v3-section v3-approach" aria-labelledby="approach-title">
           <div className="v3-container v3-approach-grid">
