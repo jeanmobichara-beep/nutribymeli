@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { REPAS_SECTIONS } from "@/data/questionnaire-repas";
 import type { Question } from "@/data/questionnaire";
 import { Progress } from "@/components/ui/progress";
@@ -40,6 +41,9 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           return { ...prev, [questionId]: current.filter((v) => v !== value) };
         }
         if (maxChoices && current.length >= maxChoices) return prev;
+        if (questionId === "allergies") {
+          return { ...prev, [questionId]: value === "aucune" ? [value] : [...current.filter((v) => v !== "aucune"), value] };
+        }
         return { ...prev, [questionId]: [...current, value] };
       });
     },
@@ -76,43 +80,51 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
   if (showIntro) {
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg border border-border/50 p-8 sm:p-12">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#2A5A3A]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <UtensilsCrossed className="w-8 h-8 text-[#2A5A3A]" />
-            </div>
-            <h1 className="text-2xl font-bold text-[#1a1a1a] mb-2">
-              Tes repas, sur-mesure
+        <div className="bg-white rounded-3xl border border-[#dce4d8] overflow-hidden">
+          <div className="relative h-48 sm:h-56">
+            <Image src="/home/pesee.jpg" alt="Une portion pesée avec soin en cuisine" fill sizes="(max-width: 672px) 100vw, 672px" className="object-cover" preload />
+          </div>
+          <div className="p-7 sm:p-10">
+          <div className="mb-7">
+            <p className="text-xs font-medium text-[#25573E] mb-3">Ton profil NutriByMeli</p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#17291F] mb-4">
+              Ton assiette commence par toi.
             </h1>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-lg mx-auto">
-              Un court questionnaire (2 minutes) pour que je pèse et dose chaque
-              repas selon toi. Rien n&apos;est laissé au hasard.
+            <p className="text-[#546458] text-sm sm:text-base leading-relaxed">
+              Parle à Mélissa de ton quotidien, de tes goûts et de tes besoins.
+              Tes réponses l&apos;aident à penser tes portions et, si tu le souhaites,
+              à te proposer une collation en complément.
             </p>
+            <div className="flex items-center gap-3 mt-5">
+              <Image src="/home/melissa.jpg" alt="" width={40} height={40} className="rounded-full h-10 w-10 object-cover" />
+              <p className="text-xs text-[#546458]"><strong className="block text-[#17291F] font-semibold">Mélissa</strong>Diététicienne diplômée d&apos;État</p>
+            </div>
           </div>
 
           <div className="bg-[#FBFCF9] rounded-xl p-6 mb-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Tes réponses sont <strong className="text-foreground">strictement confidentielles</strong> et
-              servent uniquement à personnaliser tes repas, dans le respect du secret
-              professionnel de ma profession de{" "}
-              <strong className="text-foreground">Diététicienne Diplômée d&apos;État</strong>.
+              Tes réponses servent à préparer ta proposition de repas.
+              Les tarifs, les possibilités de livraison et les adaptations sont
+              confirmés avec Mélissa avant toute commande. Tu peux consulter notre{" "}
+              <a href="/politique-confidentialite" className="underline underline-offset-2">politique de confidentialité</a>.
             </p>
           </div>
 
           <div className="flex items-center gap-3 text-sm text-muted-foreground mb-8">
             <span className="bg-[#2A5A3A]/10 text-[#2A5A3A] px-3 py-1 rounded-full text-xs font-medium">
-              ~2 min
+              Quelques minutes
             </span>
-            <span>Places limitées</span>
+            <span>Sans engagement</span>
           </div>
 
           <Button
             onClick={() => setShowIntro(false)}
             className="w-full bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] py-6 rounded-full text-base font-semibold"
           >
-            Commencer
+            Créer mon profil
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
+          </div>
         </div>
       </div>
     );
@@ -160,12 +172,12 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           ))}
         </div>
 
-        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border/50">
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-10 pt-6 border-t border-border/50">
           <Button
             variant="ghost"
             onClick={handleBack}
             disabled={currentSection === 0 || submitting}
-            className="text-muted-foreground"
+            className="text-muted-foreground w-full sm:w-auto"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Précédent
@@ -173,7 +185,7 @@ export function RepasForm({ onComplete, submitting = false }: RepasFormProps) {
           <Button
             onClick={handleNext}
             disabled={!canProceed() || submitting}
-            className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-8 rounded-full"
+            className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-6 rounded-full w-full sm:w-auto"
           >
             {submitting ? "Envoi…" : isLast ? "Envoyer mes préférences" : "Continuer"}
             {!submitting && <ArrowRight className="w-4 h-4 ml-2" />}
@@ -201,7 +213,7 @@ function RepasQuestionField({
 }: RepasQuestionFieldProps) {
   return (
     <div>
-      <Label className="text-sm font-semibold text-[#1a1a1a] mb-3 block">
+      <Label id={"label-" + q.id} htmlFor={"repas-" + q.id} className="text-sm font-semibold text-[#1a1a1a] mb-3 block">
         {q.label}
         {q.required && <span className="text-red-400 ml-1">*</span>}
       </Label>
@@ -211,6 +223,7 @@ function RepasQuestionField({
 
       {(q.type === "text" || q.type === "email" || q.type === "number") && (
         <Input
+          id={"repas-" + q.id}
           type={q.type}
           placeholder={q.placeholder}
           value={(value as string) || ""}
@@ -221,6 +234,7 @@ function RepasQuestionField({
 
       {q.type === "textarea" && (
         <Textarea
+          id={"repas-" + q.id}
           placeholder={q.placeholder}
           value={(value as string) || ""}
           onChange={(e) => onChange(q.id, e.target.value)}
@@ -231,6 +245,7 @@ function RepasQuestionField({
 
       {q.type === "radio" && q.options && (
         <RadioGroup
+          aria-labelledby={"label-" + q.id}
           value={(value as string) || ""}
           onValueChange={(v) => onChange(q.id, v)}
           className="grid grid-cols-1 sm:grid-cols-2 gap-2"
@@ -252,7 +267,7 @@ function RepasQuestionField({
       )}
 
       {q.type === "checkbox" && q.options && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div role="group" aria-labelledby={"label-" + q.id} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {q.options.map((opt) => {
             const checked = ((value as string[]) || []).includes(opt.value);
             return (

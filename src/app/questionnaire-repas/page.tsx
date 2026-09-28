@@ -30,14 +30,14 @@ export default function QuestionnaireRepasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FBFCF9] to-white">
+    <div className="min-h-screen bg-[#FBFCF9]">
       <header className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/">
             <Image src="/home/logo.svg" alt="NutriByMeli" width={120} height={40} className="h-10 w-auto" />
           </Link>
           <span className="text-xs text-muted-foreground hidden sm:block">
-            Vos données sont protégées par le secret professionnel
+            Ton profil, avec Mélissa
           </span>
         </div>
       </header>
@@ -57,8 +57,9 @@ export default function QuestionnaireRepasPage() {
                 Merci {prenom} ! C&apos;est bien reçu.
               </h1>
               <p className="text-muted-foreground text-sm leading-relaxed max-w-lg mx-auto mb-8">
-                Mélissa a reçu tes préférences. Elle revient vers toi avec ton menu
-                de la semaine, pesé et dosé rien que pour toi. À très vite.
+                Mélissa a reçu ton profil, tes préférences et tes éventuelles envies
+                de collations. Consulte ton email pour la suite. Les repas, le tarif
+                et la livraison seront confirmés avant toute commande.
               </p>
               <Link href="/">
                 <Button className="bg-[#C4F135] hover:bg-[#b3dd2a] text-[#16240F] px-8 rounded-full">

@@ -10,12 +10,12 @@ export const REPAS_SECTIONS: Section[] = [
   {
     id: "toi",
     title: "Toi",
-    subtitle: "Juste ce qu'il faut pour calculer tes portions. Tout reste confidentiel.",
+    subtitle: "Les premiers repères pour que Mélissa comprenne tes besoins.",
     icon: "Target",
     color: "amber",
     questions: [
       { id: "prenom", label: "Ton prénom", type: "text", required: true, placeholder: "Prénom" },
-      { id: "email", label: "Ton email", type: "email", required: true, placeholder: "email@exemple.com", helpText: "Pour te confirmer ta commande." },
+      { id: "email", label: "Ton email", type: "email", required: true, placeholder: "email@exemple.com", helpText: "Pour recevoir ta proposition et échanger avec Mélissa." },
       { id: "age", label: "Ton âge", type: "number", placeholder: "Ex. 34" },
       { id: "sexe", label: "Tu es…", type: "radio", options: [
         { value: "femme", label: "Une femme" },
@@ -43,19 +43,24 @@ export const REPAS_SECTIONS: Section[] = [
         { value: "moderee", label: "Modérée (1-3 séances / sem.)" },
         { value: "sportive", label: "Sportive (4+ séances / sem.)" },
       ] },
-      { id: "jours", label: "Quels jours veux-tu tes déjeuners ?", type: "checkbox", required: true, maxChoices: 5, helpText: "Places limitées — de 1 à 5 jours (du lundi au vendredi).", options: [
+      { id: "jours", label: "Quels jours t'intéresseraient pour tes déjeuners ?", type: "checkbox", required: true, maxChoices: 5, helpText: "Indique tes préférences. Les jours disponibles seront confirmés avec Mélissa.", options: [
         { value: "lundi", label: "Lundi" },
         { value: "mardi", label: "Mardi" },
         { value: "mercredi", label: "Mercredi" },
         { value: "jeudi", label: "Jeudi" },
         { value: "vendredi", label: "Vendredi" },
       ] },
+      { id: "livraison_secteur", label: "Où souhaites-tu recevoir tes repas ?", type: "radio", required: true, helpText: "Les premières livraisons se préparent sur Jarry, à Baie-Mahault.", options: [
+        { value: "jarry", label: "À Jarry" },
+        { value: "autre", label: "Dans un autre secteur — à étudier ensemble" },
+      ] },
+      { id: "lieu_livraison", label: "Ton entreprise ou ton quartier", type: "text", placeholder: "Ex. nom de l'entreprise à Jarry", helpText: "Pour organiser les tournées. Si tu es ailleurs, précise ta commune." },
     ],
   },
   {
     id: "preferences",
     title: "Tes préférences",
-    subtitle: "Rien n'est laissé au hasard : c'est toi qui composes.",
+    subtitle: "Tes goûts, ton appétit et les contraintes à prendre en compte.",
     icon: "Apple",
     color: "green",
     questions: [
@@ -75,6 +80,13 @@ export const REPAS_SECTIONS: Section[] = [
         { value: "petite", label: "Petite faim" },
         { value: "normale", label: "Normal" },
         { value: "grosse", label: "Grosse faim" },
+      ] },
+      { id: "collations", label: "Une collation en complément, ça t'intéresse ?", type: "radio", helpText: "Une option à discuter selon tes besoins. Mélissa te précisera la proposition et son tarif.", options: [
+        { value: "salee", label: "Oui, plutôt salée" },
+        { value: "sucree", label: "Oui, plutôt sucrée" },
+        { value: "les_deux", label: "Les deux me plaisent" },
+        { value: "conseil", label: "J'aimerais l'avis de Mélissa" },
+        { value: "non", label: "Les déjeuners seulement" },
       ] },
       { id: "epices", label: "Épices", type: "radio", options: [
         { value: "doux", label: "Doux" },

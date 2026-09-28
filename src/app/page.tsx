@@ -1,350 +1,108 @@
+import Image from "next/image";
 import Link from "next/link";
-import "./home.css";
-import { RevealInit } from "@/components/home/RevealInit";
+import { ArrowUpRight, Check, MapPin, Plus } from "lucide-react";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
-import { NewsletterPopup } from "@/components/home/NewsletterPopup";
+import "./home.css";
+import "./home-v3.css";
 
-/* eslint-disable @next/next/no-img-element */
-
-const MENU = [
-  {
-    img: "/home/plat-saumon.jpg",
-    alt: "Saumon laqué miso-érable, riz noir, brocolis rôtis au sésame",
-    tags: ["Sans gluten", "Oméga-3"],
-    title: "Saumon laqué miso-érable",
-    comp: "Riz noir, brocolis rôtis au sésame.",
-    macros: [
-      { v: "38 g", u: "Protéines" },
-      { v: "620", u: "Kcal" },
-      { v: "470 g", u: "L'assiette" },
-    ],
-  },
-  {
-    img: "/home/plat-poulet.jpg",
-    alt: "Poulet curcuma et citron confit, boulgour aux herbes, houmous de betterave",
-    tags: ["Signature", "Super protéiné"],
-    title: "Poulet curcuma & citron confit",
-    comp: "Boulgour aux herbes, grenade, houmous de betterave.",
-    macros: [
-      { v: "42 g", u: "Protéines" },
-      { v: "590", u: "Kcal" },
-      { v: "480 g", u: "L'assiette" },
-    ],
-  },
-  {
-    img: "/home/plat-dahl.jpg",
-    alt: "Dahl de lentilles corail coco, riz basmati, épinards, oignons frits",
-    tags: ["Végé", "Riche en fibres"],
-    title: "Dahl de lentilles corail coco",
-    comp: "Riz basmati, épinards, coriandre, oignons frits maison.",
-    macros: [
-      { v: "24 g", u: "Protéines" },
-      { v: "540", u: "Kcal" },
-      { v: "460 g", u: "L'assiette" },
-    ],
-  },
+const ASSIETTES = [
+  { image: "/home/plat-saumon.jpg", title: "Saumon laqué miso-érable", detail: "Riz noir, brocolis rôtis au sésame.", note: "Le plaisir des beaux ingrédients", alt: "Saumon laqué accompagné de riz noir et de brocolis" },
+  { image: "/home/plat-poulet.jpg", title: "Poulet curcuma & citron confit", detail: "Boulgour aux herbes, grenade, houmous de betterave.", note: "Des saveurs qui réveillent le déjeuner", alt: "Poulet au curcuma avec boulgour et houmous de betterave" },
+  { image: "/home/plat-dahl.jpg", title: "Dahl de lentilles corail coco", detail: "Riz basmati, épinards, coriandre, oignons frits.", note: "Toute la gourmandise du végétal", alt: "Dahl de lentilles corail au lait de coco, riz et épinards" },
 ];
 
-const QUALITY = [
-  ["Fruits & légumes bio.", "Achetés en magasin bio, jamais du tout-venant."],
-  ["Protéines de qualité.", "Poisson, volaille, légumineuses — variées, jamais transformées."],
-  ["Zéro ultra-transformé, zéro sucre caché.", "Tu sais exactement ce que tu manges."],
-  ["Cuisiné frais, jamais congelé.", "Préparé pour toi, pas produit en série."],
-  ["Pesé au gramme par une diététicienne.", "La bonne quantité de protéines, de fibres, de tout."],
+const FAQ = [
+  { question: "Qu’est-ce qui est personnalisé pour moi ?", answer: "Tes portions et la composition de ton assiette sont pensées à partir de ton profil, de ton activité, de ton appétit et de tes objectifs. Mélissa s’appuie sur le menu de la semaine pour adapter les quantités et les associations. Tu échanges avec elle pour préciser ce qui te correspond." },
+  { question: "Pourquoi remplir un questionnaire ?", answer: "Pour que Mélissa puisse comprendre ton quotidien, tes goûts et tes besoins avant de te proposer des repas. Il sert à préparer une première proposition et un échange avec elle. Remplir ton profil ne t’engage pas à commander." },
+  { question: "Et les collations salées ou sucrées ?", answer: "Tu peux indiquer ton intérêt dans le questionnaire. Selon ton profil et ton alimentation sur le reste de la journée, Mélissa pourra te proposer une collation en complément du déjeuner. Son contenu et son tarif sont précisés avec toi avant toute commande." },
+  { question: "Où sont prévus les premiers repas ?", answer: "Le lancement se concentre sur Jarry, à Baie-Mahault. Indique ton lieu de livraison et les jours qui t’intéressent dans le questionnaire : Mélissa te confirme les possibilités et les modalités avant la commande." },
+  { question: "Quel est le prix ?", answer: "Le tarif dépend de la formule retenue : nombre de déjeuners et éventuelles collations. Tu reçois une proposition avec les repas, le prix et les modalités de livraison avant de décider. Aucun paiement n’est demandé pour remplir ton profil." },
+  { question: "J’ai une allergie ou une contrainte alimentaire.", answer: "Précise-la dans le questionnaire, même si elle ne figure pas dans les choix proposés. Mélissa examine ta demande avant de confirmer ce qui est possible en cuisine. Une demande avec une allergie ou une intolérance nécessite sa validation ; le questionnaire ne garantit pas à lui seul la compatibilité des repas." },
 ];
+
+function ProfileLink({ children = "Créer mon profil", className = "" }: { children?: React.ReactNode; className?: string }) {
+  return <Link href="/questionnaire-repas" className={"btn btn-accent v3-cta " + className}>{children}<ArrowUpRight size={19} aria-hidden="true" /></Link>;
+}
 
 export default function HomePage() {
   return (
-    <div className="nb-home">
-      <RevealInit />
-      <NewsletterPopup />
-
-      {/* ===== Nav ===== */}
-      <header className="nb-nav">
-        <div className="wrap nav-in">
-          <Link href="/">
-            <img className="nav-logo" src="/home/logo.svg" alt="Nutri by Meli" />
-          </Link>
-          <nav className="nav-links">
-            <a className="txt" href="#apropos">À propos</a>
-            <Link className="txt" href="/questionnaire">Bilan nutritionnel</Link>
-            <Link className="btn btn-accent btn-sm" href="/questionnaire-repas">Composer mon menu</Link>
+    <div className="nb-home nb-v3">
+      <a className="v3-skip" href="#contenu">Aller au contenu</a>
+      <div className="v3-location-bar"><MapPin size={14} aria-hidden="true" /><span>Les premières assiettes se préparent à Jarry, en Guadeloupe.</span><a href="#questions">En savoir plus</a></div>
+      <header className="v3-nav">
+        <div className="v3-container v3-nav-inner">
+          <Link href="/" aria-label="NutriByMeli, accueil"><Image src="/home/logo.svg" alt="Nutri by Meli" width={138} height={64} className="v3-logo" preload /></Link>
+          <nav aria-label="Navigation principale" className="v3-nav-links">
+            <a href="#approche">L’approche</a><a href="#assiettes">Les assiettes</a><a href="#melissa">Mélissa</a>
           </nav>
+          <ProfileLink className="v3-nav-cta" />
         </div>
       </header>
 
-      <main>
-        {/* ===== Hero ===== */}
-        <section className="hero">
-          <div className="wrap hero-grid">
-            <div className="hero-copy">
-              <span className="eyebrow reveal">N°1 aux Antilles — par une diététicienne D.E.</span>
-              <h1 className="reveal">Mange sain.<br />Sans te prendre la tête.</h1>
-              <p className="lead reveal">
-                Chaque semaine, des déjeuners frais, pesés et dosés pour ton corps par une
-                diététicienne diplômée. On cuisine, on livre. Fini les courses, fini la
-                question «&nbsp;qu&apos;est-ce que je mange&nbsp;?&nbsp;».
-              </p>
-              <div className="hero-cta reveal">
-                <Link className="btn btn-accent btn-arrow" href="/questionnaire-repas">
-                  Composer mon menu — 2 min
-                </Link>
-                <Link className="btn btn-ghost" href="/questionnaire">
-                  Mon bilan nutritionnel offert
-                </Link>
-              </div>
-              <div className="chips reveal">
-                <span className="chip">Diététicienne D.E.</span>
-                <span className="chip">Frais &amp; bio</span>
-                <span className="chip">Livraison offerte</span>
-                <span className="chip">Places limitées</span>
+      <main id="contenu">
+        <section className="v3-hero" aria-labelledby="hero-title">
+          <div className="v3-container v3-hero-grid">
+            <div className="v3-hero-copy">
+              <p className="v3-kicker"><span className="v3-dot" />La cuisine d’une diététicienne. Pour toi.</p>
+              <h1 id="hero-title">Bien manger,<br />à ta mesure.</h1>
+              <p className="v3-hero-description">Des plats qui donnent envie. Des portions pensées pour toi. Mélissa, diététicienne diplômée d’État, met son expertise et sa cuisine dans ton quotidien.</p>
+              <div className="v3-hero-actions"><ProfileLink /><a className="v3-text-link" href="#approche">Découvrir l’approche</a></div>
+              <p className="v3-reassurance">Quelques minutes pour parler de toi. Sans engagement.</p>
+              <div className="v3-hero-person">
+                <Image src="/home/melissa.jpg" alt="" width={52} height={52} />
+                <div><strong>Mélissa, derrière chaque assiette.</strong><span>Diététicienne D.E. & naturopathe</span></div>
               </div>
             </div>
-            <div className="hero-media reveal">
-              <img
-                src="/home/hero.jpg"
-                alt="Un déjeuner NutriByMeli : steaks de poisson, légumes sautés et quinoa dans une gamelle en verre"
-              />
-              <div className="hero-badge">
-                <div className="k">38 g</div>
-                <div className="l">de protéines · pesé pour toi</div>
-              </div>
+            <div className="v3-hero-visual">
+              <div className="v3-hero-photo"><Image src="/home/hero.jpg" alt="Une assiette NutriByMeli : galettes de poisson, légumes et quinoa, dans un contenant en verre" fill sizes="(max-width: 760px) 100vw, 52vw" preload /></div>
+              <div className="v3-photo-note"><span className="v3-note-mark"><Check size={20} aria-hidden="true" /></span><div><strong>Pensé. Pesé. Cuisiné.</strong><span>Avec du soin dans chaque portion.</span></div></div>
+              <span className="v3-photo-caption">Le plaisir de bien manger, au quotidien.</span>
             </div>
           </div>
         </section>
 
-        {/* ===== Comment ça marche ===== */}
-        <section id="menu">
-          <div className="wrap">
-            <div className="sec-head reveal">
-              <span className="eyebrow">Comment ça marche</span>
-              <h2>Trois étapes. Zéro prise de tête.</h2>
-            </div>
-            <div className="steps">
-              <div className="stepc reveal">
-                <img src="/home/quiz.jpg" alt="Des ingrédients pesés, prêts à composer ton menu" />
-                <div className="body">
-                  <span className="n">01</span>
-                  <h3>Ton profil en 2 min</h3>
-                  <p>Objectif, allergies, goûts. On apprend à te connaître — un vrai quiz, pas un formulaire.</p>
-                </div>
-              </div>
-              <div className="stepc reveal">
-                <img src="/home/semaine.jpg" alt="Une semaine de repas différents, prêts en gamelles" />
-                <div className="body">
-                  <span className="n">02</span>
-                  <h3>Ton menu, composé pour toi</h3>
-                  <p>Chaque semaine, Mélissa compose ton menu, pesé selon tes besoins. Un plat ne te tente pas&nbsp;? Tu l&apos;échanges.</p>
-                </div>
-              </div>
-              <div className="stepc reveal">
-                <img src="/home/cuisine.jpg" alt="Cuisine propre, gamelles prêtes à être livrées" />
-                <div className="body">
-                  <span className="n">03</span>
-                  <h3>Cuisiné, pesé, livré</h3>
-                  <p>Tu coches tes jours, et tes gamelles arrivent fraîches. Plus qu&apos;à te régaler.</p>
-                </div>
-              </div>
+        <div className="v3-principles"><div className="v3-container"><span>Une vraie diététicienne</span><span>Une cuisine pleine de goût</span><span>Des portions qui te correspondent</span></div></div>
+
+        <section id="approche" className="v3-section v3-approach" aria-labelledby="approach-title">
+          <div className="v3-container v3-approach-grid">
+            <div className="v3-section-intro"><p className="v3-kicker">Le sur-mesure, concrètement</p><h2 id="approach-title">Ton quotidien.<br />Tes besoins.<br />Ton assiette.</h2><p>Tu ne manges pas comme ton voisin. Ton déjeuner mérite qu’on s’intéresse à toi.</p><a href="/questionnaire-repas" className="v3-text-link">Tout commence par ton profil <ArrowUpRight size={17} aria-hidden="true" /></a></div>
+            <div className="v3-personalisation">
+              <article><span className="v3-detail-label">Te comprendre</span><h3>Ce qui compte pour toi.</h3><p>Ton rythme, ton activité, tes goûts, ton appétit. Le questionnaire donne à Mélissa les premiers repères pour te proposer une assiette adaptée.</p></article>
+              <article><span className="v3-detail-label">Ajuster l’assiette</span><h3>Les bonnes portions. Le même plaisir.</h3><p>Protéines, accompagnements, légumes : les quantités et les associations se travaillent selon ton profil, à partir des préparations du menu.</p></article>
+              <article><span className="v3-detail-label">Voir la journée dans son ensemble</span><h3>Et parfois, une collation en plus.</h3><p>Salée ou sucrée, elle peut compléter ton déjeuner si cela correspond à tes besoins. Mélissa en discute avec toi.</p></article>
             </div>
           </div>
         </section>
 
-        {/* ===== Menu de la semaine ===== */}
-        <section>
-          <div className="wrap">
-            <div className="sec-head reveal">
-              <span className="eyebrow">Le menu de la semaine</span>
-              <h2>Chaque plat, pesé au gramme.</h2>
-              <p className="lead">Un aperçu. Le tien sera composé selon ton profil.</p>
-            </div>
-            <div className="menu-cards">
-              {MENU.map((m) => (
-                <article className="mcard reveal" key={m.title}>
-                  <img className="ph" src={m.img} alt={m.alt} />
-                  <div className="tags">
-                    {m.tags.map((t) => (
-                      <span className="tag" key={t}>{t}</span>
-                    ))}
-                  </div>
-                  <h3>{m.title}</h3>
-                  <p className="comp">{m.comp}</p>
-                  <div className="macros">
-                    {m.macros.map((x) => (
-                      <span className="m" key={x.u}>
-                        <span className="v">{x.v}</span>
-                        <span className="u">{x.u}</span>
-                      </span>
-                    ))}
-                  </div>
-                  <span className="perso">Personnalisé pour toi</span>
-                </article>
-              ))}
-            </div>
+        <section id="assiettes" className="v3-section v3-food" aria-labelledby="food-title">
+          <div className="v3-container">
+            <div className="v3-section-heading"><div><p className="v3-kicker">Le goût a toute sa place</p><h2 id="food-title">L’équilibre, oui.<br />L’envie d’y revenir, aussi.</h2></div><p>Des associations généreuses, des textures, des épices. Voici un aperçu de l’univers culinaire NutriByMeli.</p></div>
+            <div className="v3-meal-grid">{ASSIETTES.map((meal) => <article className="v3-meal" key={meal.title}><div className="v3-meal-image"><Image src={meal.image} alt={meal.alt} fill sizes="(max-width: 760px) 100vw, 33vw" /></div><div className="v3-meal-copy"><span>{meal.note}</span><h3>{meal.title}</h3><p>{meal.detail}</p></div></article>)}</div>
+            <p className="v3-menu-note">Exemples de plats. Le menu et tes portions sont précisés dans ta proposition.</p>
           </div>
         </section>
 
-        {/* ===== Ce que tu gagnes ===== */}
-        <section>
-          <div className="wrap">
-            <div className="sec-head reveal">
-              <span className="eyebrow">Ce que tu gagnes</span>
-              <h2>Fais tes comptes.</h2>
-            </div>
-            <div className="stats">
-              <div className="stat reveal">
-                <div className="big">~3 h</div>
-                <div className="desc">gagnées chaque semaine — fini les courses et la cuisine du midi.</div>
-              </div>
-              <div className="stat reveal">
-                <div className="big">0</div>
-                <div className="desc">gaspillage — tu paies exactement ce que tu manges, rien de plus.</div>
-              </div>
-              <div className="stat reveal">
-                <div className="big">0 €</div>
-                <div className="desc">de livraison — offerte sur ton menu de la semaine.</div>
-              </div>
-            </div>
+        <section id="melissa" className="v3-section v3-melissa" aria-labelledby="melissa-title">
+          <div className="v3-container v3-melissa-grid">
+            <div className="v3-portrait"><Image src="/home/melissa.jpg" alt="Mélissa, diététicienne diplômée d’État et créatrice de NutriByMeli" fill sizes="(max-width: 760px) 100vw, 45vw" /><div className="v3-portrait-label"><strong>Mélissa</strong><span>Diététicienne diplômée d’État</span></div></div>
+            <div className="v3-melissa-copy"><p className="v3-kicker">Une professionnelle. Une passion pour la cuisine.</p><h2 id="melissa-title">La nutrition,<br />avec un vrai<br />goût de cuisine.</h2><p>Diététicienne diplômée d’État et également naturopathe, Mélissa réunit deux savoir-faire : comprendre tes besoins et cuisiner des plats que tu as plaisir à manger.</p><p>Elle pense les associations, ajuste les portions et prépare les repas. Son expertise se retrouve dans le contenu de ton assiette, autant que dans l’attention qu’elle te porte.</p><div className="v3-credentials"><span>Diététicienne D.E.</span><span>Naturopathe</span><span>En Guadeloupe</span></div><ProfileLink>Parler de mes besoins</ProfileLink></div>
           </div>
         </section>
 
-        {/* ===== Que du vrai ===== */}
-        <section>
-          <div className="wrap">
-            <div className="sec-head reveal">
-              <span className="eyebrow">Que du vrai</span>
-              <h2>Frais, bio, pesé. Rien d&apos;autre.</h2>
-            </div>
-            <div className="qlist">
-              {QUALITY.map(([t, d]) => (
-                <div className="qitem reveal" key={t}>
-                  <span className="mk">✓</span>
-                  <div>
-                    <span className="t">{t}</span> <span className="d">{d}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <section className="v3-section v3-snacks" aria-labelledby="snack-title"><div className="v3-container"><div className="v3-snack-panel"><div><p className="v3-kicker">L’attention continue après le déjeuner</p><h2 id="snack-title">Une petite faim,<br />une vraie attention.</h2><p>Ton équilibre se construit sur la journée. Selon tes besoins, une collation peut trouver sa place à côté de tes repas : une option à étudier avec Mélissa, dès ton questionnaire.</p><a className="v3-text-link" href="/questionnaire-repas">Indiquer mes envies <ArrowUpRight size={17} aria-hidden="true" /></a></div><div className="v3-snack-options"><div><span>Plutôt salé</span><p>Une pause gourmande, adaptée à ton rythme.</p></div><span className="v3-snack-or">ou</span><div><span>Plutôt sucré</span><p>Du plaisir, avec une composition pensée pour toi.</p></div><p className="v3-snack-footnote">En complément, selon la proposition de Mélissa.</p></div></div></div></section>
 
-        {/* ===== À propos ===== */}
-        <section id="apropos">
-          <div className="wrap about-grid">
-            <div className="ab-media reveal">
-              <img
-                src="/home/melissa.jpg"
-                alt="Mélissa, Diététicienne Diplômée d'État et Naturopathe, dans sa cuisine"
-              />
-            </div>
-            <div className="ab-copy reveal">
-              <span className="eyebrow">À propos</span>
-              <h2>Derrière chaque assiette, Mélissa.</h2>
-              <p>
-                Diététicienne Diplômée d&apos;État &amp; Naturopathe, installée en Guadeloupe.
-                Passionnée de cuisine autant que de nutrition, elle a un principe simple&nbsp;:
-                manger sain doit être un plaisir, pas une contrainte.
-              </p>
-              <p>
-                C&apos;est elle — pas une usine, pas un algorithme — qui étudie ton profil,
-                compose ton menu, pèse chaque portion et cuisine chaque plat. C&apos;est ça,
-                le sur-mesure.
-              </p>
-              <div className="chips">
-                <span className="chip">Diététicienne D.E.</span>
-                <span className="chip">Naturopathe</span>
-                <span className="chip">Guadeloupe</span>
-              </div>
-              <Link className="btn btn-ghost btn-arrow" href="/questionnaire">
-                Faire connaissance — bilan offert
-              </Link>
-            </div>
-          </div>
-        </section>
+        <section className="v3-section v3-how" aria-labelledby="how-title"><div className="v3-container"><div className="v3-section-heading"><div><p className="v3-kicker">Simple pour toi. Soigné en cuisine.</p><h2 id="how-title">De ton profil<br />à ta pause déjeuner.</h2></div><p>On prend le temps de te connaître, puis on organise la suite avec toi.</p></div><div className="v3-steps">
+          <article><div className="v3-step-image"><Image src="/home/quiz.jpg" alt="Ingrédients préparés et pesés pour composer les repas" fill sizes="(max-width: 760px) 100vw, 33vw" /><span>01</span></div><h3>Tu parles de toi.</h3><p>Quelques questions sur tes besoins, tes goûts, tes jours et ton lieu de livraison.</p></article>
+          <article><div className="v3-step-image"><Image src="/home/pesee.jpg" alt="Une portion sur une balance de cuisine" fill sizes="(max-width: 760px) 100vw, 33vw" /><span>02</span></div><h3>Mélissa affine avec toi.</h3><p>Les repas, les portions, les éventuelles collations et le tarif sont précisés avant ta commande.</p></article>
+          <article><div className="v3-step-image"><Image src="/home/cuisine.jpg" alt="Repas préparés et conditionnés en cuisine" fill sizes="(max-width: 760px) 100vw, 33vw" /><span>03</span></div><h3>Cuisiné, pesé, livré.</h3><p>Ta livraison est organisée sur Jarry, selon les jours et les modalités convenus.</p></article>
+        </div></div></section>
 
-        {/* ===== La différence ===== */}
-        <section>
-          <div className="nb-invert reveal">
-            <div className="wrap invert-grid">
-              <div>
-                <span className="eyebrow">La différence</span>
-                <h2>Pas un algorithme.<br />Une vraie diététicienne.</h2>
-                <p>
-                  Les autres te vendent un menu générique. Mélissa — Diététicienne Diplômée
-                  d&apos;État &amp; Naturopathe — conçoit <em>le tien</em>, en fonction de ton
-                  corps, tes objectifs et tes allergies. Du sur-mesure, pas du prêt-à-manger.
-                </p>
-                <p className="member">
-                  On cuisine tout à la main, pour un cercle restreint. Les premières places
-                  aux Antilles s&apos;ouvrent maintenant.
-                </p>
-                <Link className="btn btn-accent btn-arrow" href="/questionnaire-repas">
-                  Rejoindre la liste
-                </Link>
-              </div>
-              <div className="im">
-                <img
-                  src="/home/pesee.jpg"
-                  alt="Portion pesée au gramme sur une balance de cuisine, à côté d'une gamelle en verre"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+        <section id="questions" className="v3-section v3-faq" aria-labelledby="faq-title"><div className="v3-container v3-faq-grid"><div><p className="v3-kicker">Avant de te lancer</p><h2 id="faq-title">Tu te demandes<br />peut-être…</h2><p>Quelques réponses pour te projeter.</p></div><div className="v3-faq-items">{FAQ.map((item) => <details key={item.question}><summary>{item.question}<Plus size={20} aria-hidden="true" /></summary><p>{item.answer}</p></details>)}</div></div></section>
 
-        {/* ===== Cross-sell bilan ===== */}
-        <section id="bilan" className="cross">
-          <div className="wrap inner">
-            <div>
-              <span className="eyebrow">Pour aller plus loin</span>
-              <h2 style={{ marginTop: 12 }}>
-                Tes repas s&apos;occupent d&apos;aujourd&apos;hui.<br />Et si on s&apos;occupait de la suite&nbsp;?
-              </h2>
-              <p className="lead" style={{ marginTop: 14, maxWidth: "46ch" }}>
-                En plus de tes repas, Mélissa t&apos;accompagne en profondeur&nbsp;: commence par
-                ton bilan nutritionnel complet offert (10&nbsp;min, ça les vaut), puis une
-                consultation ou le programme 90&nbsp;jours si tu veux transformer tes habitudes
-                pour de bon.
-              </p>
-            </div>
-            <Link className="btn btn-ghost btn-arrow" href="/questionnaire">
-              Mon bilan nutritionnel offert
-            </Link>
-          </div>
-        </section>
-
-        {/* ===== CTA final ===== */}
-        <section className="final">
-          <div className="wrap">
-            <div className="sec-head">
-              <span className="eyebrow">Places limitées</span>
-              <h2>Prêt à ne plus te poser la question&nbsp;?</h2>
-            </div>
-            <p className="lead">Compose ton menu en 2 minutes. Livraison offerte — places limitées.</p>
-            <Link className="btn btn-accent btn-arrow" href="/questionnaire-repas">
-              Composer mon menu
-            </Link>
-          </div>
-        </section>
+        <section className="v3-final" aria-labelledby="final-title"><div className="v3-container v3-final-inner"><div><p className="v3-kicker">NutriByMeli, à Jarry</p><h2 id="final-title">Et si on commençait<br />par toi ?</h2><p>Raconte ton quotidien à Mélissa.<br />La suite se prépare ensemble.</p></div><div className="v3-final-action"><ProfileLink /><span>Sans engagement. À ton rythme.</span></div></div></section>
       </main>
 
-      {/* ===== Footer ===== */}
-      <footer className="nb-footer">
-        <div className="wrap">
-          <img className="flogo" src="/home/logo.svg" alt="Nutri by Meli" />
-          <div style={{ marginTop: 12 }}>
-            Mélissa P. · Diététicienne Diplômée d&apos;État &amp; Naturopathe · Guadeloupe
-          </div>
-          <NewsletterForm />
-          <div className="flinks">
-            <Link href="/questionnaire">Bilan nutritionnel</Link>
-            <Link href="/questionnaire-repas">Composer mon menu</Link>
-            <Link href="/mentions-legales">Mentions légales</Link>
-            <Link href="/politique-confidentialite">Confidentialité</Link>
-            <Link href="/cgv">CGV</Link>
-          </div>
-          <div className="fsmall">© {new Date().getFullYear()} NutriByMeli — nutri-meli.com</div>
-        </div>
-      </footer>
+      <footer className="v3-footer"><div className="v3-container"><div className="v3-footer-top"><div><Image src="/home/logo.svg" alt="Nutri by Meli" width={145} height={72} /><p>La cuisine d’une diététicienne.<br />Des assiettes à ta mesure.</p><span>Jarry, Baie-Mahault · Guadeloupe</span></div><NewsletterForm /></div><div className="v3-footer-bottom"><span>© {new Date().getFullYear()} NutriByMeli</span><nav aria-label="Liens de pied de page"><Link href="/questionnaire">Bilan nutritionnel</Link><Link href="/mentions-legales">Mentions légales</Link><Link href="/politique-confidentialite">Confidentialité</Link><Link href="/cgv">CGV</Link></nav></div></div></footer>
     </div>
   );
 }

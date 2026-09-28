@@ -2,7 +2,7 @@
 // MOTEUR DE MENU — NutriByMeli
 // Profil (questionnaire repas) → menu de la semaine proposé + coût matière/marge.
 // Sélection des plats par IA (Vercel AI Gateway → Claude) avec repli
-// déterministe si l'IA est indisponible : un menu sort TOUJOURS.
+// déterministe si l'IA est indisponible, uniquement pour les profils compatibles.
 // Les portions/macros restent CALCULÉES par le code (pas par l'IA) et sont
 // présentées à Mélissa comme une PROPOSITION à valider — jamais envoyées
 // directement au client.
@@ -11,6 +11,7 @@
 import { generateObject } from "ai";
 import { z } from "zod";
 import { RECETTES, coutMatiere, type Recette } from "./recettes";
+import { needsDietitianReview, requireCompatibleRecipes } from "./eligibility";
 
 type Answers = Record<string, string | string[]>;
 
@@ -156,13 +157,16 @@ function selectionFallback(joursDemandes: string[], pool: Recette[], answers: An
 /* ----------------------- Assemblage ----------------------- */
 
 export async function genererMenu(answers: Answers): Promise<MenuPropose> {
+  if (needsDietitianReview(answers)) {
+    throw new Error("Allergie ou intolérance déclarée : validation de Mélissa nécessaire.");
+  }
   const joursBruts = ([] as string[]).concat((answers.jours as string[]) || []);
   const joursDemandes = ORDRE_JOURS.filter((j) => joursBruts.includes(j));
   const jours = joursDemandes.length > 0 ? joursDemandes : ["lundi"];
 
   const cible = cibles(answers);
-  let pool = compatibles(answers);
-  if (pool.length === 0) pool = RECETTES; // jamais bloqué : Mélissa arbitrera
+  const pool = compatibles(answers);
+  requireCompatibleRecipes(pool.length);
 
   const ia = await selectionIA(answers, jours, pool);
   const selection = ia?.jours?.length ? ia.jours : selectionFallback(jours, pool, answers);

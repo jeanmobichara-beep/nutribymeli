@@ -70,9 +70,9 @@ export async function POST(request: Request) {
     }
 
     if (!resend) {
-      // Config email absente — on ne bloque pas l'UX mais on le signale au log
+      // Ne jamais annoncer une demande reçue si elle n'a pas pu être transmise.
       console.error("RESEND_API_KEY manquant — email non envoyé");
-      return NextResponse.json({ success: true, emailed: false, menu: menu ? { source: menu.source, jours: menu.jours.length } : null });
+      return NextResponse.json({ error: "La demande n'a pas pu être transmise. Réessaie plus tard." }, { status: 503 });
     }
 
     const menuHtml = menu ? renderMenuHtml(menu) : `<p style="color:#B45309;font-size:14px;"><strong>⚠️ Menu non généré</strong> — à composer manuellement pour ce client.</p>`;
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       : null;
 
     // === Email à Mélissa : la demande repas complète + menu proposé (interne : coûts/marge) ===
-    await resend.emails.send({
+    const internalEmail = await resend.emails.send({
       from: "NutriByMeli <notifications@nutri-meli.com>",
       to: [MELISSA_EMAIL],
       replyTo: clientEmail || undefined,
@@ -98,11 +98,16 @@ export async function POST(request: Request) {
       `),
     });
 
+    if (internalEmail.error) {
+      console.error("Transmission de la demande impossible:", internalEmail.error.name);
+      return NextResponse.json({ error: "La demande n'a pas pu être transmise. Réessaie plus tard." }, { status: 502 });
+    }
+
     // === Email au client : SON menu, tout de suite (conversion), sans les coûts ===
     if (clientEmail) {
       const menuClientHtml = menu
         ? `
-          <p style="font-size:15px;line-height:1.7;color:#586A5B;margin:0 0 16px 0;">Ton menu de la semaine est prêt — composé selon ton profil, pesé et dosé pour toi. Le voici :</p>
+          <p style="font-size:15px;line-height:1.7;color:#586A5B;margin:0 0 16px 0;">Voici une première proposition de menu à partir de ton profil. Mélissa pourra l'affiner avec toi et confirmer les portions, les éventuelles collations, le tarif et la livraison avant ta commande.</p>
           <table style="width:100%;border-collapse:collapse;margin:0 0 16px 0;font-size:14px;">
             ${menu.jours
               .map(
@@ -113,17 +118,16 @@ export async function POST(request: Request) {
               )
               .join("")}
           </table>
-          ${menu.conseil ? `<p style="background:#EEF3E8;border-radius:10px;padding:12px 14px;font-size:13px;color:#2A5A3A;margin:0 0 18px 0;"><strong>Le mot de Mélissa :</strong> ${menu.conseil}</p>` : ""}
           <table cellpadding="0" cellspacing="0" style="margin:6px 0 10px 0;"><tr><td style="background:#C4F135;border-radius:999px;">
             <a href="${menuUrl}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:700;color:#16240F;text-decoration:none;">Voir mon menu &amp; confirmer mes jours →</a>
           </td></tr></table>
-          <p style="font-size:12px;color:#9AA79B;margin:8px 0 0 0;">Mélissa peut ajuster ton menu à la marge au moment de la confirmation. Un plat ne te tente pas&nbsp;? Réponds à cet email, on l'échange.</p>`
-        : `<p style="font-size:15px;line-height:1.7;color:#586A5B;">Merci ! J'ai bien reçu tes préférences. Je compose ton menu de la semaine, pesé et dosé pour toi, et je reviens vers toi très rapidement.</p>`;
+          <p style="font-size:12px;color:#586A5B;margin:8px 0 0 0;">Cette proposition reste à valider avec Mélissa. Une préférence ou une question ? Réponds à cet email pour en discuter.</p>`
+        : `<p style="font-size:15px;line-height:1.7;color:#586A5B;">Merci ! Ton profil a bien été transmis à Mélissa. Elle examinera tes besoins et tes contraintes alimentaires avant de te proposer des repas. Tu recevras les détails et le tarif avant toute commande.</p>`;
 
       await resend.emails.send({
         from: "Mélissa P. — NutriByMeli <contact@nutri-meli.com>",
         to: [clientEmail],
-        subject: menu ? `${prenom}, ton menu de la semaine est prêt 🌿` : `${prenom}, tes préférences sont bien reçues`,
+        subject: menu ? `${prenom}, ta première proposition de menu 🌿` : `${prenom}, ton profil est bien reçu`,
         html: brandEmail(
           `<p style="font-size:16px;margin:0 0 12px 0;">Bonjour ${prenom},</p>${menuClientHtml}`,
           { preheader: menu ? "Ton menu personnalisé t'attend — confirme tes jours." : undefined }

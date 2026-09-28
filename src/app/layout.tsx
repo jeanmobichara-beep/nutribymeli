@@ -17,12 +17,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "NutriByMeli — Repas sains personnalisés, livrés | Diététicienne D.E. Guadeloupe",
   description:
-    "Des déjeuners frais, pesés et dosés pour ton corps par une diététicienne Diplômée d'État. Compose ton menu en 2 minutes — livraison offerte, places limitées. Bilan nutritionnel offert.",
+    "À Jarry, en Guadeloupe, Mélissa, diététicienne diplômée d’État, prépare des repas gourmands avec des portions pensées pour toi. Décris tes besoins et tes envies de collations pour recevoir ta proposition.",
   keywords: [
     "diététicienne",
     "naturopathe",
     "Guadeloupe",
-    "Martinique",
+    "Jarry",
+    "Baie-Mahault",
     "Antilles",
     "nutrition",
     "bilan alimentaire",
