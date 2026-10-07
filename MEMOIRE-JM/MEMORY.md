@@ -1,0 +1,21 @@
+# Mémoire de JM pour ce projet (copie du Mac du 7/10/2026 — un fichier par fait ; ajoute ici tes nouveaux faits et une ligne d'index)
+
+- [Identité](user_identity.md) — Jean-Maurice (Jean-Mo) BICHARA-JABOUR, concubin de Mélissa
+- [Plan Claude](user_plan.md) — Max
+- [Profil entrepreneur IA](user_profil_entrepreneur_ia.md) — autodidacte ; tend à sous-tarifer
+- [Partenaire critique](feedback_critical_partner.md) — zéro complaisance, challenger
+- [Prévenir avant action sensible](feedback_warn_before_sensitive_actions.md) — suppression, prod, argent
+- [🔴 Tu ou vous](feedback_adresse_tu_vous_contextuelle.md) — par projet et par cible
+- [🔴 Mails : brouillon seulement](feedback_mails_melimo_depuis_boite_pro.md) — MELIMO depuis melimo.contact
+- [🔴 INFast : lecture seule](feedback_infast_interdiction_ecriture.md) — amount = HT, amountVat = TTC
+- [🔴 Limite effacement traces IA](feedback_limite_effacement_traces_ia.md) — filigranes refusés ; métadonnées OK
+- [🔴 Recette design premium](feedback_design_recipe_sites_premium.md) — skill design avant le rendu
+- [Carrefour méthode de travail](hub_methode.md) — vérifier avant d'affirmer, chercher avant le cutoff, compter les succès, tests réels, Chrome, puissance avant coûts, choix du modèle, Madame/Monsieur + NOM, sur-relance, .docx
+- [Carrefour ecom et marques](hub_ecom_marques.md) — HAIRMELLY, VitalDésir (🔴 conformité import), HACHIJO, SPICEX, NutriByMeli, recherche produit, TrendTrack, copy, emails, Shopify
+- [Carrefour UGC et visuels](hub_ugc_visuels.md) — casting, pas de visage fondateur, pipeline et machine UGC, Higgsfield, packaging photoréaliste, modèles image, Voicebox, watermarks
+- [🔴 SHILAMAYA marque, VitalDésir produit](reference_shilamaya_vitaldesir.md) — jamais « la marque VitalDésir »
+- [🔴 Expéditions SHILAMAYA par Colissimo](reference_coliship_etiquettes.md) — `expedier-shilamaya` (contrôle, puis `--envoyer` sur accord de JM) ; Antilles sans signature, Guyane et métropole signature + DDP + CN23 ×2 + facture ; code 210690, origine CN jamais sur la facture ; tester au bac à sable ; sorties dans `02-SHILAMAYA/COLISSIMO SHILAMAYA/<date>/` ; RECAP du 05/10/2026 dans ce dossier
+- [🔴 Shopify : clés API, pas le MCP](feedback_shopify_cles_api_pas_mcp.md) — dashboard/.env.local ; ne jamais demander à JM de reconnecter le connecteur
+- [🔴 Catalogue = vraies photos](feedback_catalogue_visuels_obligatoires.md) — fiche par produit en clair + conformité produit par produit
+- [🔴 UGC : acteurs validés JM seulement](feedback_ugc_acteurs_valides_uniquement.md) — zéro visage hors casting validé
+- [Skill meta-ads-copilot](project_meta_ads_copilot.md) — 21/09 : Plugkit en lecture vérifié, écriture verrouillée ; insights sans identifiants, budgets en centimes, 7 clés d'achat
